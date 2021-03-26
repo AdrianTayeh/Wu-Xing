@@ -6,8 +6,11 @@ namespace Wu_Xing
 {
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+        private SpriteFont normalFont;
+
+        private Rectangle window;
         
         public Game1()
         {
@@ -17,12 +20,21 @@ namespace Wu_Xing
 
         protected override void Initialize()
         {
+            IsMouseVisible = true;
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            normalFont = Content.Load<SpriteFont>("Normal");
+
+            window.Width = 1280;
+            window.Height = 720;
+
+            graphics.PreferredBackBufferWidth = window.Width;
+            graphics.PreferredBackBufferHeight = window.Height;
+            graphics.ApplyChanges();
         }
 
         protected override void UnloadContent()
@@ -44,7 +56,7 @@ namespace Wu_Xing
             GraphicsDevice.Clear(Keyboard.GetState().IsKeyDown(Keys.Space) ? Color.DarkGray : Color.DarkCyan);
             spriteBatch.Begin();
 
-            //Hold space to change background color
+            spriteBatch.DrawString(normalFont, "Hold space to change background color", new Vector2(100, 100), Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);
