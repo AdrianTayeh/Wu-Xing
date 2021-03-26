@@ -29,7 +29,7 @@ namespace Prototype_Room
             GameOver,
         }
         GameState currentGameState;
-
+        //kommentar
         //Filip testade att lägga in en kommentar här :)
 
         public Game1()
