@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace Prototype_Room
+namespace Wu_Xing
 {
-#if WINDOWS || LINUX
     /// <summary>
     /// The main class.
     /// </summary>
@@ -18,5 +17,4 @@ namespace Prototype_Room
                 game.Run();
         }
     }
-#endif
 }

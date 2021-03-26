@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Prototype Room")]
-[assembly: AssemblyProduct("Prototype Room")]
+[assembly: AssemblyTitle("Wu_Xing")]
+[assembly: AssemblyProduct("Wu_Xing")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0154ac48-d829-49af-8823-61a1888c81e4")]
+[assembly: Guid("256b876d-9770-4591-8b13-955984d85922")]
 
 // Version information for an assembly consists of the following four values:
 //
