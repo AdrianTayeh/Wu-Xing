@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -26,6 +27,8 @@ namespace Prototype_Room
             GameOver,
         }
         GameState currentGameState;
+
+        //Filip testade att lägga in en kommentar här :)
 
         public Game1()
         {
