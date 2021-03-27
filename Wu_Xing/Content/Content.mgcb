@@ -49,6 +49,13 @@
 /processorParam:TextureFormat=Color
 /build:Backgrounds/Background Split.jpg
 
+#begin Big.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Big.spritefont
+
 #begin Doors/Door Bottom Black Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor

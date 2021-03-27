@@ -11,10 +11,12 @@ namespace Wu_Xing
     static class FontLibrary
     {
         public static SpriteFont Normal { get; private set; }
+        public static SpriteFont Big { get; private set; }
 
         public static void Load(ContentManager Content)
         {
             Normal = Content.Load<SpriteFont>("Normal");
+            Big = Content.Load<SpriteFont>("Big");
         }
     }
 }

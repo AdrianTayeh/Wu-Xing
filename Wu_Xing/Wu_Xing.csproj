@@ -56,6 +56,9 @@
     <Compile Include="Start.cs" />
     <Compile Include="Stats.cs" />
     <Compile Include="TextureLibrary.cs" />
+    <Compile Include="Rotate.cs" />
+    <Compile Include="Mouse.cs" />
+    <Compile Include="ColorLibrary.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

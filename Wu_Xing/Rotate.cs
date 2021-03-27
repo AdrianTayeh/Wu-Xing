@@ -1,26 +1,26 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace iOSgame
+namespace Wu_Xing
 {
     static class Rotate
     {
         public static Vector2 PointAroundZero(Vector2 point, float degrees)
         {
-            float radians = degrees * MathF.PI / 180;
+            float radians = degrees * (float)Math.PI / 180;
 
             return new Vector2(
-                MathF.Cos(radians) * point.X - MathF.Sin(radians) * point.Y,
-                MathF.Sin(radians) * point.X + MathF.Cos(radians) * point.Y);
+                (float)Math.Cos(radians) * point.X - (float)Math.Sin(radians) * point.Y,
+                (float)Math.Sin(radians) * point.X + (float)Math.Cos(radians) * point.Y);
         }
 
         public static Vector2 PointAroundCenter(Vector2 point, Vector2 center, float degrees)
         {
-            float radians = degrees * MathF.PI / 180;
+            float radians = degrees * (float)Math.PI / 180;
 
             return new Vector2(
-                MathF.Cos(radians) * (point.X - center.X) - MathF.Sin(radians) * (point.Y - center.Y) + center.X,
-                MathF.Sin(radians) * (point.X - center.X) + MathF.Cos(radians) * (point.Y - center.Y) + center.Y);
+                (float)Math.Cos(radians) * (point.X - center.X) - (float)Math.Sin(radians) * (point.Y - center.Y) + center.X,
+                (float)Math.Sin(radians) * (point.X - center.X) + (float)Math.Cos(radians) * (point.Y - center.Y) + center.Y);
         }
     }
 }

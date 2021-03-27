@@ -11,7 +11,7 @@ namespace Wu_Xing
 {
     class Button
     {
-        public enum State { None, Hover, Pressed, Down, Released }
+        public enum State { None, Hover, Pressed, Held, Released }
         private State state;
 
         private Vector2 labelOrigin;
@@ -70,26 +70,27 @@ namespace Wu_Xing
         public Rectangle Rectangle { get { return rectangle; } }
         public Point Location { get { return rectangle.Location; } set { rectangle.Location = value; } }
         public string Label { get { return label; } set { label = value; } }
+        public Dictionary<State, Color> BackgroundColor { get { return backgroundColor; } set { backgroundColor = value; } }
 
         public void UpdateLabelOrigin()
         {
             labelOrigin = font.MeasureString(label) / 2;
         }
 
-        public void Update(MouseState currentMouseState, MouseState previousMouseState)
+        public void Update(Mouse mouse)
         {
             if (!active)
                 return;
 
-            if (rectangle.Contains(currentMouseState.Position))
+            if (rectangle.Contains(mouse.Position))
             {
-                if (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
+                if (mouse.LeftIsPressed)
                     state = State.Pressed;
 
-                else if ((state == State.Pressed || state == State.Down) && currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Pressed)
-                    state = State.Down;
+                else if ((state == State.Pressed || state == State.Held) && mouse.LeftIsHeld)
+                    state = State.Held;
 
-                else if ((state == State.Pressed || state == State.Down) && currentMouseState.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed)
+                else if ((state == State.Pressed || state == State.Held) && mouse.LeftIsReleased)
                     state = State.Released;
 
                 else
@@ -108,13 +109,13 @@ namespace Wu_Xing
                 return;
 
             if (background != null)
-                spriteBatch.Draw(background, rectangle, backgroundColor[state == State.Pressed ? State.Down : state]);
+                spriteBatch.Draw(background, rectangle, backgroundColor[state == State.Pressed || state == State.Released ? State.Held : state]);
 
             if (icon != null)
                 spriteBatch.Draw(icon, rectangle.Center.ToVector2(), null, Color.White, 0, icon.Bounds.Center.ToVector2(), 1, SpriteEffects.None, 0);
 
             if (label != "" && labelColor != null)
-                spriteBatch.DrawString(font, label, rectangle.Center.ToVector2(), labelColor[state == State.Pressed ? State.Down : state], 0, labelOrigin, 1, SpriteEffects.None, 0);
+                spriteBatch.DrawString(font, label, rectangle.Center.ToVector2(), labelColor[state == State.Pressed || state == State.Released ? State.Held : state], 0, labelOrigin, 1, SpriteEffects.None, 0);
         }
     }
 }

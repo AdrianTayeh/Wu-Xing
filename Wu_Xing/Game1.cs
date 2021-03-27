@@ -10,6 +10,9 @@ namespace Wu_Xing
         private SpriteBatch spriteBatch;
 
         private Rectangle window;
+        private Rectangle resolution;
+        private float windowScale;
+        private RenderTarget2D game;
 
         private Start start;
         private Menu menu;
@@ -19,13 +22,12 @@ namespace Wu_Xing
         private NewGame newGame;
         private Running running;
 
-        Screen screen;
+        private Screen screen;
 
-        MouseState currentMouseState;
-        MouseState previousMouseState;
-        KeyboardState currentKeyboardState;
-        KeyboardState previousKeyboardState;
-        
+        private Mouse mouse;
+        private KeyboardState currentKeyboard;
+        private KeyboardState previousKeyboard;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -44,14 +46,24 @@ namespace Wu_Xing
 
             window.Width = 1920;
             window.Height = 1080;
+            resolution.Width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            resolution.Height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
-            graphics.PreferredBackBufferWidth = window.Width;
-            graphics.PreferredBackBufferHeight = window.Height;
+            graphics.PreferredBackBufferWidth = resolution.Width;
+            graphics.PreferredBackBufferHeight = resolution.Height;
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
+
+            game = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
+
+            windowScale = resolution.Height / resolution.Width >= window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
 
             TextureLibrary.Load(Content, GraphicsDevice);
             FontLibrary.Load(Content);
+            ColorLibrary.Load();
+
             screen = Screen.Start;
+            mouse = new Mouse(window, resolution, windowScale);
 
             start = new Start();
             menu = new Menu(window);
@@ -69,42 +81,42 @@ namespace Wu_Xing
 
         protected override void Update(GameTime gameTime)
         {
-            previousMouseState = currentMouseState;
-            previousKeyboardState = currentKeyboardState;
-            currentMouseState = Mouse.GetState();
-            currentKeyboardState = Keyboard.GetState();
+            previousKeyboard = currentKeyboard;
+            currentKeyboard = Keyboard.GetState();
 
-            if (currentKeyboardState.IsKeyDown(Keys.Escape))
+            mouse.Update();
+
+            if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape) && screen == Screen.Start)
                 Exit();
 
             switch (screen)
             {
                 case Screen.Start:
-                    start.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    start.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Menu:
-                    menu.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    menu.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Settings:
-                    settings.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    settings.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Pregame:
-                    pregame.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Stats:
-                    stats.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    stats.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.NewGame:
-                    newGame.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, currentMouseState, previousMouseState, currentKeyboardState, previousKeyboardState);
+                    running.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
             }
 
@@ -113,6 +125,7 @@ namespace Wu_Xing
 
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(game);
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
@@ -146,6 +159,14 @@ namespace Wu_Xing
                     running.Draw(spriteBatch, window);
                     break;
             }
+
+            spriteBatch.End();
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin();
+
+            //Scales the 1920x1080 game to the resolution of the screen
+            spriteBatch.Draw(game, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
 
             spriteBatch.End();
             base.Draw(gameTime);

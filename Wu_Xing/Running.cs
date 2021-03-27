@@ -16,9 +16,10 @@ namespace Wu_Xing
 
         }
 
-        public void Update(ref Screen screen, MouseState currentMouseState, MouseState previousMouseState, KeyboardState currentKeyboardState, KeyboardState previousKeyboardState)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard)
         {
-
+            if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
+                screen = Screen.Pregame;
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle window)

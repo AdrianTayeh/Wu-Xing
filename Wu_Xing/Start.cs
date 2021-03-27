@@ -16,9 +16,9 @@ namespace Wu_Xing
 
         }
 
-        public void Update(ref Screen screen, MouseState currentMouseState, MouseState previousMouseState, KeyboardState currentKeyboardState, KeyboardState previousKeyboardState)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboardState, KeyboardState previousKeyboardState)
         {
-            if (currentKeyboardState.GetPressedKeys().Count() > 0 || currentMouseState.LeftButton == ButtonState.Pressed || currentMouseState.RightButton == ButtonState.Pressed)
+            if ((currentKeyboardState.GetPressedKeys().Count() > 0 && currentKeyboardState.IsKeyUp(Keys.Escape)) || mouse.LeftIsPressed || mouse.RightIsPressed)
                 screen = Screen.Menu;
         }
 
