@@ -56,7 +56,7 @@ namespace Wu_Xing
 
             game = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
 
-            windowScale = resolution.Height / resolution.Width >= window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
+            windowScale = (float)resolution.Height / resolution.Width >= (float)window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
 
             TextureLibrary.Load(Content, GraphicsDevice);
             FontLibrary.Load(Content);
