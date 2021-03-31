@@ -23,7 +23,6 @@ namespace Wu_Xing
         private Running running;
 
         private Screen screen;
-        private Adam adam = new Adam();
 
         private Mouse mouse;
         private KeyboardState currentKeyboard;
@@ -121,8 +120,6 @@ namespace Wu_Xing
                     break;
             }
 
-            adam.Update(currentKeyboard, previousKeyboard);
-
             base.Update(gameTime);
         }
 
@@ -162,8 +159,6 @@ namespace Wu_Xing
                     running.Draw(spriteBatch, window);
                     break;
             }
-
-            adam.Draw(spriteBatch);
 
             spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);

@@ -8,185 +8,139 @@ namespace Wu_Xing
 {
     class Adam
     {
-        private enum Direction { None, Down, Up, Left, Right }
-        private Direction facingDirection;
-        private Direction aimingDirection;
-
         private Vector2 position;
-        private Vector2 velocity;
-        private float speed;
+        private float movingSpeed;
 
-        private Dictionary<Direction, Rectangle> headSource;
-        private Dictionary<Direction, Rectangle> torsoSource;
-        private Dictionary<Direction, Rectangle> footSource;
-        private Rectangle armSource;
-        private Rectangle leftLegSource;
-        private Rectangle rightLegSource;
+        private Vector2 movingDirection;
+        private Vector2 aimingDirection;
 
-        private Dictionary<Direction, float> armRotation;
-        private Dictionary<Direction, Vector2> leftArmPosition;
-        private Dictionary<Direction, Vector2> rightArmPosition;
-        private Dictionary<Direction, Vector2> leftLegPosition;
-        private Dictionary<Direction, Vector2> rightLegPosition;
-        private Dictionary<Direction, Vector2> leftFootPosition;
-        private Dictionary<Direction, Vector2> rightFootPosition;
-        private Vector2 torsoPosition;
+        private Rectangle headSource;
+        private Rectangle aimingArmSource;
+        private Rectangle restingArmSource;
+        private float rotation;
+        private float rotationTarget;
+        private float rotationSpeed;
+        private Vector2 leftArmPosition;
+        private Vector2 rightArmPosition;
 
-        public Adam()
+        public Adam(Rectangle window)
         {
-            facingDirection = Direction.Down;
-            aimingDirection = Direction.None;
+            headSource = new Rectangle(140, 0, 140, 140);
+            aimingArmSource = new Rectangle(0, 140, 40, 70);
+            restingArmSource = new Rectangle(40, 140, 40, 70);
 
-            headSource = new Dictionary<Direction, Rectangle> {
-                { Direction.Down, new Rectangle(0, 0, 160, 160) },
-                { Direction.Up, new Rectangle(160, 0, 160, 160) },
-                { Direction.Left, new Rectangle(320, 0, 160, 160) },
-                { Direction.Right, new Rectangle(480, 0, 160, 160) } };
+            leftArmPosition = new Vector2(28, 22);
+            rightArmPosition = new Vector2(-28, 22);
 
-            torsoSource = new Dictionary<Direction, Rectangle> {
-                { Direction.Down, new Rectangle(0, 160, 70, 50) },
-                { Direction.Up, new Rectangle(70, 160, 70, 50) },
-                { Direction.Left, new Rectangle(140, 160, 70, 50) },
-                { Direction.Right, new Rectangle(210, 160, 70, 50) } };
-
-            footSource = new Dictionary<Direction, Rectangle> {
-                { Direction.Down, new Rectangle(360, 160, 40, 40) },
-                { Direction.Up, new Rectangle(360, 160, 40, 40) },
-                { Direction.Left, new Rectangle(400, 160, 40, 40) },
-                { Direction.Right, new Rectangle(400, 160, 40, 40) } };
-
-            armSource = new Rectangle(440, 160, 40, 80);
-            leftLegSource = new Rectangle(320, 160, 40, 50);
-            rightLegSource = new Rectangle(280, 160, 40, 50);
-
-            armRotation = new Dictionary<Direction, float> {
-                { Direction.Down, 0 },
-                { Direction.Up, (float)Math.PI },
-                { Direction.Left, (float)Math.PI * 0.5f },
-                { Direction.Right, (float)Math.PI * 1.5f },
-                { Direction.None, (float)Math.PI * 0.07f } };
-
-            leftArmPosition = new Dictionary<Direction, Vector2> {
-                { Direction.Down, new Vector2(34, -70) },
-                { Direction.Up, new Vector2(34, -70) },
-                { Direction.Left, new Vector2(0, -60) },
-                { Direction.Right, new Vector2(0, -80) } };
-
-            rightArmPosition = new Dictionary<Direction, Vector2> {
-                { Direction.Down, new Vector2(-34, -70) },
-                { Direction.Up, new Vector2(-34, -70) },
-                { Direction.Left, new Vector2(0, -80) },
-                { Direction.Right, new Vector2(0, -60) } };
-
-            leftLegPosition = new Dictionary<Direction, Vector2> {
-                { Direction.Down, new Vector2(12, -40) },
-                { Direction.Up, new Vector2(12, -36) },
-                { Direction.Left, new Vector2(0, -30) },
-                { Direction.Right, new Vector2(0, -50) } };
-
-            rightLegPosition = new Dictionary<Direction, Vector2> {
-                { Direction.Down, new Vector2(-12, -40) },
-                { Direction.Up, new Vector2(-12, -36) },
-                { Direction.Left, new Vector2(0, -50) },
-                { Direction.Right, new Vector2(0, -30) } };
-
-            leftFootPosition = new Dictionary<Direction, Vector2> {
-                { Direction.Down, new Vector2(14, -22) },
-                { Direction.Up, new Vector2(14, -22) },
-                { Direction.Left, new Vector2(0, -12) },
-                { Direction.Right, new Vector2(0, -38) } };
-
-            rightFootPosition = new Dictionary<Direction, Vector2> {
-                { Direction.Down, new Vector2(-14, -22) },
-                { Direction.Up, new Vector2(-14, -22) },
-                { Direction.Left, new Vector2(0, -38) },
-                { Direction.Right, new Vector2(0, -12) } };
-
-            torsoPosition = new Vector2(0, -65);
-
-            position = new Vector2(200, 200);
-            speed = 10;
+            rotationSpeed = 0.3f;
+            position = window.Size.ToVector2() / 2;
+            movingSpeed = 8;
         }
 
-        public void Update(KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        public void Update(KeyboardState currentKeyboard)
         {
-            //Determine velocity
-            velocity = Vector2.Zero;
+            DetermineMovingDirection(currentKeyboard);
+            DetermineAimingDirection(currentKeyboard);
+            DetermineRotationTarget();
+            RotateTowardTarget();
+            Move();
+        }
+
+        private void DetermineMovingDirection(KeyboardState currentKeyboard)
+        {
+            movingDirection = Vector2.Zero;
 
             if (currentKeyboard.IsKeyDown(Keys.W))
-                velocity.Y = -1;
+                movingDirection.Y -= 1;
 
-            else if (currentKeyboard.IsKeyDown(Keys.S))
-                velocity.Y = 1;
+            if (currentKeyboard.IsKeyDown(Keys.S))
+                movingDirection.Y += 1;
 
             if (currentKeyboard.IsKeyDown(Keys.A))
-                velocity.X = -1;
+                movingDirection.X -= 1;
 
-            else if (currentKeyboard.IsKeyDown(Keys.D))
-                velocity.X = 1;
+            if (currentKeyboard.IsKeyDown(Keys.D))
+                movingDirection.X += 1;
+        }
 
-            //Determine facing direction
-            if (velocity.Y == -1)
-                facingDirection = Direction.Up;
+        private void DetermineAimingDirection(KeyboardState currentKeyboard)
+        {
+            aimingDirection = Vector2.Zero;
 
-            else if (velocity.Y == 1)
-                facingDirection = Direction.Down;
-
-            else if (velocity.X == -1)
-                facingDirection = Direction.Left;
-
-            else if (velocity.X == 1)
-                facingDirection = Direction.Right;
-
-            //Move
-            if (velocity != Vector2.Zero)
-                velocity.Normalize();
-            position += velocity * speed;
-
-            //Determine aiming direction
             if (currentKeyboard.IsKeyDown(Keys.Up))
-                aimingDirection = Direction.Up;
+                aimingDirection.Y -= 1;
 
-            else if (currentKeyboard.IsKeyDown(Keys.Down))
-                aimingDirection = Direction.Down;
+            if (currentKeyboard.IsKeyDown(Keys.Down))
+                aimingDirection.Y += 1;
 
-            else if (currentKeyboard.IsKeyDown(Keys.Left))
-                aimingDirection = Direction.Left;
+            if (currentKeyboard.IsKeyDown(Keys.Left))
+                aimingDirection.X -= 1;
 
-            else if (currentKeyboard.IsKeyDown(Keys.Right))
-                aimingDirection = Direction.Right;
+            if (currentKeyboard.IsKeyDown(Keys.Right))
+                aimingDirection.X += 1;
+        }
+
+        private void DetermineRotationTarget()
+        {
+            if (aimingDirection != Vector2.Zero)
+                rotationTarget = (float)Math.Atan2(-aimingDirection.X, aimingDirection.Y);
+
+            else if (movingDirection != Vector2.Zero)
+                rotationTarget = (float)Math.Atan2(-movingDirection.X, movingDirection.Y);
+
+            rotationTarget %= (float)Math.PI * 2;
+        }
+
+        private void RotateTowardTarget()
+        {
+            if (rotation == rotationTarget)
+                return;
+
+            //Find closest rotation path
+            float larger = rotationTarget > rotation ? rotationTarget : rotation;
+            float smaller = rotationTarget > rotation ? rotation : rotationTarget;
+
+            float distanceWithoutCrossingZero = larger - smaller;
+            float distanceCrossingZero = smaller + ((float)Math.PI * 2f - larger);
+
+            //Rotate
+            if (distanceWithoutCrossingZero < distanceCrossingZero)
+                rotation += rotation == smaller ? rotationSpeed : -rotationSpeed;
 
             else
-                aimingDirection = Direction.None;
+                rotation += rotation == smaller ? -rotationSpeed : rotationSpeed;
+
+            rotation %= (float)Math.PI * 2;
+
+            //Check if rotation is complete
+            float larger2 = rotationTarget > rotation ? rotationTarget : rotation;
+            float smaller2 = rotationTarget > rotation ? rotation : rotationTarget;
+
+            float distanceWithoutCrossingZero2 = larger - smaller;
+            float distanceCrossingZero2 = smaller + ((float)Math.PI * 2f - larger);
+
+            if (distanceWithoutCrossingZero2 <= rotationSpeed || distanceCrossingZero2 <= rotationSpeed)
+                rotation = rotationTarget;
+        }
+
+        private void Move()
+        {
+            if (movingDirection != Vector2.Zero)
+                movingDirection.Normalize();
+            position += movingDirection * movingSpeed;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            //Left foot
-            spriteBatch.Draw(TextureLibrary.Adam, position + leftFootPosition[facingDirection], footSource[facingDirection], Color.White, 0, new Vector2(footSource[facingDirection].Width / 2, footSource[facingDirection].Height / 2), 1, SpriteEffects.None, 0);
-
-            //Right foot
-            spriteBatch.Draw(TextureLibrary.Adam, position + rightFootPosition[facingDirection], footSource[facingDirection], Color.White, 0, new Vector2(footSource[facingDirection].Width / 2, footSource[facingDirection].Height / 2), 1, SpriteEffects.None, 0);
-
-            //Left leg
-            spriteBatch.Draw(TextureLibrary.Adam, position + leftLegPosition[facingDirection], facingDirection == Direction.Right ? rightLegSource : leftLegSource, Color.White, 0, new Vector2(leftLegSource.Width / 2, leftLegSource.Height / 2), 1, SpriteEffects.None, 0);
-
-            //Right leg
-            spriteBatch.Draw(TextureLibrary.Adam, position + rightLegPosition[facingDirection], facingDirection == Direction.Left ? leftLegSource : rightLegSource, Color.White, 0, new Vector2(rightLegSource.Width / 2, rightLegSource.Height / 2), 1, SpriteEffects.None, 0);
-
-            //Torso
-            spriteBatch.Draw(TextureLibrary.Adam, position + torsoPosition, torsoSource[facingDirection], Color.White, 0, new Vector2(torsoSource[facingDirection].Width / 2, torsoSource[facingDirection].Height / 2), 1, SpriteEffects.None, 0);
-
             //Left arm
-            spriteBatch.Draw(TextureLibrary.Adam, position + leftArmPosition[facingDirection], armSource, Color.White, aimingDirection == Direction.None ? -armRotation[aimingDirection] : armRotation[aimingDirection], new Vector2(armSource.Width / 2, armSource.Height / 2), 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(TextureLibrary.Adam, position + Rotate.PointAroundZero(leftArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, Color.White, rotation + (aimingDirection == Vector2.Zero ? -0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, 0);
 
             //Right arm
-            spriteBatch.Draw(TextureLibrary.Adam, position + rightArmPosition[facingDirection], armSource, Color.White, armRotation[aimingDirection], new Vector2(armSource.Width / 2, armSource.Height / 2), 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(TextureLibrary.Adam, position + Rotate.PointAroundZero(rightArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, Color.White, rotation + (aimingDirection == Vector2.Zero ? 0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, 0);
 
-            
-
-
-
+            //Head
+            spriteBatch.Draw(TextureLibrary.Adam, position, headSource, Color.White, rotation, new Vector2(headSource.Width / 2, headSource.Height / 2), 1, SpriteEffects.None, 0);
         }
+
     }
 }
