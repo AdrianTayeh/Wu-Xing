@@ -59,6 +59,7 @@
     <Compile Include="Rotate.cs" />
     <Compile Include="Mouse.cs" />
     <Compile Include="ColorLibrary.cs" />
+    <Compile Include="Adam.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

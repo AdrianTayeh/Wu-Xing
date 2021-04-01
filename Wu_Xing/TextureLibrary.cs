@@ -16,6 +16,9 @@ namespace Wu_Xing
         public static Texture2D BackgroundRed { get; private set; }
         public static Texture2D BackgroundSplit { get; private set; }
 
+        //Folder Characters
+        public static Texture2D Adam { get; private set; }
+
         //Folder Doors
         public static Texture2D DoorBottomBlackBoss { get; private set; }
         public static Texture2D DoorBottomBlackNormal { get; private set; }
@@ -71,6 +74,9 @@ namespace Wu_Xing
             BackgroundGray = Content.Load<Texture2D>("Backgrounds\\Background Gray");
             BackgroundRed = Content.Load<Texture2D>("Backgrounds\\Background Red");
             BackgroundSplit = Content.Load<Texture2D>("Backgrounds\\Background Split");
+
+            //Folder Characters
+            Adam = Content.Load<Texture2D>("Characters\\Adam");
 
             //Folder Doors
             DoorBottomBlackBoss = Content.Load<Texture2D>("Doors\\Door Bottom Black Boss");
