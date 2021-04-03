@@ -23,6 +23,7 @@ namespace Wu_Xing
         private Running running;
 
         private Screen screen;
+        private Screen previousScreen;
 
         private Mouse mouse;
         private KeyboardState currentKeyboard;
@@ -70,7 +71,7 @@ namespace Wu_Xing
             settings = new Settings(window);
             pregame = new Pregame(window);
             stats = new Stats(window);
-            newGame = new NewGame(window);
+            newGame = new NewGame(window, GraphicsDevice);
             running = new Running(window);
         }
 
@@ -96,15 +97,15 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Menu:
-                    menu.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
+                    menu.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Settings:
-                    settings.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
+                    settings.Update(ref screen, previousScreen, mouse, currentKeyboard, previousKeyboard, graphics);
                     break;
 
                 case Screen.Pregame:
-                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
+                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, newGame);
                     break;
 
                 case Screen.Stats:
@@ -116,7 +117,7 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
+                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime);
                     break;
             }
 
@@ -125,6 +126,13 @@ namespace Wu_Xing
 
         protected override void Draw(GameTime gameTime)
         {
+            //Pre-draw to render targets
+
+            if (screen == Screen.NewGame)
+                newGame.DrawCircleToTexture(spriteBatch, GraphicsDevice);
+
+            //Render game
+
             GraphicsDevice.SetRenderTarget(game);
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
@@ -161,11 +169,13 @@ namespace Wu_Xing
             }
 
             spriteBatch.End();
+
+            //Scale rendered game to screen
+
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
-            //Scales the 1920x1080 game to the resolution of the screen
             spriteBatch.Draw(game, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
 
             spriteBatch.End();

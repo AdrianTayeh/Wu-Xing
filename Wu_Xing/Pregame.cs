@@ -52,7 +52,7 @@ namespace Wu_Xing
                 ));
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, NewGame newGame)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = Screen.Menu;
@@ -69,6 +69,7 @@ namespace Wu_Xing
             else if (button["New game"].IsReleased)
             {
                 screen = Screen.NewGame;
+                newGame.Refresh();
             }
 
             else if (button["Stats"].IsReleased)

@@ -69,7 +69,7 @@ namespace Wu_Xing
                 ));
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = Screen.Start;
@@ -79,6 +79,7 @@ namespace Wu_Xing
 
             if (button["Settings"].IsReleased)
             {
+                previousScreen = screen;
                 screen = Screen.Settings;
             }   
 

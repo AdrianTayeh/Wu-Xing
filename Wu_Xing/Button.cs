@@ -65,12 +65,14 @@ namespace Wu_Xing
         }
 
         public bool IsReleased { get { return state == State.Released; } }
+        public bool IsHoveredOn { get { return state != State.None; } }
         public bool Active { get { return active; } set { active = value; } }
 
         public Rectangle Rectangle { get { return rectangle; } }
         public Point Location { get { return rectangle.Location; } set { rectangle.Location = value; } }
         public string Label { get { return label; } set { label = value; } }
         public Dictionary<State, Color> BackgroundColor { get { return backgroundColor; } set { backgroundColor = value; } }
+        public Texture2D Background { get { return background; } set { background = value; } }
 
         public void UpdateLabelOrigin()
         {

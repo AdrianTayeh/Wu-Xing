@@ -344,6 +344,13 @@
 /processorParam:TextureFormat=Color
 /build:Elements/Symbol Wood.png
 
+#begin Huge.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Huge.spritefont
+
 #begin Icons/Icon Delete.png
 /importer:TextureImporter
 /processor:TextureProcessor

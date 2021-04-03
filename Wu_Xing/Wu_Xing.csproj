@@ -60,6 +60,7 @@
     <Compile Include="Mouse.cs" />
     <Compile Include="ColorLibrary.cs" />
     <Compile Include="Adam.cs" />
+    <Compile Include="Element.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

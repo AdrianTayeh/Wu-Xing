@@ -20,6 +20,7 @@ namespace Wu_Xing
         public static Dictionary<Button.State, Color> WhiteButtonLabelColor { get; private set; }
         public static Dictionary<Button.State, Color> GreenButtonBackgroundColor { get; private set; }
         public static Dictionary<Button.State, Color> RedButtonBackgroundColor { get; private set; }
+        public static Dictionary<Button.State, Color> SolidWhiteButtonBackgroundColor { get; private set; }
 
         public static void Load()
         {
@@ -46,14 +47,17 @@ namespace Wu_Xing
             GreenButtonBackgroundColor = new Dictionary<Button.State, Color> {
                 { Button.State.None, Color.Lime },
                 { Button.State.Hover, Color.FromNonPremultiplied(0, 200, 0, 255) },
-                { Button.State.Held, Color.FromNonPremultiplied(0, 170, 0, 255) },
-                { Button.State.Released, Color.Lime } };
+                { Button.State.Held, Color.FromNonPremultiplied(0, 170, 0, 255) } };
 
             RedButtonBackgroundColor = new Dictionary<Button.State, Color> {
                 { Button.State.None, Color.Red },
                 { Button.State.Hover, Color.FromNonPremultiplied(220, 0, 0, 255) },
-                { Button.State.Held, Color.FromNonPremultiplied(190, 0, 0, 255) },
-                { Button.State.Released, Color.Red } };
+                { Button.State.Held, Color.FromNonPremultiplied(190, 0, 0, 255) } };
+
+            SolidWhiteButtonBackgroundColor = new Dictionary<Button.State, Color> {
+                { Button.State.None, Color.White },
+                { Button.State.Hover, Color.White },
+                { Button.State.Held, Color.White } };
         }
     }
 }
