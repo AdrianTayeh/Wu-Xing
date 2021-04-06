@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -8,6 +9,7 @@ namespace Wu_Xing
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private Random random;
 
         private Rectangle window;
         private Rectangle resolution;
@@ -44,6 +46,7 @@ namespace Wu_Xing
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            random = new Random();
 
             window.Width = 1920;
             window.Height = 1080;
@@ -52,7 +55,7 @@ namespace Wu_Xing
 
             graphics.PreferredBackBufferWidth = resolution.Width;
             graphics.PreferredBackBufferHeight = resolution.Height;
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             game = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
@@ -105,7 +108,7 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Pregame:
-                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, newGame);
+                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, newGame, random, running.MapInitialized);
                     break;
 
                 case Screen.Stats:
@@ -113,11 +116,11 @@ namespace Wu_Xing
                     break;
 
                 case Screen.NewGame:
-                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
+                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, random, running, gameTime);
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime);
+                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime, random);
                     break;
             }
 
