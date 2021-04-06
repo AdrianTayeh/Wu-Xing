@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,6 +32,8 @@ namespace Wu_Xing
         bool waterGemObtained;
 
         private Dictionary<string, Button> gemButton = new Dictionary<string, Button>();
+        private Task generateMap;
+        private float versusScreenTimer;
 
         private enum Stage { PickElement, PickGem, Versus }
         private Stage stage;
@@ -131,7 +134,7 @@ namespace Wu_Xing
             gemButton["Water"].Active = waterGemObtained;
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, Running running, GameTime gameTime)
         {
             switch (stage)
             {
@@ -141,24 +144,25 @@ namespace Wu_Xing
                     break;
 
                 case Stage.PickGem:
-                    UpdatePickGem(currentKeyboard, previousKeyboard, mouse);
+                    UpdatePickGem(currentKeyboard, previousKeyboard, mouse, random, running);
                     UpdateEnergy();
                     break;
 
                 case Stage.Versus:
-                    UpdateVersus(ref screen);
+                    UpdateVersus(ref screen, gameTime);
                     break;
             }
+
         }
 
         private void UpdateEnergy()
         {
-            energyCircleRotation += 0.02f;
+            energyCircleRotation += 0.01f;
             energyCircleRotation %= (float)Math.PI * 2;
 
             for (int i = 0; i < energyLineSource.Length; i++)
             {
-                energyLineSource[i].X += 4;
+                energyLineSource[i].X += 2;
                 energyLineSource[i].X %= TextureLibrary.EnergyLine.Width - energyLineSource[i].Width;
             }
         }
@@ -202,7 +206,7 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdatePickGem(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse)
+        private void UpdatePickGem(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, Random random, Running running)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
             {
@@ -235,15 +239,20 @@ namespace Wu_Xing
                 if (item.Value.IsReleased && gemToFind != null)
                 {
                     stage = Stage.Versus;
+                    generateMap = Task.Run(() => running.InitializeNewMap(random, 13));
                     break;
                 }
             }
         }
 
-        private void UpdateVersus(ref Screen screen)
+        private void UpdateVersus(ref Screen screen, GameTime gameTime)
         {
-            Thread.Sleep(4000);
-            screen = Screen.Running;
+            versusScreenTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (versusScreenTimer >= 4 && generateMap.IsCompleted)
+            {
+                versusScreenTimer = 0;
+                screen = Screen.Running;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle window)

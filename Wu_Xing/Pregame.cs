@@ -52,7 +52,7 @@ namespace Wu_Xing
                 ));
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, NewGame newGame)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, NewGame newGame, Random random, bool continueAvailable)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = Screen.Menu;
@@ -60,7 +60,9 @@ namespace Wu_Xing
             foreach (KeyValuePair<string, Button> item in button)
                 item.Value.Update(mouse);
 
-            if (button["Continue"].IsReleased)
+            button["Continue"].BackgroundColor = continueAvailable ? ColorLibrary.WhiteButtonBackgroundColor : ColorLibrary.LockedWhiteButtonBackgroundColor;
+
+            if (button["Continue"].IsReleased && continueAvailable)
             {
                 screen = Screen.Running;
                 //Load existing run
