@@ -19,7 +19,7 @@ namespace Wu_Xing
 
         public Mouse(Rectangle window, Rectangle resolution, float windowScale)
         {
-            if (resolution.Height / resolution.Width >= window.Height / window.Width)
+            if ((float)resolution.Height / resolution.Width >= (float)window.Height / window.Width)
             {
                 multiplier = (float)window.Width / resolution.Width;
                 offset.Y = (int)((resolution.Height - (window.Height * windowScale)) / 2);
