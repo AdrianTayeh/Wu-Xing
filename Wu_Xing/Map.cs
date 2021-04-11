@@ -57,7 +57,7 @@ namespace Wu_Xing
         }
 
         /// <summary>
-        /// Size must be at least 5, and at most 25.
+        /// Size must be at least 5, and should not be larger than 25.
         /// </summary>
         public Room[,] GenerateNewMap(Random random, int size)
         {
@@ -65,51 +65,59 @@ namespace Wu_Xing
             int tries = 0;
             DateTime startTime = DateTime.Now;
 
-            //Generate a new map
             MapTile[,] mapTile;
+
             while (true)
             {
                 tries += 1;
-
-                //First 5 rooms
                 mapTile = new MapTile[size, size];
+                GenerateFirstFiveRooms(mapTile);
+                GenerateAllRooms(random, mapTile);
 
-                mapTile[size / 2, size / 2] = new MapTile(0, 0);
-                mapTile[size / 2, size / 2].Type = Room.Type.Center;
-                mapTile[size / 2, size / 2 - 1] = new MapTile(0, 1);
-                mapTile[size / 2, size / 2 + 1] = new MapTile(0, -1);
-                mapTile[size / 2 - 1, size / 2] = new MapTile(1, 0);
-                mapTile[size / 2 + 1, size / 2] = new MapTile(-1, 0);
-
-                //Generate rooms
-                while (true)
-                {
-                    SpreadTiles(mapTile, random, size);
-
-                    if (CheckForAliveTiles(mapTile, size) == false)
-                        break;
-                }
-
-                if (CheckIfMapFulfillsRequirements(mapTile, size) == true)
+                if (CheckIfMapFulfillsRequirements(mapTile) == true)
                     break;
             }
 
-            CreateBossRooms(mapTile, random, size);
-            CreateLargeRooms(mapTile, random, size);
+            CreateBossRooms(mapTile, random);
+            CreateLargeRooms(mapTile, random);
+            Room[,] rooms = new Room[size, size];
+            ConvertToRoomArray(mapTile, rooms);
+            ConnectDoors(rooms);
 
             //For debugging
             DateTime finishTime = DateTime.Now;
             Debug.WriteLine("Map successfully generated after " + tries + " tries and " + (finishTime - startTime).TotalMilliseconds + " milliseconds.");
 
-            return ConvertToRoomArray(mapTile, size);
+            return rooms;
         }
 
-        private void SpreadTiles(MapTile[,] mapTile, Random random, int size)
+        private void GenerateFirstFiveRooms(MapTile[,] mapTile)
+        {
+            mapTile[mapTile.GetLength(0) / 2, mapTile.GetLength(0) / 2] = new MapTile(0, 0);
+            mapTile[mapTile.GetLength(0) / 2, mapTile.GetLength(0) / 2].Type = Room.Type.Center;
+            mapTile[mapTile.GetLength(0) / 2, mapTile.GetLength(0) / 2 - 1] = new MapTile(0, 1);
+            mapTile[mapTile.GetLength(0) / 2, mapTile.GetLength(0) / 2 + 1] = new MapTile(0, -1);
+            mapTile[mapTile.GetLength(0) / 2 - 1, mapTile.GetLength(0) / 2] = new MapTile(1, 0);
+            mapTile[mapTile.GetLength(0) / 2 + 1, mapTile.GetLength(0) / 2] = new MapTile(-1, 0);
+        }
+
+        private void GenerateAllRooms(Random random, MapTile[,] mapTile)
+        {
+            while (true)
+            {
+                SpreadTiles(mapTile, random);
+
+                if (CheckForAliveTiles(mapTile) == false)
+                    break;
+            }
+        }
+
+        private void SpreadTiles(MapTile[,] mapTile, Random random)
         {
             //Update tiles that can spread
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < mapTile.GetLength(0); y++)
             {
-                for (int x = 0; x < size; x++)
+                for (int x = 0; x < mapTile.GetLength(0); x++)
                 {
                     if (mapTile[x, y] != null && mapTile[x, y].Fresh == false && mapTile[x, y].Finished == false)
                         mapTile[x, y].Spread(random, mapTile, x, y);
@@ -118,9 +126,9 @@ namespace Wu_Xing
 
             //Make fresh tiles ready to spread
             int roomsCreated = 0;
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < mapTile.GetLength(0); y++)
             {
-                for (int x = 0; x < size; x++)
+                for (int x = 0; x < mapTile.GetLength(0); x++)
                 {
                     if (mapTile[x, y] != null)
                     {
@@ -131,32 +139,99 @@ namespace Wu_Xing
             }
         }
 
-        private bool CheckForAliveTiles(MapTile[,] mapTile, int size)
+        private bool CheckForAliveTiles(MapTile[,] mapTile)
         {
-            for (int y = 0; y < size; y++)
-                for (int x = 0; x < size; x++)
+            for (int y = 0; y < mapTile.GetLength(0); y++)
+                for (int x = 0; x < mapTile.GetLength(0); x++)
                     if (mapTile[x, y] != null && mapTile[x, y].Finished == false)
                         return true;
 
             return false;
         }
 
-        private void CreateBossRooms(MapTile[,] mapTile, Random random, int size)
+        private bool CheckIfMapFulfillsRequirements(MapTile[,] mapTile)
+        {
+            int totalRooms = 0;
+
+            bool north = false;
+            bool south = false;
+            bool west = false;
+            bool east = false;
+
+            bool northWest = false;
+            bool northEast = false;
+            bool southWest = false;
+            bool southEast = false;
+
+            for (int y = 0; y < mapTile.GetLength(0); y++)
+                for (int x = 0; x < mapTile.GetLength(0); x++)
+                    if (mapTile[x, y] != null)
+                        totalRooms += 1;
+
+            for (int y = 0; y < 2; y++)
+                for (int x = 2; x < mapTile.GetLength(0) - 2; x++)
+                    if (mapTile[x, y] != null)
+                        north = true;
+
+            for (int y = mapTile.GetLength(0) - 2; y < mapTile.GetLength(0); y++)
+                for (int x = 2; x < mapTile.GetLength(0) - 2; x++)
+                    if (mapTile[x, y] != null)
+                        south = true;
+
+            for (int y = 2; y < mapTile.GetLength(0) - 2; y++)
+                for (int x = 0; x < 2; x++)
+                    if (mapTile[x, y] != null)
+                        west = true;
+
+            for (int y = 2; y < mapTile.GetLength(0) - 2; y++)
+                for (int x = mapTile.GetLength(0) - 2; x < mapTile.GetLength(0); x++)
+                    if (mapTile[x, y] != null)
+                        east = true;
+
+            for (int y = 0; y < mapTile.GetLength(0) * 0.3; y++)
+                for (int x = 0; x < mapTile.GetLength(0) * 0.3; x++)
+                    if (mapTile[x, y] != null)
+                        northWest = true;
+
+            for (int y = 0; y < mapTile.GetLength(0) * 0.3; y++)
+                for (int x = (int)(mapTile.GetLength(0) * 0.7); x < mapTile.GetLength(0); x++)
+                    if (mapTile[x, y] != null)
+                        northEast = true;
+
+            for (int y = (int)(mapTile.GetLength(0) * 0.7); y < mapTile.GetLength(0); y++)
+                for (int x = 0; x < mapTile.GetLength(0) * 0.3; x++)
+                    if (mapTile[x, y] != null)
+                        southWest = true;
+
+            for (int y = (int)(mapTile.GetLength(0) * 0.7); y < mapTile.GetLength(0); y++)
+                for (int x = (int)(mapTile.GetLength(0) * 0.7); x < mapTile.GetLength(0); x++)
+                    if (mapTile[x, y] != null)
+                        southEast = true;
+
+            if (totalRooms > mapTile.GetLength(0) * 3 && totalRooms < mapTile.GetLength(0) * 6)
+                if (north && south && west && east)
+                    if ((northWest && southEast) || (northEast && southWest))
+                        return true;
+
+            return false;
+        }
+
+        private void CreateBossRooms(MapTile[,] mapTile, Random random)
         {
             List<Point> start = new List<Point>();
             List<Point> end = new List<Point>();
 
             start.Add(new Point(2, 0));
-            end.Add(new Point(size - 3, 1));
+            end.Add(new Point(mapTile.GetLength(0) - 3, 1));
 
-            start.Add(new Point(2, size - 2));
-            end.Add(new Point(size - 3, size - 1));
+            start.Add(new Point(2, mapTile.GetLength(0) - 2));
+            end.Add(new Point(mapTile.GetLength(0) - 3, mapTile.GetLength(0) - 1));
 
             start.Add(new Point(0, 2));
-            end.Add(new Point(1, size - 3));
+            end.Add(new Point(1, mapTile.GetLength(0) - 3));
 
-            start.Add(new Point(size - 2, 2));
-            end.Add(new Point(size - 1, size - 3));
+            start.Add(new Point(mapTile.GetLength(0) - 2, 2));
+            end.Add(new Point(mapTile.GetLength(0) - 1, mapTile.GetLength(0) - 3));
 
             for (int i = 0; i < 4; i++)
             {
@@ -175,19 +250,19 @@ namespace Wu_Xing
                             if (y - 1 >= 0 && mapTile[x, y - 1] != null)
                                 connections += 1;
 
-                            if (y + 1 < size && mapTile[x, y + 1] != null)
+                            if (y + 1 < mapTile.GetLength(0) && mapTile[x, y + 1] != null)
                                 connections += 1;
 
                             if (x - 1 >= 0 && mapTile[x - 1, y] != null)
                                 connections += 1;
 
-                            if (x + 1 < size && mapTile[x + 1, y] != null)
+                            if (x + 1 < mapTile.GetLength(0) && mapTile[x + 1, y] != null)
                                 connections += 1;
 
                             if (connections == 1)
                                 perfectBossRoomLocations.Add(new Point(x, y));
 
-                            else if (x == 0 || x == size - 1 || y == 0 || y == size - 1)
+                            else if (x == 0 || x == mapTile.GetLength(0) - 1 || y == 0 || y == mapTile.GetLength(0) - 1)
                                 edgeBossRoomLocations.Add(new Point(x, y));
 
                             else
@@ -211,7 +286,7 @@ namespace Wu_Xing
             }
         }
 
-        private void CreateLargeRooms(MapTile[,] mapTile, Random random, int size)
+        private void CreateLargeRooms(MapTile[,] mapTile, Random random)
         {
             List<Point> roomSizes = new List<Point>();
             roomSizes.Add(new Point(2, 2));
@@ -236,15 +311,15 @@ namespace Wu_Xing
             foreach (Point roomSize in roomSizes)
             {
                 //Check all tiles
-                for (int y = 0; y < size; y++)
+                for (int y = 0; y < mapTile.GetLength(0); y++)
                 {
-                    for (int x = 0; x < size; x++)
+                    for (int x = 0; x < mapTile.GetLength(0); x++)
                     {
                         //Check if tile can become current room size
                         bool possible = true;
                         for (int b = y; b < y + roomSize.Y; b++)
                             for (int a = x; a < x + roomSize.X; a++)
-                                if (a >= size || b >= size || mapTile[a, b] == null || mapTile[a, b].Size != new Point(1, 1) || mapTile[a, b].Type == Room.Type.Boss)
+                                if (a >= mapTile.GetLength(0) || b >= mapTile.GetLength(0) || mapTile[a, b] == null || mapTile[a, b].Size != new Point(1, 1) || mapTile[a, b].Type == Room.Type.Boss)
                                     possible = false;
 
                         //If possible, 25% chance to implement
@@ -272,117 +347,114 @@ namespace Wu_Xing
             }
         }
 
-        private Room[,] ConvertToRoomArray(MapTile[,] mapTile, int size)
+        private void ConvertToRoomArray(MapTile[,] mapTile, Room[,] rooms)
         {
-            Room[,] rooms = new Room[size, size];
-
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < mapTile.GetLength(0); y++)
             {
-                for (int x = 0; x < size; x++)
+                for (int x = 0; x < mapTile.GetLength(0); x++)
                 {
                     //If the tile exists, and its size is positive
                     if (mapTile[x, y] != null && mapTile[x, y].Size.X > 0 && mapTile[x, y].Size.Y > 0)
                     {
                         List<Door> doors = new List<Door>();
 
-                        //North side
-                        /*if (y > 0)
+                        if (y > 0)
                             for (int a = x; a < x + mapTile[x, y].Size.X; a++)
-                                if (mapTile[a, y] != null)
-                                    doors.Add(NewDoor(mapTile, x, y, a, y - 1, 0));*/
-                        
+                                if (mapTile[a, y - 1] != null)
+                                    doors.Add(NewDoor(mapTile, x, y, a, y - 1, 0));
+
+                        if (y < mapTile.GetLength(0) - 1)
+                            for (int a = x; a < x + mapTile[x, y].Size.X; a++)
+                                if (mapTile[a, y + 1] != null)
+                                    doors.Add(NewDoor(mapTile, x, y, a, y + 1, (float)Math.PI));
+
+                        if (x > 0)
+                            for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
+                                if (mapTile[x - 1, b] != null)
+                                    doors.Add(NewDoor(mapTile, x, y, x - 1, b, (float)Math.PI * 1.5f));
+
+                        if (x < mapTile.GetLength(0) - 1)
+                            for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
+                                if (mapTile[x + 1, b] != null)
+                                    doors.Add(NewDoor(mapTile, x, y, x + 1, b, (float)Math.PI / 2));
+
                         rooms[x, y] = new Room(mapTile[x, y].Size, Point.Zero, mapTile[x, y].Type, doors);
                     }
                 }
             }
-
-            return rooms;
         }
 
-        /*private Door NewDoor(MapTile[,] mapTile, int x, int y, int a, int b, float rotation)
+        private Door NewDoor(MapTile[,] mapTile, int x, int y, int a, int b, float rotation)
         {
-            Point connectedToTile;
+            Point connectedToTile = Point.Zero;
+            Vector2 position = Vector2.Zero;
 
             if (rotation == 0)
-                connectedToTile = new Point(7 + 15 * (x - a), 0);
+            {
+                connectedToTile.X = 7 + 15 * (a - x);
+                position.X = 190 + connectedToTile.X * 100 + 50;
+            }
 
             else if (rotation == Math.PI / 2)
-                connectedToTile = new Point(7 + 15 * , 3 + 7 * (mapTile[a, y].Size.Y - 1));
+            {
+                connectedToTile.X = 15 * mapTile[x, y].Size.X - 1;
+                connectedToTile.Y = 3 + 7 * (b - y);
+                position.X = 190 + connectedToTile.X * 100 + 100 + 190;
+                position.Y = 190 + connectedToTile.Y * 100 + 50;
+            }
 
+            else if (rotation == Math.PI)
+            {
+                connectedToTile.X = 7 + 15 * (a - x);
+                connectedToTile.Y = 7 * mapTile[x, y].Size.Y - 1;
+                position.X = 190 + connectedToTile.X * 100 + 50;
+                position.Y = 190 + connectedToTile.Y * 100 + 100 + 190;
+            }
 
-            //If the tile is a room (positive size)
-            if (mapTile[a, y].Size.X > 0)
-                return new Door(, 0, new Point(a, y), new Point(7, 6), mapTile[a, y].Type == Room.Type.Normal ? TextureLibrary.DoorTopBlackNormal : TextureLibrary.DoorTopBlackBoss);
+            else
+            {
+                connectedToTile.Y = 3 + 7 * (b - y);
+                position.Y = 190 + connectedToTile.Y * 100 + 50;
+            }
 
-            return new Door(new Point(7 + 15 * (mapTile[a, y].Size.X - 1), 0), 0, new Point(a + mapTile[a, y].Size.X, y + mapTile[a, y].Size.Y), new Point(7, 6), mapTile[a, y].Type == Room.Type.Normal ? TextureLibrary.DoorTopBlackNormal : TextureLibrary.DoorTopBlackBoss);
-            
-        }*/
+            Point leadsToRoom = Point.Zero;
 
-        private bool CheckIfMapFulfillsRequirements(MapTile[,] mapTile, int size)
+            if (mapTile[a, b].Size.X > 0)
+                leadsToRoom = new Point(a, b);
+
+            else
+                leadsToRoom = new Point(a + mapTile[a, b].Size.X, b + mapTile[a, b].Size.Y);
+
+            Texture2D topSection = mapTile[a, b].Type == Room.Type.Normal ? TextureLibrary.DoorTopBlackNormal : TextureLibrary.DoorTopBlackBoss;
+
+            return new Door(position, connectedToTile, rotation, leadsToRoom, topSection);
+        }
+
+        private void ConnectDoors(Room[,] rooms)
         {
-            int totalRooms = 0;
+            for (int y = 0; y < rooms.GetLength(0); y++)
+            {
+                for (int x = 0; x < rooms.GetLength(0); x++)
+                {
+                    if (rooms[x, y] != null)
+                    {
+                        List<Door> correspondingDoorsFound = new List<Door>();
 
-            bool north = false;
-            bool south = false;
-            bool west = false;
-            bool east = false;
-
-            bool northWest = false;
-            bool northEast = false;
-            bool southWest = false;
-            bool southEast = false;
-
-            for (int y = 0; y < size; y++)
-                for (int x = 0; x < size; x++)
-                    if (mapTile[x, y] != null)
-                        totalRooms += 1;
-
-            for (int y = 0; y < 2; y++)
-                for (int x = 2; x < size - 2; x++)
-                    if (mapTile[x, y] != null)
-                        north = true;
-
-            for (int y = size - 2; y < size; y++)
-                for (int x = 2; x < size - 2; x++)
-                    if (mapTile[x, y] != null)
-                        south = true;
-
-            for (int y = 2; y < size - 2; y++)
-                for (int x = 0; x < 2; x++)
-                    if (mapTile[x, y] != null)
-                        west = true;
-
-            for (int y = 2; y < size - 2; y++)
-                for (int x = size - 2; x < size; x++)
-                    if (mapTile[x, y] != null)
-                        east = true;
-
-            for (int y = 0; y < size * 0.3; y++)
-                for (int x = 0; x < size * 0.3; x++)
-                    if (mapTile[x, y] != null)
-                        northWest = true;
-
-            for (int y = 0; y < size * 0.3; y++)
-                for (int x = (int)(size * 0.7); x < size; x++)
-                    if (mapTile[x, y] != null)
-                        northEast = true;
-
-            for (int y = (int)(size * 0.7); y < size; y++)
-                for (int x = 0; x < size * 0.3; x++)
-                    if (mapTile[x, y] != null)
-                        southWest = true;
-
-            for (int y = (int)(size * 0.7); y < size; y++)
-                for (int x = (int)(size * 0.7); x < size; x++)
-                    if (mapTile[x, y] != null)
-                        southEast = true;
-
-            if (totalRooms > size * 3 && totalRooms < size * 6)
-                if (north && south && west && east)
-                    if ((northWest && southEast) || (northEast && southWest))
-                        return true;
-
-            return false;
+                        foreach (Door door in rooms[x, y].Doors)
+                        {
+                            foreach (Door correspondingDoor in rooms[door.LeadsToRoom.X, door.LeadsToRoom.Y].Doors)
+                            {
+                                if (correspondingDoor.LeadsToRoom == new Point(x, y) && !correspondingDoorsFound.Contains(correspondingDoor))
+                                {
+                                    door.LeadsToTile = correspondingDoor.ConnectedToTile;
+                                    correspondingDoorsFound.Add(correspondingDoor);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
     }

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -252,6 +253,7 @@ namespace Wu_Xing
             {
                 versusScreenTimer = 0;
                 screen = Screen.Running;
+                Debug.WriteLine("Task " + generateMap.Status + ", and at least four seconds elapsed.");
             }
         }
 

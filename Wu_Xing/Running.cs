@@ -120,11 +120,17 @@ namespace Wu_Xing
             spriteBatch.Draw(TextureLibrary.RoomBlack1x1, window.Center.ToVector2(), null, Color.White, 0, TextureLibrary.RoomBlack1x1.Bounds.Size.ToVector2() / 2, 1, SpriteEffects.None, 0);
             adam.Draw(spriteBatch);
 
-            for (int y = 0; y < rooms.GetLength(1); y++)
+            for (int y = 0; y < rooms.GetLength(0); y++)
+            {
                 for (int x = 0; x < rooms.GetLength(0); x++)
+                {
                     if (rooms[x, y] != null)
+                    {
                         spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(50 + x * 30, 50 + y * 30, 30 * rooms[x, y].Size.X - 4, 30 * rooms[x, y].Size.Y - 4), rooms[x, y].RoomType == Room.Type.Normal ? Color.White : rooms[x, y].RoomType == Room.Type.Boss ? Color.Red : Color.Blue);
-
+                    }
+                }
+            }
+                
             if (paused)
             {
                 spriteBatch.Draw(TextureLibrary.WhitePixel, window, Color.FromNonPremultiplied(0, 0, 0, 150));
