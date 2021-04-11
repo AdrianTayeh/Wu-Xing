@@ -23,11 +23,13 @@ namespace Wu_Xing
             this.size = size;
             this.pointer = pointer;
             this.roomType = roomType;
+            this.doors = doors;
             tiles = new Tile[15 * size.X, 7 * size.Y];
         }
 
         public Point Size { get { return size; } }
         public Point Pointer { get { return pointer; } }
         public Type RoomType { get { return roomType; } }
+        public List<Door> Doors { get { return doors; } }
     }
 }
