@@ -51,20 +51,20 @@ namespace Wu_Xing
             }
         }
 
-        public Map()
-        {
-
-        }
+        private Room[,] rooms;
+        private Point currentRoom;
+        private Element element;
 
         /// <summary>
         /// Size must be at least 5, and should not be larger than 25.
         /// </summary>
-        public Room[,] GenerateNewMap(Random random, int size)
+        public Map(Random random, int size, Element element)
         {
             //For debugging
             int tries = 0;
             DateTime startTime = DateTime.Now;
 
+            this.element = element;
             MapTile[,] mapTile;
 
             while (true)
@@ -80,15 +80,13 @@ namespace Wu_Xing
 
             CreateBossRooms(mapTile, random);
             CreateLargeRooms(mapTile, random);
-            Room[,] rooms = new Room[size, size];
+            rooms = new Room[size, size];
             ConvertToRoomArray(mapTile, rooms);
             ConnectDoors(rooms);
+            SetCurrentRoomToCenter(rooms);
 
             //For debugging
-            DateTime finishTime = DateTime.Now;
-            Debug.WriteLine("Map successfully generated after " + tries + " tries and " + (finishTime - startTime).TotalMilliseconds + " milliseconds.");
-
-            return rooms;
+            Debug.WriteLine("Map successfully generated after " + tries + " tries and " + (DateTime.Now - startTime).TotalMilliseconds + " milliseconds.");
         }
 
         private void GenerateFirstFiveRooms(MapTile[,] mapTile)
@@ -363,20 +361,20 @@ namespace Wu_Xing
                                 if (mapTile[a, y - 1] != null)
                                     doors.Add(NewDoor(mapTile, x, y, a, y - 1, 0));
 
-                        if (y < mapTile.GetLength(0) - 1)
+                        if (x + mapTile[x, y].Size.X - 1 < mapTile.GetLength(0) - 1)
+                            for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
+                                if (mapTile[x + mapTile[x, y].Size.X, b] != null)
+                                    doors.Add(NewDoor(mapTile, x, y, x + mapTile[x, y].Size.X, b, (float)Math.PI / 2));
+
+                        if (y + mapTile[x, y].Size.Y < mapTile.GetLength(0) - 1)
                             for (int a = x; a < x + mapTile[x, y].Size.X; a++)
-                                if (mapTile[a, y + 1] != null)
-                                    doors.Add(NewDoor(mapTile, x, y, a, y + 1, (float)Math.PI));
+                                if (mapTile[a, y + mapTile[x, y].Size.Y] != null)
+                                    doors.Add(NewDoor(mapTile, x, y, a, y + mapTile[x, y].Size.Y, (float)Math.PI));
 
                         if (x > 0)
                             for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
                                 if (mapTile[x - 1, b] != null)
                                     doors.Add(NewDoor(mapTile, x, y, x - 1, b, (float)Math.PI * 1.5f));
-
-                        if (x < mapTile.GetLength(0) - 1)
-                            for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
-                                if (mapTile[x + 1, b] != null)
-                                    doors.Add(NewDoor(mapTile, x, y, x + 1, b, (float)Math.PI / 2));
 
                         rooms[x, y] = new Room(mapTile[x, y].Size, Point.Zero, mapTile[x, y].Type, doors);
                     }
@@ -391,20 +389,23 @@ namespace Wu_Xing
 
             if (rotation == 0)
             {
+                Debug.WriteLine("North");
                 connectedToTile.X = 7 + 15 * (a - x);
                 position.X = 190 + connectedToTile.X * 100 + 50;
             }
 
-            else if (rotation == Math.PI / 2)
+            else if (rotation == (float)Math.PI / 2)
             {
+                Debug.WriteLine("East");
                 connectedToTile.X = 15 * mapTile[x, y].Size.X - 1;
                 connectedToTile.Y = 3 + 7 * (b - y);
                 position.X = 190 + connectedToTile.X * 100 + 100 + 190;
                 position.Y = 190 + connectedToTile.Y * 100 + 50;
             }
 
-            else if (rotation == Math.PI)
+            else if (rotation == (float)Math.PI)
             {
+                Debug.WriteLine("South");
                 connectedToTile.X = 7 + 15 * (a - x);
                 connectedToTile.Y = 7 * mapTile[x, y].Size.Y - 1;
                 position.X = 190 + connectedToTile.X * 100 + 50;
@@ -413,6 +414,7 @@ namespace Wu_Xing
 
             else
             {
+                Debug.WriteLine("West");
                 connectedToTile.Y = 3 + 7 * (b - y);
                 position.Y = 190 + connectedToTile.Y * 100 + 50;
             }
@@ -425,9 +427,9 @@ namespace Wu_Xing
             else
                 leadsToRoom = new Point(a + mapTile[a, b].Size.X, b + mapTile[a, b].Size.Y);
 
-            Texture2D topSection = mapTile[a, b].Type == Room.Type.Normal ? TextureLibrary.DoorTopBlackNormal : TextureLibrary.DoorTopBlackBoss;
-
-            return new Door(position, connectedToTile, rotation, leadsToRoom, topSection);
+            Room.Type doorType = mapTile[x, y].Type == Room.Type.Boss || mapTile[leadsToRoom.X, leadsToRoom.Y].Type == Room.Type.Boss ? Room.Type.Boss : Room.Type.Normal;
+            
+            return new Door(position, connectedToTile, rotation, leadsToRoom, doorType);
         }
 
         private void ConnectDoors(Room[,] rooms)
@@ -455,6 +457,34 @@ namespace Wu_Xing
                     }
                 }
             }
+        }
+
+        private void SetCurrentRoomToCenter(Room[,] rooms)
+        {
+            for (int y = 0; y < rooms.GetLength(0); y++)
+            {
+                for (int x = 0; x < rooms.GetLength(0); x++)
+                {
+                    if (rooms[x, y] != null && rooms[x, y].RoomType == Room.Type.Center)
+                    {
+                        currentRoom = new Point(x, y);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void DrawFullMap(SpriteBatch spriteBatch)
+        {
+            for (int y = 0; y < rooms.GetLength(0); y++)
+                for (int x = 0; x < rooms.GetLength(0); x++)
+                    if (rooms[x, y] != null)
+                        spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(50 + x * 30, 50 + y * 30, 30 * rooms[x, y].Size.X - 4, 30 * rooms[x, y].Size.Y - 4), rooms[x, y].RoomType == Room.Type.Normal ? Color.White : rooms[x, y].RoomType == Room.Type.Boss ? Color.Red : Color.Blue);
+        }
+
+        public void DrawWorld(SpriteBatch spriteBatch)
+        {
+            rooms[currentRoom.X, currentRoom.Y].Draw(spriteBatch, element);
         }
 
     }

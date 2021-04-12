@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Wu_Xing
 {
@@ -31,5 +32,13 @@ namespace Wu_Xing
         public Point Pointer { get { return pointer; } }
         public Type RoomType { get { return roomType; } }
         public List<Door> Doors { get { return doors; } }
+
+        public void Draw(SpriteBatch spriteBatch, Element element)
+        {
+            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], Vector2.Zero, ColorLibrary.Room[element]);
+
+            foreach (Door door in doors)
+                door.Draw(spriteBatch);
+        }
     }
 }

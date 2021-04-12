@@ -68,7 +68,7 @@
 /processorParam:TextureFormat=Color
 /build:Characters/Adam.png
 
-#begin Doors/Door Bottom Black Boss.png
+#begin Doors/Door Bottom Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -78,9 +78,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Doors/Door Bottom Black Boss.png
+/build:Doors/Door Bottom Boss.png
 
-#begin Doors/Door Bottom Black Normal.png
+#begin Doors/Door Bottom Normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -90,9 +90,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Doors/Door Bottom Black Normal.png
+/build:Doors/Door Bottom Normal.png
 
-#begin Doors/Door Front Black Normal.png
+#begin Doors/Door Front Normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -102,9 +102,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Doors/Door Front Black Normal.png
+/build:Doors/Door Front Normal.png
 
-#begin Doors/Door Top Black Boss.png
+#begin Doors/Door Top Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -114,9 +114,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Doors/Door Top Black Boss.png
+/build:Doors/Door Top Boss.png
 
-#begin Doors/Door Top Black Normal.png
+#begin Doors/Door Top Normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -126,7 +126,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Doors/Door Top Black Normal.png
+/build:Doors/Door Top Normal.png
 
 #begin Elements/Energy Circle.png
 /importer:TextureImporter
@@ -442,7 +442,7 @@
 /processorParam:TextureFormat=Compressed
 /build:Normal.spritefont
 
-#begin Rooms/Room Black 1x1.jpg
+#begin Rooms/Room 1x1.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -452,9 +452,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Rooms/Room Black 1x1.jpg
+/build:Rooms/Room 1x1.jpg
 
-#begin Rooms/Room Black 1x2.jpg
+#begin Rooms/Room 1x2.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -464,9 +464,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Rooms/Room Black 1x2.jpg
+/build:Rooms/Room 1x2.jpg
 
-#begin Rooms/Room Black 1x3.jpg
+#begin Rooms/Room 1x3.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -476,9 +476,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Rooms/Room Black 1x3.jpg
+/build:Rooms/Room 1x3.jpg
 
-#begin Rooms/Room Black 2x1.jpg
+#begin Rooms/Room 2x1.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -488,9 +488,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Rooms/Room Black 2x1.jpg
+/build:Rooms/Room 2x1.jpg
 
-#begin Rooms/Room Black 2x2.jpg
+#begin Rooms/Room 2x2.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -500,9 +500,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Rooms/Room Black 2x2.jpg
+/build:Rooms/Room 2x2.jpg
 
-#begin Rooms/Room Black 3x1.jpg
+#begin Rooms/Room 3x1.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -512,5 +512,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Rooms/Room Black 3x1.jpg
+/build:Rooms/Room 3x1.jpg
 

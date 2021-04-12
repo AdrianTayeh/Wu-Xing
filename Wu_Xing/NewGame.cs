@@ -240,7 +240,7 @@ namespace Wu_Xing
                 if (item.Value.IsReleased && gemToFind != null)
                 {
                     stage = Stage.Versus;
-                    generateMap = Task.Run(() => running.InitializeNewMap(random, 13));
+                    generateMap = Task.Run(() => running.InitializeNewMap(random, 13, (Element)Enum.Parse(typeof(Element), item.Key)));
                     break;
                 }
             }

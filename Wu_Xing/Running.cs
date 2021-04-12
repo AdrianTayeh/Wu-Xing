@@ -20,7 +20,7 @@ namespace Wu_Xing
 
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
 
-        private Room[,] rooms;
+        private Map map;
         private Point room;
         //private List<GameObject> gameObjects = new List<GameObject>();
 
@@ -56,11 +56,11 @@ namespace Wu_Xing
                 ));
         }
 
-        public bool MapInitialized { get { return rooms != null; } }
+        public bool MapInitialized { get { return map != null; } }
 
-        public void InitializeNewMap(Random random, int size)
+        public void InitializeNewMap(Random random, int size, Element element)
         {
-            rooms = new Map().GenerateNewMap(random, size);
+            map = new Map(random, size, element);
         }
 
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random)
@@ -117,19 +117,9 @@ namespace Wu_Xing
 
         public void Draw(SpriteBatch spriteBatch, Rectangle window)
         {
-            spriteBatch.Draw(TextureLibrary.RoomBlack1x1, window.Center.ToVector2(), null, Color.White, 0, TextureLibrary.RoomBlack1x1.Bounds.Size.ToVector2() / 2, 1, SpriteEffects.None, 0);
+            map.DrawWorld(spriteBatch);
             adam.Draw(spriteBatch);
-
-            for (int y = 0; y < rooms.GetLength(0); y++)
-            {
-                for (int x = 0; x < rooms.GetLength(0); x++)
-                {
-                    if (rooms[x, y] != null)
-                    {
-                        spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(50 + x * 30, 50 + y * 30, 30 * rooms[x, y].Size.X - 4, 30 * rooms[x, y].Size.Y - 4), rooms[x, y].RoomType == Room.Type.Normal ? Color.White : rooms[x, y].RoomType == Room.Type.Boss ? Color.Red : Color.Blue);
-                    }
-                }
-            }
+            map.DrawFullMap(spriteBatch);
                 
             if (paused)
             {

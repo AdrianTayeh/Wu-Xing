@@ -6,12 +6,6 @@ namespace Wu_Xing
 {
     static class ColorLibrary
     {
-        public static Color WoodGreen { get; private set; }
-        public static Color FireRed { get; private set; }
-        public static Color EarthYellow { get; private set; }
-        public static Color MetalWhite { get; private set; }
-        public static Color WaterBlue { get; private set; }
-
         public static Color ButtonNormal { get; private set; }
         public static Color ButtonHover { get; private set; }
         public static Color ButtonHeld { get; private set; }
@@ -23,14 +17,11 @@ namespace Wu_Xing
         public static Dictionary<Button.State, Color> RedButtonBackgroundColor { get; private set; }
         public static Dictionary<Button.State, Color> SolidWhiteButtonBackgroundColor { get; private set; }
 
+        public static Dictionary<Element, Color> Element { get; private set; }
+        public static Dictionary<Element, Color> Room { get; private set; }
+
         public static void Load()
         {
-            WoodGreen = Color.Lime;
-            FireRed = Color.Red;
-            EarthYellow = Color.Yellow;
-            MetalWhite = Color.White;
-            WaterBlue = Color.FromNonPremultiplied(0, 200, 255, 255);
-
             ButtonNormal = Color.White;
             ButtonHover = Color.FromNonPremultiplied(175, 200, 255, 255);
             ButtonHeld = Color.FromNonPremultiplied(130, 160, 220, 255);
@@ -64,6 +55,20 @@ namespace Wu_Xing
                 { Button.State.None, Color.White },
                 { Button.State.Hover, Color.White },
                 { Button.State.Held, Color.White } };
+
+            Element = new Dictionary<Element, Color> {
+                { Wu_Xing.Element.Earth, Color.Yellow },
+                { Wu_Xing.Element.Fire, Color.Red },
+                { Wu_Xing.Element.Metal, Color.White },
+                { Wu_Xing.Element.Water, Color.FromNonPremultiplied(0, 200, 255, 255) },
+                { Wu_Xing.Element.Wood, Color.Lime } };
+
+            Room = new Dictionary<Element, Color> {
+                { Wu_Xing.Element.Earth, Color.FromNonPremultiplied(60, 60, 10, 255) },
+                { Wu_Xing.Element.Fire, Color.FromNonPremultiplied(60, 10, 10, 255) },
+                { Wu_Xing.Element.Metal, Color.FromNonPremultiplied(50, 50, 50, 255) },
+                { Wu_Xing.Element.Water, Color.FromNonPremultiplied(10, 47, 60, 255) },
+                { Wu_Xing.Element.Wood, Color.FromNonPremultiplied(10, 60, 10, 255) } };
         }
     }
 }
