@@ -109,8 +109,8 @@ namespace Wu_Xing
             //Gems obtained in this save file
             woodGemObtained = true;
             fireGemObtained = true;
-            earthGemObtained = true;
-            metalGemObtained = false;
+            earthGemObtained = false;
+            metalGemObtained = true;
             waterGemObtained = true;
 
             //Set visibility of destructive energy lines
@@ -153,7 +153,6 @@ namespace Wu_Xing
                     UpdateVersus(ref screen, gameTime);
                     break;
             }
-
         }
 
         private void UpdateEnergy()
@@ -177,25 +176,25 @@ namespace Wu_Xing
                 item.Value.Update(mouse);
 
             //Preview element
-            if (gemButton["Wood"].IsHoveredOn)
+            if (gemButton["Wood"].IsHoveredOn && gemButton["Wood"].Active)
                 elementToChannel = TextureLibrary.SymbolWood;
 
-            else if (gemButton["Fire"].IsHoveredOn)
+            else if (gemButton["Fire"].IsHoveredOn && gemButton["Fire"].Active)
                 elementToChannel = TextureLibrary.SymbolFire;
 
-            else if (gemButton["Earth"].IsHoveredOn)
+            else if (gemButton["Earth"].IsHoveredOn && gemButton["Earth"].Active)
                 elementToChannel = TextureLibrary.SymbolEarth;
 
-            else if (gemButton["Metal"].IsHoveredOn)
+            else if (gemButton["Metal"].IsHoveredOn && gemButton["Metal"].Active)
                 elementToChannel = TextureLibrary.SymbolMetal;
 
-            else if (gemButton["Water"].IsHoveredOn)
+            else if (gemButton["Water"].IsHoveredOn && gemButton["Water"].Active)
                 elementToChannel = TextureLibrary.SymbolWater;
 
             //Element selected
             foreach (KeyValuePair<string, Button> item in gemButton)
             {
-                if (item.Value.IsReleased && elementToChannel != null)
+                if (item.Value.IsReleased && item.Value.Active && elementToChannel != null)
                 {
                     stage = Stage.PickGem;
 

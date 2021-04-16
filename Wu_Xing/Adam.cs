@@ -9,6 +9,7 @@ namespace Wu_Xing
     class Adam
     {
         private Vector2 position;
+        private Vector2 exitPosition;
         private float movingSpeed;
 
         private Vector2 movingDirection;
@@ -34,16 +35,35 @@ namespace Wu_Xing
 
             rotationSpeed = 0.3f;
             position = window.Size.ToVector2() / 2;
-            movingSpeed = 8;
+            movingSpeed = 10;
         }
 
-        public void Update(KeyboardState currentKeyboard)
+        public Vector2 Position { get { return position; } set { position = value; } }
+        public Vector2 ExitPosition { get { return exitPosition; } }
+
+        public void Update(KeyboardState currentKeyboard, Map map)
         {
             DetermineMovingDirection(currentKeyboard);
             DetermineAimingDirection(currentKeyboard);
             DetermineRotationTarget();
             RotateTowardTarget();
             Move();
+
+            CheckDoors(map);
+        }
+
+        private void CheckDoors(Map map)
+        {
+            foreach (Door door in map.Rooms[map.CurrentRoom.X, map.CurrentRoom.Y].Doors)
+            {
+                if (door.EntranceArea.Contains(position))
+                {
+                    position = door.TransitionExitPosition;
+                    exitPosition = door.ExitPosition;
+                    map.StartRoomTransition(door);
+                    break;
+                }
+            }
         }
 
         private void DetermineMovingDirection(KeyboardState currentKeyboard)

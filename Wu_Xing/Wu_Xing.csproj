@@ -65,6 +65,7 @@
     <Compile Include="Room.cs" />
     <Compile Include="Door.cs" />
     <Compile Include="Tile.cs" />
+    <Compile Include="Camera.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

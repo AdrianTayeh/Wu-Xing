@@ -12,7 +12,8 @@ namespace Wu_Xing
     class Running
     {
         private Adam adam;
-        private bool paused;
+        private enum State { Running, Paused, Transition }
+        private State gameState;
 
         private float seconds;
         private int minutes;
@@ -56,47 +57,78 @@ namespace Wu_Xing
                 ));
         }
 
+        public Vector2 CameraFocus { get { return adam.Position; } }
+        public Point CurrentRoomSize { get { return map == null ? new Point(1, 1) : map.Rooms[map.CurrentRoom.X, map.CurrentRoom.Y].Size; } }
         public bool MapInitialized { get { return map != null; } }
 
         public void InitializeNewMap(Random random, int size, Element element)
         {
             map = new Map(random, size, element);
+            adam.Position = map.CenterOfCenterRoom;
         }
 
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
-                paused = !paused;
+                gameState = gameState == State.Running ? State.Paused : State.Running;
 
-            //Running
-            if (!paused)
+            else if (currentKeyboard.IsKeyUp(Keys.R) && previousKeyboard.IsKeyDown(Keys.R))
+                InitializeNewMap(random, map.Size, map.Element);
+
+            switch (gameState)
             {
-                adam.Update(currentKeyboard);
-                UpdateTimer(gameTime);
+                case State.Running:
+                    UpdateRunning(currentKeyboard, gameTime);
+                    break;
+
+                case State.Paused:
+                    UpdatePaused(ref screen, ref previousScreen, mouse);
+                    break;
+
+                case State.Transition:
+                    UpdateTransition();
+                    break;
+            }
+        }
+
+        private void UpdateRunning(KeyboardState currentKeyboard, GameTime gameTime)
+        {
+            adam.Update(currentKeyboard, map);
+            UpdateTimer(gameTime);
+
+            if (map.Transition)
+                gameState = State.Transition;
+        }
+
+        private void UpdatePaused(ref Screen screen, ref Screen previousScreen, Mouse mouse)
+        {
+            foreach (KeyValuePair<string, Button> item in button)
+                item.Value.Update(mouse);
+
+            if (button["Continue"].IsReleased)
+            {
+                gameState = State.Running;
             }
 
-            //Paused
-            else
+            else if (button["Settings"].IsReleased)
             {
-                foreach (KeyValuePair<string, Button> item in button)
-                    item.Value.Update(mouse);
-
-                if (button["Continue"].IsReleased)
-                {
-                    paused = false;
-                }
-                    
-                else if (button["Settings"].IsReleased)
-                {
-                    previousScreen = screen;
-                    screen = Screen.Settings;
-                }
-                    
-                else if (button["Menu"].IsReleased)
-                {
-                    screen = Screen.Pregame;
-                }  
+                previousScreen = screen;
+                screen = Screen.Settings;
             }
+
+            else if (button["Menu"].IsReleased)
+            {
+                screen = Screen.Pregame;
+            }
+        }
+
+        private void UpdateTransition()
+        {
+            if (map.Transition)
+                return;
+
+            gameState = State.Running;
+            adam.Position = adam.ExitPosition;
         }
 
         private void UpdateTimer(GameTime gameTime)
@@ -115,13 +147,17 @@ namespace Wu_Xing
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, Rectangle window)
+        public void DrawWorld(SpriteBatch spriteBatch)
         {
             map.DrawWorld(spriteBatch);
             adam.Draw(spriteBatch);
+        }
+
+        public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
+        {
             map.DrawFullMap(spriteBatch);
-                
-            if (paused)
+
+            if (gameState == State.Paused)
             {
                 spriteBatch.Draw(TextureLibrary.WhitePixel, window, Color.FromNonPremultiplied(0, 0, 0, 150));
                 spriteBatch.DrawString(FontLibrary.Normal, "PAUSED", new Vector2(window.Width / 2, 190), Color.White, 0, FontLibrary.Normal.MeasureString("PAUSED") / 2, 1, SpriteEffects.None, 0);

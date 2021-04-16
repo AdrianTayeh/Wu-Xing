@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,7 +15,9 @@ namespace Wu_Xing
         private Rectangle window;
         private Rectangle resolution;
         private float windowScale;
-        private RenderTarget2D game;
+        private RenderTarget2D world;
+        private RenderTarget2D HUD;
+        private Camera camera;
 
         private Start start;
         private Menu menu;
@@ -55,10 +58,11 @@ namespace Wu_Xing
 
             graphics.PreferredBackBufferWidth = resolution.Width;
             graphics.PreferredBackBufferHeight = resolution.Height;
-            //graphics.IsFullScreen = true;
+            graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
-            game = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
+            world = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
+            HUD = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
 
             windowScale = (float)resolution.Height / resolution.Width >= (float)window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
 
@@ -68,6 +72,7 @@ namespace Wu_Xing
 
             screen = Screen.Start;
             mouse = new Mouse(window, resolution, windowScale);
+            camera = new Camera(window);
 
             start = new Start();
             menu = new Menu(window);
@@ -124,6 +129,8 @@ namespace Wu_Xing
                     break;
             }
 
+            camera.UpdateFocus(running.CameraFocus, running.CurrentRoomSize);
+
             base.Update(gameTime);
         }
 
@@ -134,10 +141,23 @@ namespace Wu_Xing
             if (screen == Screen.NewGame)
                 newGame.DrawCircleToTexture(spriteBatch, GraphicsDevice);
 
-            //Render game
+            //Render world
 
-            GraphicsDevice.SetRenderTarget(game);
-            GraphicsDevice.Clear(Color.Black);
+            if (screen == Screen.Running)
+            {
+                GraphicsDevice.SetRenderTarget(world);
+                GraphicsDevice.Clear(Color.Transparent);
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Matrix);
+
+                running.DrawWorld(spriteBatch);
+
+                spriteBatch.End();
+            }
+
+            //Render HUD and menu
+
+            GraphicsDevice.SetRenderTarget(HUD);
+            GraphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
 
             switch (screen)
@@ -167,7 +187,7 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Running:
-                    running.Draw(spriteBatch, window);
+                    running.DrawHUD(spriteBatch, window);
                     break;
             }
 
@@ -179,7 +199,8 @@ namespace Wu_Xing
             GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
 
-            spriteBatch.Draw(game, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(world, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(HUD, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
 
             spriteBatch.End();
             base.Draw(gameTime);

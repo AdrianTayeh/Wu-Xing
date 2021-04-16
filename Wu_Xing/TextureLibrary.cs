@@ -119,7 +119,7 @@ namespace Wu_Xing
             Rooms = new Dictionary<string, Texture2D>();
             Rooms.Add("1x1", Content.Load<Texture2D>("Rooms\\Room 1x1"));
             Rooms.Add("1x2", Content.Load<Texture2D>("Rooms\\Room 1x2"));
-            Rooms.Add("1x3", Content.Load<Texture2D>("Rooms\\Room 1x2"));
+            Rooms.Add("1x3", Content.Load<Texture2D>("Rooms\\Room 1x3"));
             Rooms.Add("2x1", Content.Load<Texture2D>("Rooms\\Room 2x1"));
             Rooms.Add("3x1", Content.Load<Texture2D>("Rooms\\Room 3x1"));
             Rooms.Add("2x2", Content.Load<Texture2D>("Rooms\\Room 2x2"));
