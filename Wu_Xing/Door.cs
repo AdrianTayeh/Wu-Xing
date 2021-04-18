@@ -36,14 +36,16 @@ namespace Wu_Xing
         public Vector2 ExitPosition { get { return exitPosition; } set { exitPosition = value; } }
         public Rectangle EntranceArea { get { return entranceArea; } }
         public Vector2 TransitionExitPosition { get { return Rotate.PointAroundCenter(new Vector2(position.X, position.Y - Map.GridOffset - 50), position, rotation); } }
+        public float Rotation { get { return rotation; } }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Vector2 roomPosition)
         {
-            spriteBatch.Draw(TextureLibrary.DoorBottoms[doorType], position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
-            spriteBatch.Draw(TextureLibrary.DoorFronts[doorType], position, frontSource, Color.White, rotation, frontOrigin, 1, SpriteEffects.None, 0);
-            spriteBatch.Draw(TextureLibrary.DoorTops[doorType], position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(TextureLibrary.DoorBottoms[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.11f);
+            spriteBatch.Draw(TextureLibrary.DoorFronts[doorType], roomPosition + position, frontSource, Color.White, rotation, frontOrigin, 1, SpriteEffects.None, 0.12f);
+            spriteBatch.Draw(TextureLibrary.DoorTops[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.9f);
 
-            spriteBatch.Draw(TextureLibrary.WhitePixel, entranceArea, Color.FromNonPremultiplied(255, 100, 50, 100));
+            //Temporary
+            spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(roomPosition.ToPoint() + entranceArea.Location, entranceArea.Size), null, Color.FromNonPremultiplied(255, 255, 255, 50), 0, Vector2.Zero, SpriteEffects.None, 1f);
         }
     }
 }

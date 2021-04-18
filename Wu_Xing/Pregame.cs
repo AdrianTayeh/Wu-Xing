@@ -52,7 +52,7 @@ namespace Wu_Xing
                 ));
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, NewGame newGame, Random random, bool continueAvailable)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, NewGame newGame, bool continueAvailable)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = Screen.Menu;

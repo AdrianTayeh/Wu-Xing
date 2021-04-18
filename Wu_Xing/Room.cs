@@ -30,12 +30,12 @@ namespace Wu_Xing
         public Type RoomType { get { return roomType; } }
         public List<Door> Doors { get { return doors; } }
 
-        public void Draw(SpriteBatch spriteBatch, Element element)
+        public void Draw(SpriteBatch spriteBatch, Element element, Vector2 position)
         {
-            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], Vector2.Zero, ColorLibrary.Room[element]);
+            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, ColorLibrary.Room[element], 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
             
             foreach (Door door in doors)
-                door.Draw(spriteBatch);
+                door.Draw(spriteBatch, position);
         }
     }
 }

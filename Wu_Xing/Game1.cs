@@ -58,7 +58,7 @@ namespace Wu_Xing
 
             graphics.PreferredBackBufferWidth = resolution.Width;
             graphics.PreferredBackBufferHeight = resolution.Height;
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             world = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
@@ -113,7 +113,7 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Pregame:
-                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, newGame, random, running.MapInitialized);
+                    pregame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, newGame, running.MapInitialized);
                     break;
 
                 case Screen.Stats:
@@ -125,11 +125,12 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime, random);
+                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime, random, window);
                     break;
             }
 
-            camera.UpdateFocus(running.CameraFocus, running.CurrentRoomSize);
+            if (screen == Screen.Running)
+                camera.UpdateFocus(running.CameraFocus, running.CurrentRoomSize, running.LimitCameraFocusToBounds);
 
             base.Update(gameTime);
         }
@@ -143,11 +144,18 @@ namespace Wu_Xing
 
             //Render world
 
+            // 0.1 Room
+            // 0.11 Door Bottom
+            // 0.12 Door Front
+            // 0.5 GameObjects Bottom
+            // 0.51 GameObjects Top
+            // 0.9 Door Top
+
             if (screen == Screen.Running)
             {
                 GraphicsDevice.SetRenderTarget(world);
                 GraphicsDevice.Clear(Color.Transparent);
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Matrix);
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, null, null, null, null, null, camera.Matrix);
 
                 running.DrawWorld(spriteBatch);
 

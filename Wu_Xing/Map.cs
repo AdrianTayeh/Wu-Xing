@@ -12,8 +12,8 @@ namespace Wu_Xing
         class MapTile
         {
             private Point createdFrom;
-            public bool Fresh;
-            public bool Finished;
+            public enum TileState { New, Ready, Finished }
+            TileState state;
             public Point Size;
             public Room.Type Type;
 
@@ -21,9 +21,10 @@ namespace Wu_Xing
             {
                 createdFrom.X = X;
                 createdFrom.Y = Y;
-                Fresh = true;
                 Size = new Point(1, 1);
             }
+
+            public TileState State { get { return state; } set { state = value; } }
 
             public void Spread(Random random, MapTile[,] mapTile, int X, int Y)
             {
@@ -48,7 +49,7 @@ namespace Wu_Xing
                             if (mapTile[X + createdFrom.Y * i, Y + createdFrom.X * i] == null)
                                 mapTile[X + createdFrom.Y * i, Y + createdFrom.X * i] = new MapTile(createdFrom.Y, createdFrom.X);
 
-                Finished = true;
+                state = TileState.Finished;
             }
         }
 
@@ -57,6 +58,7 @@ namespace Wu_Xing
         private Point currentRoom;
         private Point transitionRoom;
         private Vector2 transitionPosition;
+        private Vector2 transitionRoomPosition;
 
         private Element element;
         
@@ -74,6 +76,7 @@ namespace Wu_Xing
 
             this.element = element;
             gridOffset = GridOffset = 190;
+            transitionRoom = new Point(-1, -1);
             MapTile[,] mapTile;
 
             while (true)
@@ -94,15 +97,15 @@ namespace Wu_Xing
             SwapDoorExitPositions(rooms);
             SetCurrentRoomToCenter(rooms);
 
-            //For debugging
             Debug.WriteLine("Map successfully generated after " + tries + " tries and " + (DateTime.Now - startTime).TotalMilliseconds + " milliseconds.");
         }
 
         public Element Element { get { return element; } }
         public int Size { get { return rooms.GetLength(0); } }
         public Room[,] Rooms { get { return rooms; } }
-        public Point CurrentRoom { get { return currentRoom; } set { currentRoom = value; } }
+        public Point CurrentRoom { get { return currentRoom; } }
         public bool Transition { get { return transitionPosition != Vector2.Zero; } }
+        public Vector2 TransitionPosition { get { return transitionPosition; } }
 
         public Vector2 CenterOfCenterRoom
         {
@@ -139,36 +142,24 @@ namespace Wu_Xing
 
         private void SpreadTiles(MapTile[,] mapTile, Random random)
         {
-            //Update tiles that can spread
+            //Spread tiles that are ready
             for (int y = 0; y < mapTile.GetLength(0); y++)
-            {
                 for (int x = 0; x < mapTile.GetLength(0); x++)
-                {
-                    if (mapTile[x, y] != null && mapTile[x, y].Fresh == false && mapTile[x, y].Finished == false)
+                    if (mapTile[x, y] != null && mapTile[x, y].State == MapTile.TileState.Ready)
                         mapTile[x, y].Spread(random, mapTile, x, y);
-                }
-            }
 
-            //Make fresh tiles ready to spread
-            int roomsCreated = 0;
+            //Make new tiles ready
             for (int y = 0; y < mapTile.GetLength(0); y++)
-            {
                 for (int x = 0; x < mapTile.GetLength(0); x++)
-                {
-                    if (mapTile[x, y] != null)
-                    {
-                        mapTile[x, y].Fresh = false;
-                        roomsCreated += 1;
-                    }
-                }
-            }
+                    if (mapTile[x, y] != null && mapTile[x, y].State == MapTile.TileState.New)
+                        mapTile[x, y].State = MapTile.TileState.Ready;
         }
 
         private bool CheckForAliveTiles(MapTile[,] mapTile)
         {
             for (int y = 0; y < mapTile.GetLength(0); y++)
                 for (int x = 0; x < mapTile.GetLength(0); x++)
-                    if (mapTile[x, y] != null && mapTile[x, y].Finished == false)
+                    if (mapTile[x, y] != null && mapTile[x, y].State != MapTile.TileState.Finished)
                         return true;
 
             return false;
@@ -393,7 +384,7 @@ namespace Wu_Xing
                                 if (mapTile[x + mapTile[x, y].Size.X, b] != null)
                                     doors.Add(NewDoor(mapTile, x, y, x + mapTile[x, y].Size.X, b, (float)Math.PI / 2));
 
-                        if (y + mapTile[x, y].Size.Y < mapTile.GetLength(0) - 1)
+                        if (y + mapTile[x, y].Size.Y - 1 < mapTile.GetLength(0) - 1)
                             for (int a = x; a < x + mapTile[x, y].Size.X; a++)
                                 if (mapTile[a, y + mapTile[x, y].Size.Y] != null)
                                     doors.Add(NewDoor(mapTile, x, y, a, y + mapTile[x, y].Size.Y, (float)Math.PI));
@@ -449,15 +440,7 @@ namespace Wu_Xing
 
             Vector2 exitPosition = new Vector2(gridOffset + exitTile.X * 100 + 50, gridOffset + exitTile.Y * 100 + 50);
             Rectangle entranceArea = new Rectangle(gridOffset + entranceTile.X * 100, gridOffset + entranceTile.Y * 100, 100, 100);
-
-            Point leadsToRoom = Point.Zero;
-
-            if (mapTile[a, b].Size.X > 0)
-                leadsToRoom = new Point(a, b);
-
-            else
-                leadsToRoom = new Point(a + mapTile[a, b].Size.X, b + mapTile[a, b].Size.Y);
-
+            Point leadsToRoom = mapTile[a, b].Size.X > 0 ? new Point(a, b) : new Point(a + mapTile[a, b].Size.X, b + mapTile[a, b].Size.Y);
             Room.Type doorType = mapTile[x, y].Type == Room.Type.Boss || mapTile[leadsToRoom.X, leadsToRoom.Y].Type == Room.Type.Boss ? Room.Type.Boss : Room.Type.Normal;
             
             return new Door(position, exitPosition, entranceArea, rotation, leadsToRoom, doorType);
@@ -510,17 +493,70 @@ namespace Wu_Xing
             }
         }
 
-        public async void StartRoomTransition(Door door)
+        public async void StartRoomTransition(Door door, Rectangle window)
         {
+            transitionRoom = door.LeadsToRoom;
+
+            //Calculate transitionStart and transitionEnd
             Vector2 transitionStart = door.EntranceArea.Center.ToVector2();
             Vector2 transitionEnd = door.TransitionExitPosition;
+
+            if (door.Rotation == 0)
+            {
+                transitionStart.Y += 500;
+                transitionEnd.Y -= 300;
+            }
+
+            else if (door.Rotation == (float)Math.PI / 2)
+            {
+                transitionStart.X -= 900;
+                transitionEnd.X += 700;
+            }
+
+            else if (door.Rotation == (float)Math.PI)
+            {
+                transitionStart.Y -= 500;
+                transitionEnd.Y += 300;
+            }
+
+            else
+            {
+                transitionStart.X += 900;
+                transitionEnd.X -= 700;
+            }
+
             transitionPosition = transitionStart;
 
-            await Task.Delay(1000);
+            //Calculate transitionRoomPosition
+            transitionRoomPosition.X = (transitionRoom.X - currentRoom.X) * 1500;
+            transitionRoomPosition.Y = (transitionRoom.Y - currentRoom.Y) * 700;
+            transitionRoomPosition += Rotate.PointAroundZero(new Vector2(0, -380), door.Rotation);
+
+            //Start transition
+            int duration = 400;
+            DateTime startTime = DateTime.Now;
+            TimeSpan elapsedTime = TimeSpan.Zero;
+
+            while (elapsedTime.TotalMilliseconds < duration)
+            {
+                elapsedTime = DateTime.Now - startTime;
+
+                //x goes from (-1)-1 linearly
+                float x = (float)elapsedTime.TotalMilliseconds / duration * 2f - 1f;
+
+                //y goes from 0-1 exponentially (sigmoid curve)
+                float y = (float)(-1f / (1f + (float)Math.Pow(2, x * 8f)) + 1f);
+
+                transitionPosition = transitionStart + ((transitionEnd - transitionStart) * y);
+
+                //A 1ms delay is necessary in order for transitionPosition to be read correctly
+                await Task.Delay(1);
+            }
 
             //Transition finished
             currentRoom = door.LeadsToRoom;
             transitionPosition = Vector2.Zero;
+            transitionRoom = new Point(-1, -1);
         }
 
         public void DrawFullMap(SpriteBatch spriteBatch)
@@ -550,7 +586,10 @@ namespace Wu_Xing
 
         public void DrawWorld(SpriteBatch spriteBatch)
         {
-            rooms[currentRoom.X, currentRoom.Y].Draw(spriteBatch, element);
+            rooms[currentRoom.X, currentRoom.Y].Draw(spriteBatch, element, Vector2.Zero);
+
+            if (transitionRoom != new Point(-1, - 1))
+                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition);
         }
 
     }

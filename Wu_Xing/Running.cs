@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,7 +58,8 @@ namespace Wu_Xing
                 ));
         }
 
-        public Vector2 CameraFocus { get { return adam.Position; } }
+        public Vector2 CameraFocus { get { return map.TransitionPosition == Vector2.Zero ? adam.Position : map.TransitionPosition; } }
+        public bool LimitCameraFocusToBounds { get { return map.TransitionPosition == Vector2.Zero; } }
         public Point CurrentRoomSize { get { return map == null ? new Point(1, 1) : map.Rooms[map.CurrentRoom.X, map.CurrentRoom.Y].Size; } }
         public bool MapInitialized { get { return map != null; } }
 
@@ -67,7 +69,7 @@ namespace Wu_Xing
             adam.Position = map.CenterOfCenterRoom;
         }
 
-        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random)
+        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random, Rectangle window)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 gameState = gameState == State.Running ? State.Paused : State.Running;
@@ -78,7 +80,7 @@ namespace Wu_Xing
             switch (gameState)
             {
                 case State.Running:
-                    UpdateRunning(currentKeyboard, gameTime);
+                    UpdateRunning(currentKeyboard, gameTime, window);
                     break;
 
                 case State.Paused:
@@ -91,9 +93,9 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdateRunning(KeyboardState currentKeyboard, GameTime gameTime)
+        private void UpdateRunning(KeyboardState currentKeyboard, GameTime gameTime, Rectangle window)
         {
-            adam.Update(currentKeyboard, map);
+            adam.Update(currentKeyboard, map, window);
             UpdateTimer(gameTime);
 
             if (map.Transition)

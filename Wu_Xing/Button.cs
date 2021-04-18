@@ -69,7 +69,7 @@ namespace Wu_Xing
         public bool Active { get { return active; } set { active = value; } }
 
         public Rectangle Rectangle { get { return rectangle; } }
-        public Point Location { get { return rectangle.Location; } set { rectangle.Location = value; } }
+        public Point Location { get { return rectangle.Location; } }
         public string Label { get { return label; } set { label = value; } }
         public Dictionary<State, Color> BackgroundColor { get { return backgroundColor; } set { backgroundColor = value; } }
         public Texture2D Background { get { return background; } set { background = value; } }
