@@ -23,7 +23,6 @@ namespace Wu_Xing
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
 
         private Map map;
-        private Point room;
         //private List<GameObject> gameObjects = new List<GameObject>();
 
         public Running(Rectangle window)
@@ -157,7 +156,7 @@ namespace Wu_Xing
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
-            map.DrawFullMap(spriteBatch);
+            map.DrawMinimap(spriteBatch);
 
             if (gameState == State.Paused)
             {

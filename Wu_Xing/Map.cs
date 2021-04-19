@@ -65,20 +65,26 @@ namespace Wu_Xing
         private int gridOffset;
         public static int GridOffset { get; private set; }
 
+        private Dictionary<Room.State, Color> minimapColor;
+
         /// <summary>
         /// Size must be at least 5, and should not be larger than 25.
         /// </summary>
         public Map(Random random, int size, Element element)
         {
+            this.element = element;
+            gridOffset = GridOffset = 190;
+            transitionRoom = new Point(-1, -1);
+            minimapColor = new Dictionary<Room.State, Color>();
+            minimapColor.Add(Room.State.Discovered, Color.FromNonPremultiplied(80, 80, 80, 255));
+            minimapColor.Add(Room.State.Cleared, Color.FromNonPremultiplied(150, 150, 150, 255));
+            MapTile[,] mapTile;
+
             //For debugging
             int tries = 0;
             DateTime startTime = DateTime.Now;
 
-            this.element = element;
-            gridOffset = GridOffset = 190;
-            transitionRoom = new Point(-1, -1);
-            MapTile[,] mapTile;
-
+            //Generation
             while (true)
             {
                 tries += 1;
@@ -487,6 +493,7 @@ namespace Wu_Xing
                     if (rooms[x, y] != null && rooms[x, y].RoomType == Room.Type.Center)
                     {
                         currentRoom = new Point(x, y);
+                        rooms[x, y].IsEntered(rooms);
                         break;
                     }
                 }
@@ -496,6 +503,7 @@ namespace Wu_Xing
         public async void StartRoomTransition(Door door, Rectangle window)
         {
             transitionRoom = door.LeadsToRoom;
+            rooms[transitionRoom.X, transitionRoom.Y].IsEntered(rooms);
 
             //Calculate transitionStart and transitionEnd
             Vector2 transitionStart = door.EntranceArea.Center.ToVector2();
@@ -559,26 +567,15 @@ namespace Wu_Xing
             transitionRoom = new Point(-1, -1);
         }
 
-        public void DrawFullMap(SpriteBatch spriteBatch)
+        public void DrawMinimap(SpriteBatch spriteBatch)
         {
             for (int y = 0; y < rooms.GetLength(0); y++)
             {
                 for (int x = 0; x < rooms.GetLength(0); x++)
                 {
-                    if (rooms[x, y] != null)
+                    if (rooms[x, y] != null && rooms[x, y].RoomState != Room.State.Unknown)
                     {
-                        Color color;
-
-                        if (new Point(x, y) == currentRoom)
-                            color = Color.Lime;
-                        else if (rooms[x, y].RoomType == Room.Type.Boss)
-                            color = Color.Red;
-                        else if (rooms[x, y].RoomType == Room.Type.Center)
-                            color = ColorLibrary.Element[Element.Water];
-                        else
-                            color = Color.White;
-
-                        spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(50 + x * 30, 50 + y * 30, 30 * rooms[x, y].Size.X - 4, 30 * rooms[x, y].Size.Y - 4), color);
+                        spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(50 + x * 30, 50 + y * 30, 30 * rooms[x, y].Size.X - 4, 30 * rooms[x, y].Size.Y - 4), new Point(x, y) == currentRoom ? Color.White : minimapColor[rooms[x, y].RoomState]);
                     }
                 }
             }           

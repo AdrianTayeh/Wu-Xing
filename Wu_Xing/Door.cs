@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -28,8 +29,9 @@ namespace Wu_Xing
             this.doorType = doorType;
 
             origin.X = TextureLibrary.DoorBottoms[doorType].Width / 2;
-            frontSource = new Rectangle(0, 0, 130, 175);
+            frontSource.Size = new Point(130, 175);
             frontOrigin.X = frontSource.Width / 2;
+            OpenInstantly();
         }
 
         public Point LeadsToRoom { get { return leadsToRoom; } }
@@ -37,6 +39,50 @@ namespace Wu_Xing
         public Rectangle EntranceArea { get { return entranceArea; } }
         public Vector2 TransitionExitPosition { get { return Rotate.PointAroundCenter(new Vector2(position.X, position.Y - Map.GridOffset - 50), position, rotation); } }
         public float Rotation { get { return rotation; } }
+
+        public void OpenInstantly()
+        {
+            frontSource.Location = TextureLibrary.DoorFronts[doorType].Bounds.Size - frontSource.Size;
+        }
+
+        public void CloseInstantly()
+        {
+            frontSource.Location = Point.Zero;
+        }
+
+        public async void Open()
+        {
+            CloseInstantly();
+
+            for (int i = 0; i < 59; i++)
+            {
+                frontSource.X += frontSource.Width;
+                if (frontSource.X == TextureLibrary.DoorFronts[doorType].Width)
+                {
+                    frontSource.X = 0;
+                    frontSource.Y += frontSource.Height;
+                }
+
+                await Task.Delay(1000 / 90);
+            }
+        }
+
+        public async void Close()
+        {
+            OpenInstantly();
+
+            for (int i = 0; i < 59; i++)
+            {
+                frontSource.X -= frontSource.Width;
+                if (frontSource.X < 0)
+                {
+                    frontSource.X = TextureLibrary.DoorFronts[doorType].Bounds.Width - frontSource.Width;
+                    frontSource.Y -= frontSource.Height;
+                }
+
+                await Task.Delay(1000 / 90);
+            }
+        }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 roomPosition)
         {
