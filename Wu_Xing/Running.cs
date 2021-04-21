@@ -61,7 +61,7 @@ namespace Wu_Xing
         public Vector2 CameraFocus { get { return mapManager.TransitionPosition == Vector2.Zero ? adam.Position : mapManager.TransitionPosition; } }
         public bool LimitCameraFocusToBounds { get { return mapManager.TransitionPosition == Vector2.Zero; } }
         public Point CurrentRoomSize { get { return mapManager == null ? new Point(1, 1) : mapManager.CurrentRoom.Size; } }
-        public bool MapInitialized { get { return mapManager != null; } }
+        public bool MapInitialized { get { return mapManager.Rooms != null; } }
 
         public void InitializeNewMap(Random random, int size, Element element)
         {
