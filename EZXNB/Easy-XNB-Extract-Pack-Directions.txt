@@ -1,0 +1,7 @@
+Unzip the contents of this zip-file to somewhere - I'd recommend unzipping to the StarDew Valley folder.
+
+1. Put your .XNB file(s) you want to modify in the PACKED folder
+
+2. Double click UNPACK FILES.BAT to extract the contents. Everything will go into the UNPACKED folder where you can edit the .PNG files.
+
+3. To re-compile the image. Just double click PACK FILES.BAT, and eveything will compile and overwrite the contents of the PACKED folder.

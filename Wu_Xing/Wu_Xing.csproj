@@ -45,6 +45,7 @@
     <Compile Include="Button.cs" />
     <Compile Include="FontLibrary.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="NewGame.cs" />
     <Compile Include="Pregame.cs" />
