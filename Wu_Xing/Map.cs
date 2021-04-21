@@ -397,7 +397,8 @@ namespace Wu_Xing
                         List<object> characters = new List<object>();
 
                         string randomString = rows[mapTile[x, y].Type][mapTile[x, y].Size][random.Next(rows[mapTile[x, y].Type][mapTile[x, y].Size].Count)];
-                        GetRoomContentsFromString(tiles, characters, randomString, gameObjects);
+                        if (randomString != "")
+                            GetRoomContentsFromString(tiles, characters, randomString, gameObjects);
 
                         //Initialize room
                         rooms[x, y] = new Room(mapTile[x, y].Size, mapTile[x, y].Type, doors, tiles);
@@ -483,9 +484,6 @@ namespace Wu_Xing
         //Incomplete
         private void GetRoomContentsFromString(Tile[,] tiles, List<object> characters, string row, Dictionary<string, Type> gameObjects)
         {
-            if (row == "")
-                return;
-
             //Row format:
             //block;block;block
             string[] blocks = row.Split(';');
