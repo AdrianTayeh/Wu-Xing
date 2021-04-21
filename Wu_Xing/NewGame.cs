@@ -41,10 +41,10 @@ namespace Wu_Xing
 
         public NewGame(Rectangle window, GraphicsDevice GraphicsDevice)
         {
-            stage = Stage.PickElement;
             energyCirclePosition = new Vector2(window.Width / 2, window.Height / 2);
             energyCircle = new RenderTarget2D(GraphicsDevice, TextureLibrary.EnergyCircle.Width, TextureLibrary.EnergyCircle.Height);
 
+            //Set sources for the energy lines
             for (int i = 0; i < energyLineSource.Length; i++)
             {
                 energyLineSource[i].X = i * 300;
@@ -157,14 +157,12 @@ namespace Wu_Xing
 
         private void UpdateEnergy()
         {
-            energyCircleRotation += 0.01f;
-            energyCircleRotation %= (float)Math.PI * 2;
+            //Rotate energy circle
+            energyCircleRotation = (energyCircleRotation + 0.01f) % ((float)Math.PI * 2);
 
+            //Move energy line sources
             for (int i = 0; i < energyLineSource.Length; i++)
-            {
-                energyLineSource[i].X += 2;
-                energyLineSource[i].X %= TextureLibrary.EnergyLine.Width - energyLineSource[i].Width;
-            }
+                energyLineSource[i].X = (energyLineSource[i].X + 2) % (TextureLibrary.EnergyLine.Width - energyLineSource[i].Width);
         }
 
         private void UpdatePickElement(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, ref Screen screen)
@@ -191,13 +189,15 @@ namespace Wu_Xing
             else if (gemButton["Water"].IsHoveredOn && gemButton["Water"].Active)
                 elementToChannel = TextureLibrary.SymbolWater;
 
-            //Element selected
+            //Check if element selected
             foreach (KeyValuePair<string, Button> item in gemButton)
             {
                 if (item.Value.IsReleased && item.Value.Active && elementToChannel != null)
                 {
+                    //Next stage
                     stage = Stage.PickGem;
 
+                    //Make all gem buttons active
                     foreach (KeyValuePair<string, Button> item2 in gemButton)
                         item2.Value.Active = true;
 
@@ -233,12 +233,15 @@ namespace Wu_Xing
             else if (gemButton["Water"].IsHoveredOn)
                 gemToFind = TextureLibrary.SymbolWater;
 
-            //Element selected
+            //Check if element selected
             foreach (KeyValuePair<string, Button> item in gemButton)
             {
                 if (item.Value.IsReleased && gemToFind != null)
                 {
+                    //Next stage
                     stage = Stage.Versus;
+
+                    //Generate map on separate thread
                     generateMap = Task.Run(() => running.InitializeNewMap(random, 13, (Element)Enum.Parse(typeof(Element), item.Key)));
                     break;
                 }
@@ -303,7 +306,7 @@ namespace Wu_Xing
             GraphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
 
-            //Draw a fresh energy circle
+            //Draw rotated energy circle
             spriteBatch.Draw(TextureLibrary.EnergyCircle, energyCircle.Bounds.Size.ToVector2() / 2, null, Color.White, energyCircleRotation, energyCircle.Bounds.Size.ToVector2() / 2, 1, SpriteEffects.None, 0);
 
             //Cover with a black mask

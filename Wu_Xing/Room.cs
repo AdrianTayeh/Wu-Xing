@@ -25,12 +25,12 @@ namespace Wu_Xing
         public enum Type { Normal, Center, Boss}
         private Type roomType;
 
-        public Room(Point size, Type roomType, List<Door> doors)
+        public Room(Point size, Type roomType, List<Door> doors, Tile[,] tiles)
         {
             this.size = size;
             this.roomType = roomType;
             this.doors = doors;
-            tiles = new Tile[15 * size.X, 7 * size.Y];
+            this.tiles = tiles;
             roomState = State.Unknown;
         }
 

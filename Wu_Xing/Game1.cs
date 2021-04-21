@@ -58,7 +58,7 @@ namespace Wu_Xing
 
             graphics.PreferredBackBufferWidth = resolution.Width;
             graphics.PreferredBackBufferHeight = resolution.Height;
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             world = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
