@@ -5,11 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Wu_Xing
 {
-    class Map
+    class MapGenerator
     {
         class MapTile
         {
@@ -56,83 +55,52 @@ namespace Wu_Xing
         }
 
         private Room[,] rooms;
+        private MapTile[,] mapTile;
+        private Random random;
 
-        private Point currentRoom;
-        private Point transitionRoom;
-        private Vector2 transitionPosition;
-        private Vector2 transitionRoomPosition;
-
-        private Element element;
-        
         private int gridOffset;
         public static int GridOffset { get; private set; }
 
-        private Dictionary<Room.State, Color> minimapColor;
+        public MapGenerator(Random random)
+        {
+            this.random = random;
+            gridOffset = GridOffset = 190;
+        }
 
         /// <summary>
         /// Size must be at least 5, and should not be larger than 25.
         /// </summary>
-        public Map(Random random, int size, Element element)
+        public Room[,] NewMap(int size, Element element)
         {
-            this.element = element;
-            gridOffset = GridOffset = 190;
-            transitionRoom = new Point(-1, -1);
-
-            minimapColor = new Dictionary<Room.State, Color>();
-            minimapColor.Add(Room.State.Unknown, Color.FromNonPremultiplied(0, 100, 100, 255));
-            minimapColor.Add(Room.State.Discovered, Color.FromNonPremultiplied(80, 80, 80, 255));
-            minimapColor.Add(Room.State.Cleared, Color.FromNonPremultiplied(150, 150, 150, 255));
-
             //For debugging
             int tries = 0;
             DateTime startTime = DateTime.Now;
-
-            //MapTile matrix used to generate the map
-            MapTile[,] mapTile;
 
             //Main generation loop, each loop generates a completely new map
             while (true)
             {
                 tries += 1;
                 mapTile = new MapTile[size, size];
-                GenerateFirstFiveRooms(mapTile);
-                GenerateAllRooms(random, mapTile);
+                GenerateFirstFiveRooms();
+                GenerateAllRooms();
 
-                if (CheckIfMapFulfillsRequirements(mapTile) == true)
+                if (CheckIfMapFulfillsRequirements() == true)
                     break;
             }
 
             //Further develop the successfully generated map
-            CreateBossRooms(mapTile, random);
-            CreateLargeRooms(mapTile, random);
+            CreateBossRooms();
+            CreateLargeRooms();
             rooms = new Room[size, size];
-            ConvertToRoomArray(mapTile, rooms, random);
-            SwapDoorExitPositions(rooms);
-            SetCurrentRoomToCenter(rooms);
+            ConvertToRoomArray();
+            SwapDoorExitPositions();
 
             Debug.WriteLine("Map successfully generated after " + tries + " tries and " + (DateTime.Now - startTime).TotalMilliseconds + " milliseconds.");
+
+            return rooms;
         }
 
-        public Element Element { get { return element; } }
-        public int Size { get { return rooms.GetLength(0); } }
-        public Room[,] Rooms { get { return rooms; } }
-        public Point CurrentRoom { get { return currentRoom; } }
-        public bool Transition { get { return transitionPosition != Vector2.Zero; } }
-        public Vector2 TransitionPosition { get { return transitionPosition; } }
-
-        public Vector2 CenterOfCenterRoom
-        {
-            get
-            {
-                foreach (Room room in rooms)
-                    if (room != null && room.RoomType == Room.Type.Center)
-                        return new Vector2(gridOffset + room.Size.X * 15 * 100 / 2, gridOffset + room.Size.Y * 7 * 100 / 2);
-
-                return Vector2.Zero;
-            }
-        }
-
-        private void GenerateFirstFiveRooms(MapTile[,] mapTile)
+        private void GenerateFirstFiveRooms()
         {
             mapTile[mapTile.GetLength(0) / 2, mapTile.GetLength(0) / 2] = new MapTile(0, 0);
             mapTile[mapTile.GetLength(0) / 2, mapTile.GetLength(0) / 2].Type = Room.Type.Center;
@@ -142,18 +110,18 @@ namespace Wu_Xing
             mapTile[mapTile.GetLength(0) / 2 + 1, mapTile.GetLength(0) / 2] = new MapTile(-1, 0);
         }
 
-        private void GenerateAllRooms(Random random, MapTile[,] mapTile)
+        private void GenerateAllRooms()
         {
             while (true)
             {
-                SpreadTiles(mapTile, random);
+                SpreadTiles();
 
-                if (CheckForAliveTiles(mapTile) == false)
+                if (CheckForAliveTiles() == false)
                     break;
             }
         }
 
-        private void SpreadTiles(MapTile[,] mapTile, Random random)
+        private void SpreadTiles()
         {
             //Spread tiles that are ready
             for (int y = 0; y < mapTile.GetLength(0); y++)
@@ -168,7 +136,7 @@ namespace Wu_Xing
                         mapTile[x, y].State = MapTile.TileState.Ready;
         }
 
-        private bool CheckForAliveTiles(MapTile[,] mapTile)
+        private bool CheckForAliveTiles()
         {
             //Returns true if an alive tile was found
             for (int y = 0; y < mapTile.GetLength(0); y++)
@@ -179,7 +147,7 @@ namespace Wu_Xing
             return false;
         }
 
-        private bool CheckIfMapFulfillsRequirements(MapTile[,] mapTile)
+        private bool CheckIfMapFulfillsRequirements()
         {
             int totalRooms = 0;
 
@@ -239,7 +207,7 @@ namespace Wu_Xing
             return true;
         }
 
-        private void CreateBossRooms(MapTile[,] mapTile, Random random)
+        private void CreateBossRooms()
         {
             Rectangle[] areas = new Rectangle[4];
 
@@ -308,7 +276,7 @@ namespace Wu_Xing
             }
         }
 
-        private void CreateLargeRooms(MapTile[,] mapTile, Random random)
+        private void CreateLargeRooms()
         {
             List<Point> roomSizes = new List<Point>();
             roomSizes.Add(new Point(2, 2));
@@ -329,7 +297,7 @@ namespace Wu_Xing
                 roomSizes.Add(new Point(1, 2));
                 roomSizes.Add(new Point(2, 1));
             }
-            
+
             //For all room sizes
             foreach (Point roomSize in roomSizes)
             {
@@ -363,14 +331,14 @@ namespace Wu_Xing
                                         mapTile[a, b].Size = new Point(x - a, y - b);
                                     }
                                 }
-                            }             
+                            }
                         }
                     }
                 }
             }
         }
 
-        private void ConvertToRoomArray(MapTile[,] mapTile, Room[,] rooms, Random random)
+        private void ConvertToRoomArray()
         {
             //The dictionary rows pairs a room type with a dictionary
             //which pairs a point (room size) to a list of strings (rows)
@@ -390,7 +358,7 @@ namespace Wu_Xing
                     if (mapTile[x, y] != null && mapTile[x, y].Size.X > 0 && mapTile[x, y].Size.Y > 0)
                     {
                         //Get doors
-                        List<Door> doors = GetListOfDoors(mapTile, x, y);
+                        List<Door> doors = GetListOfDoors(x, y);
 
                         //Get tiles and characters from random string
                         Tile[,] tiles = new Tile[mapTile[x, y].Size.X * 15, mapTile[x, y].Size.Y * 7];
@@ -450,7 +418,7 @@ namespace Wu_Xing
             return gameObjects;
         }
 
-        private List<Door> GetListOfDoors(MapTile[,] mapTile, int x, int y)
+        private List<Door> GetListOfDoors(int x, int y)
         {
             List<Door> doors = new List<Door>();
 
@@ -458,25 +426,25 @@ namespace Wu_Xing
             if (y > 0)
                 for (int a = x; a < x + mapTile[x, y].Size.X; a++)
                     if (mapTile[a, y - 1] != null)
-                        doors.Add(NewDoor(mapTile, x, y, a, y - 1, 0));
+                        doors.Add(NewDoor(x, y, a, y - 1, 0));
 
             //Create doors leading east
             if (x + mapTile[x, y].Size.X - 1 < mapTile.GetLength(0) - 1)
                 for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
                     if (mapTile[x + mapTile[x, y].Size.X, b] != null)
-                        doors.Add(NewDoor(mapTile, x, y, x + mapTile[x, y].Size.X, b, (float)Math.PI / 2));
+                        doors.Add(NewDoor(x, y, x + mapTile[x, y].Size.X, b, (float)Math.PI / 2));
 
             //Create doors leading south
             if (y + mapTile[x, y].Size.Y - 1 < mapTile.GetLength(0) - 1)
                 for (int a = x; a < x + mapTile[x, y].Size.X; a++)
                     if (mapTile[a, y + mapTile[x, y].Size.Y] != null)
-                        doors.Add(NewDoor(mapTile, x, y, a, y + mapTile[x, y].Size.Y, (float)Math.PI));
+                        doors.Add(NewDoor(x, y, a, y + mapTile[x, y].Size.Y, (float)Math.PI));
 
             //Create doors leading west
             if (x > 0)
                 for (int b = y; b < y + mapTile[x, y].Size.Y; b++)
                     if (mapTile[x - 1, b] != null)
-                        doors.Add(NewDoor(mapTile, x, y, x - 1, b, (float)Math.PI * 1.5f));
+                        doors.Add(NewDoor(x, y, x - 1, b, (float)Math.PI * 1.5f));
 
             return doors;
         }
@@ -515,11 +483,10 @@ namespace Wu_Xing
                 {
                     //characters.Add(gameObjects[objectID]);
                 }
-
             }
         }
 
-        private Door NewDoor(MapTile[,] mapTile, int x, int y, int a, int b, float rotation)
+        private Door NewDoor(int x, int y, int a, int b, float rotation)
         {
             Point exitTile = Point.Zero;
             Point entranceTile = Point.Zero;
@@ -565,11 +532,11 @@ namespace Wu_Xing
             Rectangle entranceArea = new Rectangle(gridOffset + entranceTile.X * 100, gridOffset + entranceTile.Y * 100, 100, 100);
             Point leadsToRoom = mapTile[a, b].Size.X > 0 ? new Point(a, b) : new Point(a + mapTile[a, b].Size.X, b + mapTile[a, b].Size.Y);
             Room.Type doorType = mapTile[x, y].Type == Room.Type.Boss || mapTile[leadsToRoom.X, leadsToRoom.Y].Type == Room.Type.Boss ? Room.Type.Boss : Room.Type.Normal;
-            
+
             return new Door(position, exitPosition, entranceArea, rotation, leadsToRoom, doorType);
         }
 
-        private void SwapDoorExitPositions(Room[,] rooms)
+        private void SwapDoorExitPositions()
         {
             //At this point, a door's exit position is what its corresponding door's exit position should be
             //Meaning, for each door, we need to find its corresponding door, and swap their exit positions
@@ -607,117 +574,6 @@ namespace Wu_Xing
                     }
                 }
             }
-        }
-
-        private void SetCurrentRoomToCenter(Room[,] rooms)
-        {
-            //Find the room with type Center and set currentRoom to the rooms location in the map grid
-
-            for (int y = 0; y < rooms.GetLength(0); y++)
-            {
-                for (int x = 0; x < rooms.GetLength(0); x++)
-                {
-                    if (rooms[x, y] != null && rooms[x, y].RoomType == Room.Type.Center)
-                    {
-                        currentRoom = new Point(x, y);
-                        rooms[x, y].IsEntered(rooms);
-                        break;
-                    }
-                }
-            }
-        }
-
-        public async void StartRoomTransition(Door door, Rectangle window)
-        {
-            transitionRoom = door.LeadsToRoom;
-            rooms[transitionRoom.X, transitionRoom.Y].IsEntered(rooms);
-
-            //Calculate transitionStart and transitionEnd
-            Vector2 transitionStart = door.EntranceArea.Center.ToVector2();
-            Vector2 transitionEnd = door.TransitionExitPosition;
-
-            //North door
-            if (door.Rotation == 0)
-            {
-                transitionStart.Y += 500;
-                transitionEnd.Y -= 300;
-            }
-
-            //East door
-            else if (door.Rotation == (float)Math.PI / 2)
-            {
-                transitionStart.X -= 900;
-                transitionEnd.X += 700;
-            }
-
-            //South door
-            else if (door.Rotation == (float)Math.PI)
-            {
-                transitionStart.Y -= 500;
-                transitionEnd.Y += 300;
-            }
-
-            //West door
-            else
-            {
-                transitionStart.X += 900;
-                transitionEnd.X -= 700;
-            }
-
-            transitionPosition = transitionStart;
-
-            //Calculate transitionRoomPosition
-            transitionRoomPosition.X = (transitionRoom.X - currentRoom.X) * 1500;
-            transitionRoomPosition.Y = (transitionRoom.Y - currentRoom.Y) * 700;
-            transitionRoomPosition += Rotate.PointAroundZero(new Vector2(0, -380), door.Rotation);
-
-            //Start transition
-            int duration = 400;
-            DateTime startTime = DateTime.Now;
-            TimeSpan elapsedTime = TimeSpan.Zero;
-
-            while (elapsedTime.TotalMilliseconds < duration)
-            {
-                elapsedTime = DateTime.Now - startTime;
-
-                //x goes from (-1)-1 linearly
-                float x = (float)elapsedTime.TotalMilliseconds / duration * 2f - 1f;
-
-                //y goes from 0-1 exponentially (sigmoid curve)
-                float y = (float)(-1f / (1f + (float)Math.Pow(2, x * 8f)) + 1f);
-
-                transitionPosition = transitionStart + ((transitionEnd - transitionStart) * y);
-
-                //A 1ms delay is necessary in order for transitionPosition to be read correctly
-                await Task.Delay(1);
-            }
-
-            //Transition finished
-            currentRoom = door.LeadsToRoom;
-            transitionPosition = Vector2.Zero;
-            transitionRoom = new Point(-1, -1);
-        }
-
-        public void DrawMinimap(SpriteBatch spriteBatch)
-        {
-            for (int y = 0; y < rooms.GetLength(0); y++)
-            {
-                for (int x = 0; x < rooms.GetLength(0); x++)
-                {
-                    if (rooms[x, y] != null /*&& rooms[x, y].RoomState != Room.State.Unknown*/)
-                    {
-                        spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(50 + x * 30, 50 + y * 30, 30 * rooms[x, y].Size.X - 4, 30 * rooms[x, y].Size.Y - 4), new Point(x, y) == currentRoom ? Color.White : minimapColor[rooms[x, y].RoomState]);
-                    }
-                }
-            }           
-        }
-
-        public void DrawWorld(SpriteBatch spriteBatch)
-        {
-            rooms[currentRoom.X, currentRoom.Y].Draw(spriteBatch, element, Vector2.Zero);
-
-            if (transitionRoom != new Point(-1, - 1))
-                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition);
         }
 
     }

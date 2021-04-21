@@ -44,16 +44,17 @@ namespace Wu_Xing
         public static Texture2D SymbolWater { get; private set; }
         public static Texture2D SymbolWood { get; private set; }
 
-        //Folder Icons
-        public static Texture2D IconDelete { get; private set; }
-        public static Texture2D IconPlus { get; private set; }
-
         //Folder Logos
         public static Texture2D WXLogoDarkDots { get; private set; }
         public static Texture2D WXLogoDark { get; private set; }
         public static Texture2D WXLogoIcon { get; private set; }
         public static Texture2D WXLogoLightDots { get; private set; }
         public static Texture2D WXLogoLight { get; private set; }
+
+        //Folder Miscellaneous
+        public static Texture2D Heart { get; private set; }
+        public static Texture2D IconDelete { get; private set; }
+        public static Texture2D IconPlus { get; private set; }
 
         //Folder Rooms
         public static Dictionary<string, Texture2D> Rooms { get; private set; }
@@ -104,16 +105,17 @@ namespace Wu_Xing
             SymbolWater = Content.Load<Texture2D>("Elements\\Symbol Water");
             SymbolWood = Content.Load<Texture2D>("Elements\\Symbol Wood");
 
-            //Folder Icons
-            IconDelete = Content.Load<Texture2D>("Icons\\Icon Delete");
-            IconPlus = Content.Load<Texture2D>("Icons\\Icon Plus");
-
             //Folder Logos
             WXLogoDarkDots = Content.Load<Texture2D>("Logos\\WX Logo Dark Dots");
             WXLogoDark = Content.Load<Texture2D>("Logos\\WX Logo Dark");
             WXLogoIcon = Content.Load<Texture2D>("Logos\\WX Logo Icon");
             WXLogoLightDots = Content.Load<Texture2D>("Logos\\WX Logo Light Dots");
             WXLogoLight = Content.Load<Texture2D>("Logos\\WX Logo Light");
+
+            //Folder Miscellaneous
+            Heart = Content.Load<Texture2D>("Miscellaneous\\Heart");
+            IconDelete = Content.Load<Texture2D>("Miscellaneous\\Icon Delete");
+            IconPlus = Content.Load<Texture2D>("Miscellaneous\\Icon Plus");
 
             //Folder Rooms
             Rooms = new Dictionary<string, Texture2D>();

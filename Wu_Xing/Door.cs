@@ -37,7 +37,7 @@ namespace Wu_Xing
         public Point LeadsToRoom { get { return leadsToRoom; } }
         public Vector2 ExitPosition { get { return exitPosition; } set { exitPosition = value; } }
         public Rectangle EntranceArea { get { return entranceArea; } }
-        public Vector2 TransitionExitPosition { get { return Rotate.PointAroundCenter(new Vector2(position.X, position.Y - Map.GridOffset - 50), position, rotation); } }
+        public Vector2 TransitionExitPosition { get { return Rotate.PointAroundCenter(new Vector2(position.X, position.Y - MapGenerator.GridOffset - 50), position, rotation); } }
         public float Rotation { get { return rotation; } }
 
         public void OpenInstantly()

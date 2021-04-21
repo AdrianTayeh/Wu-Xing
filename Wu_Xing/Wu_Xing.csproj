@@ -61,11 +61,12 @@
     <Compile Include="ColorLibrary.cs" />
     <Compile Include="Adam.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="Door.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="MapGenerator.cs" />
+    <Compile Include="MapManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

@@ -22,12 +22,13 @@ namespace Wu_Xing
 
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
 
-        private Map map;
+        private MapManager mapManager;
         //private List<GameObject> gameObjects = new List<GameObject>();
 
         public Running(Rectangle window)
         {
             adam = new Adam(window);
+            mapManager = new MapManager();
 
             button.Add("Continue", new Button(
                 new Point(window.Width / 2, window.Height / 2 - 90),
@@ -57,15 +58,15 @@ namespace Wu_Xing
                 ));
         }
 
-        public Vector2 CameraFocus { get { return map.TransitionPosition == Vector2.Zero ? adam.Position : map.TransitionPosition; } }
-        public bool LimitCameraFocusToBounds { get { return map.TransitionPosition == Vector2.Zero; } }
-        public Point CurrentRoomSize { get { return map == null ? new Point(1, 1) : map.Rooms[map.CurrentRoom.X, map.CurrentRoom.Y].Size; } }
-        public bool MapInitialized { get { return map != null; } }
+        public Vector2 CameraFocus { get { return mapManager.TransitionPosition == Vector2.Zero ? adam.Position : mapManager.TransitionPosition; } }
+        public bool LimitCameraFocusToBounds { get { return mapManager.TransitionPosition == Vector2.Zero; } }
+        public Point CurrentRoomSize { get { return mapManager == null ? new Point(1, 1) : mapManager.CurrentRoom.Size; } }
+        public bool MapInitialized { get { return mapManager != null; } }
 
         public void InitializeNewMap(Random random, int size, Element element)
         {
-            map = new Map(random, size, element);
-            adam.Position = map.CenterOfCenterRoom;
+            mapManager.GenerateNewMap(random, size, element);
+            adam.Position = mapManager.CenterOfCenterRoom;
         }
 
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random, Rectangle window)
@@ -74,7 +75,7 @@ namespace Wu_Xing
                 gameState = gameState == State.Running ? State.Paused : State.Running;
 
             else if (currentKeyboard.IsKeyUp(Keys.R) && previousKeyboard.IsKeyDown(Keys.R))
-                InitializeNewMap(random, map.Size, map.Element);
+                InitializeNewMap(random, mapManager.Size, mapManager.Element);
 
             switch (gameState)
             {
@@ -94,10 +95,10 @@ namespace Wu_Xing
 
         private void UpdateRunning(KeyboardState currentKeyboard, GameTime gameTime, Rectangle window)
         {
-            adam.Update(currentKeyboard, map, window);
+            adam.Update(currentKeyboard, mapManager, window);
             UpdateTimer(gameTime);
 
-            if (map.Transition)
+            if (mapManager.Transition)
                 gameState = State.Transition;
         }
 
@@ -125,7 +126,7 @@ namespace Wu_Xing
 
         private void UpdateTransition()
         {
-            if (map.Transition)
+            if (mapManager.Transition)
                 return;
 
             gameState = State.Running;
@@ -150,13 +151,14 @@ namespace Wu_Xing
 
         public void DrawWorld(SpriteBatch spriteBatch)
         {
-            map.DrawWorld(spriteBatch);
+            mapManager.DrawWorld(spriteBatch);
             adam.Draw(spriteBatch);
         }
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
-            map.DrawMinimap(spriteBatch);
+            mapManager.DrawFullMap(spriteBatch);
+            adam.DrawHearts(spriteBatch);
 
             if (gameState == State.Paused)
             {

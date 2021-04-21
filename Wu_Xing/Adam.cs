@@ -41,7 +41,7 @@ namespace Wu_Xing
         public Vector2 Position { get { return position; } set { position = value; } }
         public Vector2 ExitPosition { get { return exitPosition; } }
 
-        public void Update(KeyboardState currentKeyboard, Map map, Rectangle window)
+        public void Update(KeyboardState currentKeyboard, MapManager mapManager, Rectangle window)
         {
             DetermineMovingDirection(currentKeyboard);
             DetermineAimingDirection(currentKeyboard);
@@ -49,18 +49,18 @@ namespace Wu_Xing
             RotateTowardTarget();
             Move();
 
-            CheckDoors(map, window);
+            CheckDoors(mapManager, window);
         }
 
-        private void CheckDoors(Map map, Rectangle window)
+        private void CheckDoors(MapManager mapManager, Rectangle window)
         {
-            foreach (Door door in map.Rooms[map.CurrentRoom.X, map.CurrentRoom.Y].Doors)
+            foreach (Door door in mapManager.Rooms[mapManager.CurrentRoomLocation.X, mapManager.CurrentRoomLocation.Y].Doors)
             {
                 if (door.EntranceArea.Contains(position))
                 {
                     position = door.TransitionExitPosition;
                     exitPosition = door.ExitPosition;
-                    map.StartRoomTransition(door, window);
+                    mapManager.StartRoomTransition(door, window);
                     break;
                 }
             }
@@ -155,6 +155,15 @@ namespace Wu_Xing
             spriteBatch.Draw(TextureLibrary.Adam, position + Rotate.PointAroundZero(leftArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, Color.White, rotation + (aimingDirection == Vector2.Zero ? -0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, 0.5f);
             spriteBatch.Draw(TextureLibrary.Adam, position + Rotate.PointAroundZero(rightArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, Color.White, rotation + (aimingDirection == Vector2.Zero ? 0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, 0.5f);
             spriteBatch.Draw(TextureLibrary.Adam, position, headSource, Color.White, rotation, new Vector2(headSource.Width / 2, headSource.Height / 2), 1, SpriteEffects.None, 0.51f);
+        }
+
+        public void DrawHearts(SpriteBatch spriteBatch)
+        {
+            int maxHealth = 6;
+            int health = 5;
+
+            for (int i = 1; i <= maxHealth / 2; i++)
+                spriteBatch.Draw(TextureLibrary.Heart, new Vector2(175 + i * 65, 65), new Rectangle(health >= i * 2 ? 0 : health == i * 2 - 1 ? 60 : 120, 0, 60, 60), Color.White);
         }
 
     }
