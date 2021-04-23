@@ -47,7 +47,7 @@ namespace Wu_Xing
             DetermineAimingDirection(currentKeyboard);
             DetermineRotationTarget();
             RotateTowardTarget();
-            Move();
+            Move(currentKeyboard);
 
             CheckDoors(mapManager, window);
         }
@@ -143,11 +143,11 @@ namespace Wu_Xing
                 rotation = rotationTarget;
         }
 
-        private void Move()
+        private void Move(KeyboardState currentKeyboard)
         {
             if (movingDirection != Vector2.Zero)
                 movingDirection.Normalize();
-            position += movingDirection * movingSpeed;
+            position += movingDirection * movingSpeed * (currentKeyboard.IsKeyDown(Keys.LeftShift) ? 3 : 1);
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -13,8 +13,16 @@ namespace Wu_Xing
     {
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
 
+        public static float MinimapOpacity { get; private set; }
+        public static float SoundVolume { get; private set; }
+        public static float MusicVolume { get; private set; }
+
         public Settings(Rectangle window)
         {
+            MinimapOpacity = 0.7f;
+            SoundVolume = 1;
+            MusicVolume = 0.7f;
+
             button.Add("Resolution", new Button(
                 new Point(window.Width / 2 + 140, window.Height / 2 - 270),
                 new Point(260, 70),
@@ -125,7 +133,7 @@ namespace Wu_Xing
                 percentage = percentage == 100 ? 0 : percentage + 10;
                 button["Music"].Label = percentage + "%";
                 button["Music"].UpdateLabelOrigin();
-                //Set music volume to percentage
+                MusicVolume = percentage / 100f;
             }
 
             else if (button["Sound"].IsReleased)
@@ -134,7 +142,7 @@ namespace Wu_Xing
                 percentage = percentage == 100 ? 0 : percentage + 10;
                 button["Sound"].Label = percentage + "%";
                 button["Sound"].UpdateLabelOrigin();
-                //Set sound volume to percentage
+                SoundVolume = percentage / 100f;
             }
 
             else if (button["Map"].IsReleased)
@@ -143,7 +151,7 @@ namespace Wu_Xing
                 percentage = percentage == 100 ? 0 : percentage + 10;
                 button["Map"].Label = percentage + "%";
                 button["Map"].UpdateLabelOrigin();
-                //Set map opacity to percentage
+                MinimapOpacity = percentage / 100f;
             }
 
             else if (button["Default"].IsReleased)

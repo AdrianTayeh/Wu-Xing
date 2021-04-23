@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -58,7 +59,7 @@ namespace Wu_Xing
 
             graphics.PreferredBackBufferWidth = resolution.Width;
             graphics.PreferredBackBufferHeight = resolution.Height;
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
 
             world = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
@@ -121,11 +122,11 @@ namespace Wu_Xing
                     break;
 
                 case Screen.NewGame:
-                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, random, running, gameTime);
+                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, random, running, gameTime, GraphicsDevice);
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime, random, window);
+                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, gameTime, random, window, GraphicsDevice);
                     break;
             }
 
@@ -141,6 +142,9 @@ namespace Wu_Xing
 
             if (screen == Screen.NewGame)
                 newGame.DrawCircleToTexture(spriteBatch, GraphicsDevice);
+
+            else if (screen == Screen.Running && running.MapInitialized)
+                running.DrawFullMinimap(spriteBatch, GraphicsDevice);
 
             //Render world
 

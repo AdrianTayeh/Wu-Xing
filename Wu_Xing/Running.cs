@@ -63,24 +63,24 @@ namespace Wu_Xing
         public Point CurrentRoomSize { get { return mapManager == null ? new Point(1, 1) : mapManager.CurrentRoom.Size; } }
         public bool MapInitialized { get { return mapManager.Rooms != null; } }
 
-        public void InitializeNewMap(Random random, int size, Element element)
+        public void InitializeNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element element)
         {
-            mapManager.GenerateNewMap(random, size, element);
+            mapManager.GenerateNewMap(GraphicsDevice, random, size, element);
             adam.Position = mapManager.CenterOfCenterRoom;
         }
 
-        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random, Rectangle window)
+        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random, Rectangle window, GraphicsDevice GraphicsDevice)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 gameState = gameState == State.Running ? State.Paused : State.Running;
 
             else if (currentKeyboard.IsKeyUp(Keys.R) && previousKeyboard.IsKeyDown(Keys.R))
-                InitializeNewMap(random, mapManager.Size, mapManager.Element);
+                InitializeNewMap(GraphicsDevice, random, mapManager.Size, mapManager.Element);
 
             switch (gameState)
             {
                 case State.Running:
-                    UpdateRunning(currentKeyboard, gameTime, window);
+                    UpdateRunning(currentKeyboard, previousKeyboard, gameTime, window);
                     break;
 
                 case State.Paused:
@@ -93,9 +93,10 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdateRunning(KeyboardState currentKeyboard, GameTime gameTime, Rectangle window)
+        private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Rectangle window)
         {
             adam.Update(currentKeyboard, mapManager, window);
+            mapManager.Update(currentKeyboard, previousKeyboard);
             UpdateTimer(gameTime);
 
             if (mapManager.Transition)
@@ -149,6 +150,11 @@ namespace Wu_Xing
             }
         }
 
+        public void DrawFullMinimap(SpriteBatch spriteBatch, GraphicsDevice GraphicsDevice)
+        {
+            mapManager.DrawFullMinimap(spriteBatch, GraphicsDevice);
+        }
+
         public void DrawWorld(SpriteBatch spriteBatch)
         {
             mapManager.DrawWorld(spriteBatch);
@@ -157,7 +163,7 @@ namespace Wu_Xing
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
-            mapManager.DrawFullMap(spriteBatch);
+            mapManager.DrawMinimap(spriteBatch, window);
             adam.DrawHearts(spriteBatch);
 
             if (gameState == State.Paused)

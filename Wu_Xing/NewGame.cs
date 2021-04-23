@@ -135,7 +135,7 @@ namespace Wu_Xing
             gemButton["Water"].Active = waterGemObtained;
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, Running running, GameTime gameTime)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, Running running, GameTime gameTime, GraphicsDevice GraphicsDevice)
         {
             switch (stage)
             {
@@ -145,7 +145,7 @@ namespace Wu_Xing
                     break;
 
                 case Stage.PickGem:
-                    UpdatePickGem(currentKeyboard, previousKeyboard, mouse, random, running);
+                    UpdatePickGem(currentKeyboard, previousKeyboard, mouse, random, running, GraphicsDevice);
                     UpdateEnergy();
                     break;
 
@@ -162,7 +162,7 @@ namespace Wu_Xing
 
             //Move energy line sources
             for (int i = 0; i < energyLineSource.Length; i++)
-                energyLineSource[i].X = (energyLineSource[i].X + 2) % (TextureLibrary.EnergyLine.Width - energyLineSource[i].Width);
+                energyLineSource[i].X = (energyLineSource[i].X + 2) % (TextureLibrary.EnergyLine.Width - energyLineSource[i].Width);  
         }
 
         private void UpdatePickElement(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, ref Screen screen)
@@ -206,7 +206,7 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdatePickGem(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, Random random, Running running)
+        private void UpdatePickGem(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, Random random, Running running, GraphicsDevice GraphicsDevice)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
             {
@@ -242,7 +242,7 @@ namespace Wu_Xing
                     stage = Stage.Versus;
 
                     //Generate map on separate thread
-                    generateMap = Task.Run(() => running.InitializeNewMap(random, 13, (Element)Enum.Parse(typeof(Element), item.Key)));
+                    generateMap = Task.Run(() => running.InitializeNewMap(GraphicsDevice, random, 13, (Element)Enum.Parse(typeof(Element), item.Key)));
                     break;
                 }
             }
@@ -330,11 +330,11 @@ namespace Wu_Xing
             //Replace black with transparent
             Color[] color = new Color[energyCircle.Width * energyCircle.Height];
             energyCircle.GetData(color);
-
+            
             for (int i = 0; i < color.Length; i++)
-                if (color[i].R < 200)
+                if (color[i] == Color.Black)
                     color[i] = Color.Transparent;
-
+            
             energyCircle.SetData(color);
         }
     }
