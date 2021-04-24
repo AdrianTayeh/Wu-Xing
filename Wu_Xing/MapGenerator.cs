@@ -345,8 +345,10 @@ namespace Wu_Xing
             //Each string holds tiles and enemies for a room
             Dictionary<Room.Type, Dictionary<Point, List<string>>> rows = GetDictionaryWithAllRooms();
 
-            //Incomplete
-            Dictionary<string, Type> gameObjects = GetDictionaryWithAllGameObjects();
+            //The dictionaries allCharacters and allTiles pairs a gameObject with a string (ID)
+            Dictionary<string, Character> allCharacters = new Dictionary<string, Character>();
+            Dictionary<string, Tile> allTiles = new Dictionary<string, Tile>();
+            GetDictionaryWithAllGameObjects(allCharacters, allTiles);
 
             //Go through all tiles
             for (int y = 0; y < mapTile.GetLength(0); y++)
@@ -357,16 +359,16 @@ namespace Wu_Xing
                     //Positive means it it a room and not a pointer
                     if (mapTile[x, y] != null && mapTile[x, y].Size.X > 0 && mapTile[x, y].Size.Y > 0)
                     {
-                        //Get doors
-                        List<Door> doors = GetListOfDoors(x, y);
-
                         //Get tiles and characters from random string
-                        Tile[,] tiles = new Tile[mapTile[x, y].Size.X * 15, mapTile[x, y].Size.Y * 7];
-                        List<object> characters = new List<object>();
+                        List<Tile> tiles = new List<Tile>();
+                        List<Character> characters = new List<Character>();
 
                         string randomString = rows[mapTile[x, y].Type][mapTile[x, y].Size][random.Next(rows[mapTile[x, y].Type][mapTile[x, y].Size].Count)];
                         if (randomString != "")
-                            GetRoomContentsFromString(tiles, characters, randomString, gameObjects);
+                            GetRoomContentsFromString(tiles, characters, allCharacters, allTiles, randomString);
+
+                        //Get doors
+                        List<Door> doors = GetListOfDoors(x, y);
 
                         //Initialize room
                         rooms[x, y] = new Room(mapTile[x, y].Size, mapTile[x, y].Type, doors, tiles);
@@ -379,15 +381,17 @@ namespace Wu_Xing
         {
             Dictionary<Room.Type, Dictionary<Point, List<string>>> rows = new Dictionary<Room.Type, Dictionary<Point, List<string>>>();
 
+            //Add pairs of room types and dictionaries to rows dictionary
             rows.Add(Room.Type.Normal, new Dictionary<Point, List<string>>());
             rows.Add(Room.Type.Center, new Dictionary<Point, List<string>>());
             rows.Add(Room.Type.Boss, new Dictionary<Point, List<string>>());
 
-            rows[Room.Type.Normal] = new Dictionary<Point, List<string>>();
+            //Initialize rows[Room.Type] dictionaries
+            /*rows[Room.Type.Normal] = new Dictionary<Point, List<string>>();
             rows[Room.Type.Center] = new Dictionary<Point, List<string>>();
-            rows[Room.Type.Boss] = new Dictionary<Point, List<string>>();
-
-            //Read files and convert their rows to string lists
+            rows[Room.Type.Boss] = new Dictionary<Point, List<string>>();*/
+            
+            //Points to be used
             List<Point> sizes = new List<Point>();
             sizes.Add(new Point(1, 1));
             sizes.Add(new Point(1, 2));
@@ -396,26 +400,65 @@ namespace Wu_Xing
             sizes.Add(new Point(3, 1));
             sizes.Add(new Point(2, 2));
 
+            //Add pairs of points and lists to rows[Room.Type] dictionaries
             foreach (Point size in sizes)
             {
                 rows[Room.Type.Normal].Add(size, File.ReadAllLines("Room Content/Normal " + size.X + "x" + size.Y + ".txt").ToList());
                 rows[Room.Type.Center].Add(size, File.ReadAllLines("Room Content/Center " + size.X + "x" + size.Y + ".txt").ToList());
             }
 
-            rows[Room.Type.Boss].Add(new Point(1, 1), File.ReadAllLines("Room Content/Boss 1x1" + ".txt").ToList());
+            rows[Room.Type.Boss].Add(new Point(1, 1), File.ReadAllLines("Room Content/Boss 1x1.txt").ToList());
 
             return rows;
         }
 
         //Incomplete
-        private Dictionary<string, Type> GetDictionaryWithAllGameObjects()
+        private void GetDictionaryWithAllGameObjects(Dictionary<string, Character> allCharacters, Dictionary<string, Tile> allTiles)
         {
-            Dictionary<string, Type> gameObjects = new Dictionary<string, Type>();
-            /*
-            gameObjects.Add("ST", typeof(Tile));
-            */
+            //Tiles
+            allTiles.Add("S", new Stone(Vector2.Zero, null));
 
-            return gameObjects;
+            //Characters
+            
+        }
+
+        //Incomplete
+        private void GetRoomContentsFromString(List<Tile> tiles, List<Character> characters, Dictionary<string, Character> allCharacters, Dictionary<string, Tile> allTiles, string row)
+        {
+            //Row format:
+            //block;block;block
+            string[] blocks = row.Split(';');
+
+            foreach (string block in blocks)
+            {
+                //Block formats:
+                //x,y,objectID
+                //x,y,objectID,length
+                string[] components = block.Split(',');
+
+                int x = int.Parse(components[0]);
+                int y = int.Parse(components[1]);
+                string objectID = components[2];
+
+                //If the block consists of four components, it is a number of tiles
+                if (components.Count() == 4)
+                {
+                    int length = int.Parse(components[3]);
+                    
+                    for (int a = x; a < x + length; a++)
+                    {
+                        tiles.Add((Tile)allTiles[objectID].Clone());
+                        tiles[tiles.Count - 1].MoveTo(new Vector2(gridOffset + a * 100 + 50, gridOffset + y * 100 + 50));
+                    }
+                }
+
+                //If the block consists of three components, it is a character
+                else
+                {
+                    characters.Add(allCharacters[objectID]);
+                    characters[characters.Count - 1].MoveTo(new Vector2(gridOffset + x * 100 + 50, gridOffset + y * 100 + 50));
+                }
+            }
         }
 
         private List<Door> GetListOfDoors(int x, int y)
@@ -447,43 +490,6 @@ namespace Wu_Xing
                         doors.Add(NewDoor(x, y, x - 1, b, (float)Math.PI * 1.5f));
 
             return doors;
-        }
-
-        //Incomplete
-        private void GetRoomContentsFromString(Tile[,] tiles, List<object> characters, string row, Dictionary<string, Type> gameObjects)
-        {
-            //Row format:
-            //block;block;block
-            string[] blocks = row.Split(';');
-
-            foreach (string block in blocks)
-            {
-                //Block formats:
-                //x,y,objectID
-                //x,y,objectID,length
-                string[] components = block.Split(',');
-
-                int x = int.Parse(components[0]);
-                int y = int.Parse(components[1]);
-                string objectID = components[2];
-
-                //If the block consists of four components, it is a number of tiles
-                if (components.Count() == 4)
-                {
-                    int length = int.Parse(components[3]);
-
-                    for (int a = x; a < x + length; a++)
-                    {
-                        //tiles[a, y] = new 
-                    }
-                }
-
-                //If the block consists of three components, it is a character
-                else
-                {
-                    //characters.Add(gameObjects[objectID]);
-                }
-            }
         }
 
         private Door NewDoor(int x, int y, int a, int b, float rotation)

@@ -13,7 +13,7 @@ namespace Wu_Xing
     class Running
     {
         private Adam adam;
-        private enum State { Running, Paused, Transition }
+        private enum State { Running, Paused, Transition, GameOver }
         private State gameState;
 
         private float seconds;
@@ -23,11 +23,12 @@ namespace Wu_Xing
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
 
         private MapManager mapManager;
-        //private List<GameObject> gameObjects = new List<GameObject>();
+        private List<GameObject> gameObjects = new List<GameObject>();
+        private bool drawHitbox;
+        private bool drawKeyBindings;
 
         public Running(Rectangle window)
         {
-            adam = new Adam(window);
             mapManager = new MapManager();
 
             button.Add("Continue", new Button(
@@ -63,24 +64,20 @@ namespace Wu_Xing
         public Point CurrentRoomSize { get { return mapManager == null ? new Point(1, 1) : mapManager.CurrentRoom.Size; } }
         public bool MapInitialized { get { return mapManager.Rooms != null; } }
 
-        public void InitializeNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element element)
+        public void InitializeNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
         {
-            mapManager.GenerateNewMap(GraphicsDevice, random, size, element);
-            adam.Position = mapManager.CenterOfCenterRoom;
+            mapManager.GenerateNewMap(GraphicsDevice, random, size, gemToFind);
+            adam = new Adam(mapManager.CenterOfCenterRoom, elementToChannel);
         }
 
-        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Random random, Rectangle window, GraphicsDevice GraphicsDevice)
+        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, Rectangle window, GraphicsDevice GraphicsDevice)
         {
-            if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
-                gameState = gameState == State.Running ? State.Paused : State.Running;
-
-            else if (currentKeyboard.IsKeyUp(Keys.R) && previousKeyboard.IsKeyDown(Keys.R))
-                InitializeNewMap(GraphicsDevice, random, mapManager.Size, mapManager.Element);
+            CheckKeyboardInput(currentKeyboard, previousKeyboard, random, GraphicsDevice);
 
             switch (gameState)
             {
                 case State.Running:
-                    UpdateRunning(currentKeyboard, previousKeyboard, gameTime, window);
+                    UpdateRunning(currentKeyboard, previousKeyboard, elapsedSeconds, window);
                     break;
 
                 case State.Paused:
@@ -90,14 +87,48 @@ namespace Wu_Xing
                 case State.Transition:
                     UpdateTransition();
                     break;
+
+                case State.GameOver:
+
+                    break;
             }
         }
 
-        private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, GameTime gameTime, Rectangle window)
+        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, GraphicsDevice GraphicsDevice)
         {
-            adam.Update(currentKeyboard, mapManager, window);
+            //Escape - Toggle pause
+            if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
+                gameState = gameState == State.Running ? State.Paused : State.Running;
+
+            //R - Reset run
+            else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
+                InitializeNewMap(GraphicsDevice, random, mapManager.Size, mapManager.Element, (Element)adam.Element);
+
+            //H - Toggle draw hitbox
+            else if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
+                drawHitbox = !drawHitbox;
+
+            //T - Toggle draw tips
+            else if (currentKeyboard.IsKeyDown(Keys.K) && previousKeyboard.IsKeyUp(Keys.K))
+                drawKeyBindings = !drawKeyBindings;
+        }
+
+        private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Rectangle window)
+        {
+            //Update adam and other characters
+            adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+
+            foreach (GameObject gameObject in gameObjects)
+                gameObject.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+
+            //Remove dead characters from gameObjects list
+            for (int i = gameObjects.Count - 1; i >= 0; i--)
+                if (gameObjects[i] is Character)
+                    if (((Character)gameObjects[i]).IsDead)
+                        gameObjects.RemoveAt(i);
+
             mapManager.Update(currentKeyboard, previousKeyboard);
-            UpdateTimer(gameTime);
+            UpdateTimer(elapsedSeconds);
 
             if (mapManager.Transition)
                 gameState = State.Transition;
@@ -131,12 +162,12 @@ namespace Wu_Xing
                 return;
 
             gameState = State.Running;
-            adam.Position = adam.ExitPosition;
+            adam.MoveTo(adam.ExitPosition);
         }
 
-        private void UpdateTimer(GameTime gameTime)
+        private void UpdateTimer(float elapsedSeconds)
         {
-            seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            seconds += elapsedSeconds;
             if (seconds >= 60)
             {
                 seconds %= 60;
@@ -157,14 +188,26 @@ namespace Wu_Xing
 
         public void DrawWorld(SpriteBatch spriteBatch)
         {
-            mapManager.DrawWorld(spriteBatch);
-            adam.Draw(spriteBatch);
+            mapManager.DrawWorld(spriteBatch, drawHitbox);
+            adam.Draw(spriteBatch, Vector2.Zero, drawHitbox);
+
+            foreach (GameObject gameObject in gameObjects)
+                gameObject.Draw(spriteBatch, Vector2.Zero, drawHitbox);
         }
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
             mapManager.DrawMinimap(spriteBatch, window);
             adam.DrawHearts(spriteBatch);
+
+            if (drawKeyBindings)
+            {
+                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings \nR: Restart \nH: Show hitboxes \nEsc: Pause \nTab: Additional UI", new Vector2(100, 250), Color.LightBlue);
+                spriteBatch.DrawString(FontLibrary.Normal, "LShift: Increased speed", new Vector2(100, 250 + FontLibrary.Normal.LineSpacing * 6), Color.OrangeRed);
+            }
+
+            else
+                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 250), Color.LightBlue);
 
             if (gameState == State.Paused)
             {

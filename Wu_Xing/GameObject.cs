@@ -9,74 +9,59 @@ using System.Threading.Tasks;
 
 namespace Wu_Xing
 {
-    abstract class GameObject
+    abstract class GameObject : ICloneable
     {
         // Initialized in constructor head
         protected Vector2 position;
-        protected int size;
         protected Rectangle source;
-        protected float layerDepth;
 
-        // Initialized in constructor body
+        // To be initialized in subclass constructor
+        protected Texture2D texture;
         protected Rectangle hitbox;
         protected Vector2 origin;
-        protected Color color;
+        protected float layerDepth;
+        protected Element? element;
 
-        // To Be initialized in subclass constructor body
-        protected Texture2D texture;
-
-        // Not initialized
-        protected SpriteEffects spriteEffect;
-        protected float rotation;
-        protected bool toBeRemoved;
-        protected Vector2 centerPosition;
-
-        public GameObject(Vector2 position, int size, Rectangle source, float layerDepth)
+        public GameObject(Vector2 position, Element? element)
         {
-            this.position = position;
-            this.size = size;
-            this.source = source;
-            this.layerDepth = layerDepth;
-
-            hitbox.X = (int)position.X;
-            hitbox.Y = (int)position.Y;
-            hitbox.Width = size;
-            hitbox.Height = size;
-
-            origin.X = size / 2;
-            origin.Y = size / 2;
-
-            color = Color.White;
+            MoveTo(position);
+            this.element = element;
         }
 
-        public virtual void Update(GameTime gameTime, Rectangle window, List<GameObject> gameObjectList, KeyboardState currentKeyboardState)
+        public object Clone()
         {
-            CalculateCenterPosition();
-        }
-
-        private void CalculateCenterPosition()
-        {
-            centerPosition.X = hitbox.X + size;
-            centerPosition.Y = hitbox.Y + size;
+            return MemberwiseClone();
         }
 
         public Texture2D Texture { get { return texture; } }
-
-        public Vector2 CenterPosition { get { return centerPosition; } }
-
         public Vector2 Position { get { return position; } }
-
         public Rectangle Hitbox { get { return hitbox; } }
-
         public Rectangle Source { get { return source; } }
+        public Element? Element { get { return element; } }
 
-        public int Size { get { return size; } }
-
-        public bool ToBeRemoved { get { return toBeRemoved; } set { toBeRemoved = value; } }
-
-        public virtual void Draw(SpriteBatch spriteBatch, SpriteFont spriteFont)
+        public virtual void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
         {
-            spriteBatch.Draw(texture, new Rectangle((int)position.X + (int)origin.X, (int)position.Y + (int)origin.Y, size, size), source, color, rotation, origin, spriteEffect, layerDepth);
+            
+        }
+
+        public void MoveTo(Vector2 newPosition)
+        {
+            position = newPosition;
+            hitbox.Location = (position - hitbox.Size.ToVector2() / 2).ToPoint();
+        }
+
+        //Used by Tile, overidden by Character
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
+        {
+            spriteBatch.Draw(texture, roomPosition + position, source, Color.White, 0, origin, 1, SpriteEffects.None, layerDepth);
+
+            if (drawHitbox)
+                DrawHitbox(spriteBatch);
+        }
+
+        public void DrawHitbox(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
         }
 
     }

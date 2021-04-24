@@ -119,7 +119,7 @@ namespace Wu_Xing
             }
         }
 
-        public async void StartRoomTransition(Door door, Rectangle window)
+        public async void StartRoomTransition(Door door)
         {
             transitionRoom = door.LeadsToRoom;
             rooms[transitionRoom.X, transitionRoom.Y].IsEntered(rooms);
@@ -250,12 +250,12 @@ namespace Wu_Xing
             spriteBatch.Draw(fullMinimap, new Vector2(window.Width - 50, 50), minimapSource, Color.FromNonPremultiplied(255, 255, 255, (int)(255 * minimapOpacity)), 0, new Vector2(minimapSource.Width, 0), minimapScale, SpriteEffects.None, 0);
         }
 
-        public void DrawWorld(SpriteBatch spriteBatch)
+        public void DrawWorld(SpriteBatch spriteBatch, bool drawHitbox)
         {
-            currentRoom.Draw(spriteBatch, element, Vector2.Zero);
+            currentRoom.Draw(spriteBatch, element, Vector2.Zero, drawHitbox);
 
             if (transitionRoom != new Point(-1, -1))
-                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition);
+                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition, drawHitbox);
         }
     }
 }

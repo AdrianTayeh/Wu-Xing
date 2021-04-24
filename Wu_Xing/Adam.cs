@@ -6,53 +6,51 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Wu_Xing
 {
-    class Adam
+    class Adam : Character
     {
-        private Vector2 position;
         private Vector2 exitPosition;
-        private float movingSpeed;
 
-        private Vector2 movingDirection;
-        private Vector2 aimingDirection;
-
-        private Rectangle headSource;
         private Rectangle aimingArmSource;
         private Rectangle restingArmSource;
-        private float rotation;
-        private float rotationTarget;
-        private float rotationSpeed;
+
         private Vector2 leftArmPosition;
         private Vector2 rightArmPosition;
 
-        public Adam(Rectangle window)
+        public Adam(Vector2 position, Element? element) : base(position, element)
         {
-            headSource = new Rectangle(140, 0, 140, 140);
+            texture = TextureLibrary.Adam;
+            source = new Rectangle(140, 0, 140, 140);
+            origin = new Vector2(source.Width / 2, source.Height / 2);
+
             aimingArmSource = new Rectangle(0, 140, 40, 70);
             restingArmSource = new Rectangle(40, 140, 40, 70);
 
             leftArmPosition = new Vector2(28, 22);
             rightArmPosition = new Vector2(-28, 22);
 
-            rotationSpeed = 0.3f;
-            position = window.Size.ToVector2() / 2;
-            movingSpeed = 10;
+            movingSpeed = 1;
+            maxHealth = health = 6;
+            hitbox.Size = new Point(90, 90);
         }
 
-        public Vector2 Position { get { return position; } set { position = value; } }
         public Vector2 ExitPosition { get { return exitPosition; } }
 
-        public void Update(KeyboardState currentKeyboard, MapManager mapManager, Rectangle window)
+        public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
         {
+            //Speed cheat for developers
+            movingSpeed = currentKeyboard.IsKeyDown(Keys.LeftShift) ? 2.5f : 1;
+
             DetermineMovingDirection(currentKeyboard);
             DetermineAimingDirection(currentKeyboard);
             DetermineRotationTarget();
             RotateTowardTarget();
-            Move(currentKeyboard);
 
-            CheckDoors(mapManager, window);
+            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+
+            CheckDoors(mapManager);
         }
 
-        private void CheckDoors(MapManager mapManager, Rectangle window)
+        private void CheckDoors(MapManager mapManager)
         {
             foreach (Door door in mapManager.Rooms[mapManager.CurrentRoomLocation.X, mapManager.CurrentRoomLocation.Y].Doors)
             {
@@ -60,7 +58,7 @@ namespace Wu_Xing
                 {
                     position = door.TransitionExitPosition;
                     exitPosition = door.ExitPosition;
-                    mapManager.StartRoomTransition(door, window);
+                    mapManager.StartRoomTransition(door);
                     break;
                 }
             }
@@ -81,6 +79,9 @@ namespace Wu_Xing
 
             if (currentKeyboard.IsKeyDown(Keys.D))
                 movingDirection.X += 1;
+
+            if (movingDirection != Vector2.Zero)
+                movingDirection.Normalize();
         }
 
         private void DetermineAimingDirection(KeyboardState currentKeyboard)
@@ -98,6 +99,9 @@ namespace Wu_Xing
 
             if (currentKeyboard.IsKeyDown(Keys.Right))
                 aimingDirection.X += 1;
+
+            if (aimingDirection != Vector2.Zero)
+                aimingDirection.Normalize();
         }
 
         private void DetermineRotationTarget()
@@ -143,25 +147,18 @@ namespace Wu_Xing
                 rotation = rotationTarget;
         }
 
-        private void Move(KeyboardState currentKeyboard)
+        public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
         {
-            if (movingDirection != Vector2.Zero)
-                movingDirection.Normalize();
-            position += movingDirection * movingSpeed * (currentKeyboard.IsKeyDown(Keys.LeftShift) ? 3 : 1);
-        }
+            //Arms
+            spriteBatch.Draw(texture, roomPosition + position + Rotate.PointAroundZero(leftArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, color, rotation + (aimingDirection == Vector2.Zero ? -0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, layerDepth - 0.001f);
+            spriteBatch.Draw(texture, roomPosition + position + Rotate.PointAroundZero(rightArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, color, rotation + (aimingDirection == Vector2.Zero ? 0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, layerDepth - 0.001f);
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(TextureLibrary.Adam, position + Rotate.PointAroundZero(leftArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, Color.White, rotation + (aimingDirection == Vector2.Zero ? -0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(TextureLibrary.Adam, position + Rotate.PointAroundZero(rightArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, Color.White, rotation + (aimingDirection == Vector2.Zero ? 0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, 0.5f);
-            spriteBatch.Draw(TextureLibrary.Adam, position, headSource, Color.White, rotation, new Vector2(headSource.Width / 2, headSource.Height / 2), 1, SpriteEffects.None, 0.51f);
+            //Head
+            base.Draw(spriteBatch, roomPosition, drawHitbox);
         }
 
         public void DrawHearts(SpriteBatch spriteBatch)
         {
-            int maxHealth = 6;
-            int health = 5;
-
             for (int i = 1; i <= maxHealth / 2; i++)
                 spriteBatch.Draw(TextureLibrary.Heart, new Vector2(175 + i * 65, 65), new Rectangle(health >= i * 2 ? 0 : health == i * 2 - 1 ? 60 : 120, 0, 60, 60), Color.White);
         }

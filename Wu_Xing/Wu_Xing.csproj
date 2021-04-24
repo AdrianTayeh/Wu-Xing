@@ -68,6 +68,8 @@
     <Compile Include="Camera.cs" />
     <Compile Include="MapGenerator.cs" />
     <Compile Include="MapManager.cs" />
+    <Compile Include="Character.cs" />
+    <Compile Include="Stone.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

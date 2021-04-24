@@ -423,6 +423,18 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Heart.png
 
+#begin Miscellaneous/Hitbox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Hitbox.png
+
 #begin Miscellaneous/Icon Delete.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -458,6 +470,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Minimap Icons.png
+
+#begin Miscellaneous/Tiles.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Tiles.jpg
 
 #begin Normal.spritefont
 /importer:FontDescriptionImporter

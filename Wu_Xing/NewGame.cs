@@ -242,7 +242,7 @@ namespace Wu_Xing
                     stage = Stage.Versus;
 
                     //Generate map on separate thread
-                    generateMap = Task.Run(() => running.InitializeNewMap(GraphicsDevice, random, 13, (Element)Enum.Parse(typeof(Element), item.Key)));
+                    generateMap = Task.Run(() => running.InitializeNewMap(GraphicsDevice, random, 13, (Element)Enum.Parse(typeof(Element), item.Key), (Element)Enum.Parse(typeof(Element), elementToChannel.Name.Replace("Elements\\Symbol ", ""))));
                     break;
                 }
             }

@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wu_Xing
 {
-    public class Room
+    class Room
     {
-        private Tile[,] tiles;
+        private List<Tile> tiles;
         private List<Door> doors;
 
         private Point size;
@@ -25,7 +25,7 @@ namespace Wu_Xing
         public enum Type { Normal, Center, Boss}
         private Type roomType;
 
-        public Room(Point size, Type roomType, List<Door> doors, Tile[,] tiles)
+        public Room(Point size, Type roomType, List<Door> doors, List<Tile> tiles)
         {
             this.size = size;
             this.roomType = roomType;
@@ -69,10 +69,13 @@ namespace Wu_Xing
             return false;          
         }
 
-        public void Draw(SpriteBatch spriteBatch, Element element, Vector2 position)
+        public void Draw(SpriteBatch spriteBatch, Element element, Vector2 position, bool drawHitbox)
         {
             spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, ColorLibrary.Room[element], 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
-            
+
+            foreach (Tile tile in tiles)
+                tile.Draw(spriteBatch, position, drawHitbox);
+
             foreach (Door door in doors)
                 door.Draw(spriteBatch, position);
         }

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Wu_Xing
 {
-    public class Door
+    class Door
     {
         private Vector2 position;
         private float rotation;
@@ -86,8 +86,8 @@ namespace Wu_Xing
 
         public void Draw(SpriteBatch spriteBatch, Vector2 roomPosition)
         {
-            spriteBatch.Draw(TextureLibrary.DoorBottoms[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.11f);
-            spriteBatch.Draw(TextureLibrary.DoorFronts[doorType], roomPosition + position, frontSource, Color.White, rotation, frontOrigin, 1, SpriteEffects.None, 0.12f);
+            spriteBatch.Draw(TextureLibrary.DoorBottoms[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.12f);
+            spriteBatch.Draw(TextureLibrary.DoorFronts[doorType], roomPosition + position, frontSource, Color.White, rotation, frontOrigin, 1, SpriteEffects.None, 0.13f);
             spriteBatch.Draw(TextureLibrary.DoorTops[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.9f);
 
             //Temporary
