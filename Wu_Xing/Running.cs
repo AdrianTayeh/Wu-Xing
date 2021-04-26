@@ -67,7 +67,7 @@ namespace Wu_Xing
         public void InitializeNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
         {
             mapManager.GenerateNewMap(GraphicsDevice, random, size, gemToFind);
-            adam = new Adam(mapManager.CenterOfCenterRoom, elementToChannel);
+            adam = new Adam(mapManager.CenterOfCenterRoom, elementToChannel, random);
         }
 
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, Rectangle window, GraphicsDevice GraphicsDevice)

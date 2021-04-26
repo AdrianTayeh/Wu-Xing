@@ -416,7 +416,7 @@ namespace Wu_Xing
         private void GetDictionaryWithAllGameObjects(Dictionary<string, Character> allCharacters, Dictionary<string, Tile> allTiles)
         {
             //Tiles
-            allTiles.Add("S", new Stone(Vector2.Zero, null));
+            allTiles.Add("S", new Stone(Vector2.Zero, null, random));
 
             //Characters
             
@@ -449,6 +449,7 @@ namespace Wu_Xing
                     {
                         tiles.Add((Tile)allTiles[objectID].Clone());
                         tiles[tiles.Count - 1].MoveTo(new Vector2(gridOffset + a * 100 + 50, gridOffset + y * 100 + 50));
+                        tiles[tiles.Count - 1].NewRandomSourceLocation(random);
                     }
                 }
 

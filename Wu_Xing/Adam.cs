@@ -16,21 +16,24 @@ namespace Wu_Xing
         private Vector2 leftArmPosition;
         private Vector2 rightArmPosition;
 
-        public Adam(Vector2 position, Element? element) : base(position, element)
+        public Adam(Vector2 position, Element? element, Random random) : base(position, element, random)
         {
+            //GameObject
             texture = TextureLibrary.Adam;
             source = new Rectangle(140, 0, 140, 140);
             origin = new Vector2(source.Width / 2, source.Height / 2);
+            hitbox.Size = new Point(90, 90);
+            MoveTo(position);
 
-            aimingArmSource = new Rectangle(0, 140, 40, 70);
-            restingArmSource = new Rectangle(40, 140, 40, 70);
-
-            leftArmPosition = new Vector2(28, 22);
-            rightArmPosition = new Vector2(-28, 22);
-
+            //Character
             movingSpeed = 1;
             maxHealth = health = 6;
-            hitbox.Size = new Point(90, 90);
+
+            //Adam
+            aimingArmSource = new Rectangle(0, 140, 40, 70);
+            restingArmSource = new Rectangle(40, 140, 40, 70);
+            leftArmPosition = new Vector2(28, 22);
+            rightArmPosition = new Vector2(-28, 22);
         }
 
         public Vector2 ExitPosition { get { return exitPosition; } }

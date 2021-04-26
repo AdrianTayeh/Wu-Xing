@@ -5,10 +5,15 @@ namespace Wu_Xing
 {
     class Stone : Tile
     {
-        public Stone(Vector2 position, Element? element) : base(position, element)
+        public Stone(Vector2 position, Element? element, Random random) : base(position, element, random)
         {
-            source.Location = new Point(100, 0);
+            //GameObject
+            texture = TextureLibrary.Stone;
+            source.Location = new Point(random.Next(3) * 100, random.Next(3) * 100);
             hitbox.Size = new Point(100, 100);
+
+            //Tile
+            NewRandomSourceLocation(random);
         }
     }
 }

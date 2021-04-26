@@ -24,9 +24,12 @@ namespace Wu_Xing
         protected Vector2 movingDirection;
         protected Vector2 aimingDirection;
 
-        public Character(Vector2 position, Element? element) : base(position, element)
+        public Character(Vector2 position, Element? element, Random random) : base(position, element, random)
         {
+            //GameObject
             layerDepth = 0.5f;
+
+            //Character
             color = Color.White;
             rotationSpeed = 0.3f;
         }

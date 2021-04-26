@@ -22,10 +22,10 @@ namespace Wu_Xing
         protected float layerDepth;
         protected Element? element;
 
-        public GameObject(Vector2 position, Element? element)
+        public GameObject(Vector2 position, Element? element, Random random)
         {
-            MoveTo(position);
             this.element = element;
+            //No use of calling MoveTo, since hitboxes havn't been initialized at this point
         }
 
         public object Clone()
