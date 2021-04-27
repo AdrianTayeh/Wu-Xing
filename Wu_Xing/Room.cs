@@ -71,7 +71,7 @@ namespace Wu_Xing
 
         public void Draw(SpriteBatch spriteBatch, Element element, Vector2 position, bool drawHitbox)
         {
-            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, ColorLibrary.Room[element], 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
 
             foreach (Tile tile in tiles)
                 tile.Draw(spriteBatch, position, drawHitbox);

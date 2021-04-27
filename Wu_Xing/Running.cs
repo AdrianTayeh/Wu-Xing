@@ -197,17 +197,18 @@ namespace Wu_Xing
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
+            spriteBatch.Draw(TextureLibrary.Filter, Vector2.Zero, null, Color.White);
             mapManager.DrawMinimap(spriteBatch, window);
             adam.DrawHearts(spriteBatch);
 
             if (drawKeyBindings)
             {
-                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings \nR: Restart \nH: Show hitboxes \nEsc: Pause \nTab: Additional UI", new Vector2(100, 250), Color.LightBlue);
-                spriteBatch.DrawString(FontLibrary.Normal, "LShift: Increased speed", new Vector2(100, 250 + FontLibrary.Normal.LineSpacing * 6), Color.OrangeRed);
+                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings \nR: Restart \nH: Show hitboxes \nEsc: Pause \nTab: Additional UI", new Vector2(100, 250), Color.White);
+                spriteBatch.DrawString(FontLibrary.Normal, "LShift: Increased speed", new Vector2(100, 250 + FontLibrary.Normal.LineSpacing * 6), Color.Yellow);
             }
 
             else
-                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 250), Color.LightBlue);
+                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 250), Color.White);
 
             if (gameState == State.Paused)
             {

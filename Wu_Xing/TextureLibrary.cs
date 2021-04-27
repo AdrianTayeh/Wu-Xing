@@ -52,6 +52,7 @@ namespace Wu_Xing
         public static Texture2D WXLogoLight { get; private set; }
 
         //Folder Miscellaneous
+        public static Texture2D Filter { get; private set; }
         public static Texture2D Heart { get; private set; }
         public static Texture2D Hitbox { get; private set; }
         public static Texture2D IconDelete { get; private set; }
@@ -117,6 +118,7 @@ namespace Wu_Xing
             WXLogoLight = Content.Load<Texture2D>("Logos\\WX Logo Light");
 
             //Folder Miscellaneous
+            Filter = Content.Load<Texture2D>("Miscellaneous\\Filter");
             Heart = Content.Load<Texture2D>("Miscellaneous\\Heart");
             Hitbox = Content.Load<Texture2D>("Miscellaneous\\Hitbox");
             IconDelete = Content.Load<Texture2D>("Miscellaneous\\Icon Delete");

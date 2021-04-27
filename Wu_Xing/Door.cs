@@ -89,9 +89,6 @@ namespace Wu_Xing
             spriteBatch.Draw(TextureLibrary.DoorBottoms[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.12f);
             spriteBatch.Draw(TextureLibrary.DoorFronts[doorType], roomPosition + position, frontSource, Color.White, rotation, frontOrigin, 1, SpriteEffects.None, 0.13f);
             spriteBatch.Draw(TextureLibrary.DoorTops[doorType], roomPosition + position, null, Color.White, rotation, origin, 1, SpriteEffects.None, 0.9f);
-
-            //Temporary
-            spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(roomPosition.ToPoint() + entranceArea.Location, entranceArea.Size), null, Color.FromNonPremultiplied(255, 255, 255, 50), 0, Vector2.Zero, SpriteEffects.None, 1f);
         }
     }
 }
