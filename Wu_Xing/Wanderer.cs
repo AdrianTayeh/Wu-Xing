@@ -16,7 +16,13 @@ namespace Wu_Xing
             origin = source.Size.ToVector2() / 2;
             animationFPS = 60;
             MoveTo(position);
-            NewRandomSourceLocation(random);
+            RandomSourceLocation(random);
+            RandomRotation(random, 8);
+
+            //Character
+            maxHealth = health = 70;
+            movingSpeed = 1.1f;
+            shadowSize = 80;
         }
     }
 }

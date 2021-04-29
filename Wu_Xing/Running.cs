@@ -21,7 +21,6 @@ namespace Wu_Xing
 
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
         private MapManager mapManager;
-        private bool drawHitbox;
         private bool drawKeyBindings;
 
         public Running(Rectangle window)
@@ -66,14 +65,14 @@ namespace Wu_Xing
             mapManager.GenerateNewMap(GraphicsDevice, random, size, gemToFind, elementToChannel);
         }
 
-        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, Rectangle window, GraphicsDevice GraphicsDevice)
+        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, GraphicsDevice GraphicsDevice)
         {
             CheckKeyboardInput(currentKeyboard, previousKeyboard, random, GraphicsDevice);
 
             switch (gameState)
             {
                 case State.Running:
-                    UpdateRunning(currentKeyboard, previousKeyboard, elapsedSeconds, window);
+                    UpdateRunning(currentKeyboard, previousKeyboard, elapsedSeconds, random);
                     break;
 
                 case State.Paused:
@@ -101,18 +100,14 @@ namespace Wu_Xing
             else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
                 mapManager.RegenerateMap(random);
 
-            //H - Toggle draw hitbox
-            else if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
-                drawHitbox = !drawHitbox;
-
             //T - Toggle draw tips
             else if (currentKeyboard.IsKeyDown(Keys.K) && previousKeyboard.IsKeyUp(Keys.K))
                 drawKeyBindings = !drawKeyBindings;
         }
 
-        private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Rectangle window)
+        private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random)
         {
-            mapManager.Update(elapsedSeconds, currentKeyboard, previousKeyboard);
+            mapManager.Update(elapsedSeconds, currentKeyboard, previousKeyboard, random);
             UpdateTimer(elapsedSeconds);
 
             if (mapManager.Transition)
@@ -164,7 +159,7 @@ namespace Wu_Xing
 
         public void DrawWorld(SpriteBatch spriteBatch)
         {
-            mapManager.DrawWorld(spriteBatch, drawHitbox);
+            mapManager.DrawWorld(spriteBatch);
         }
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
@@ -180,7 +175,9 @@ namespace Wu_Xing
             }
 
             else
+            {
                 spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 250), Color.White);
+            } 
 
             if (gameState == State.Paused)
             {

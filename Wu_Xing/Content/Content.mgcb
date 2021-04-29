@@ -531,6 +531,18 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Minimap Icons.png
 
+#begin Miscellaneous/Shadow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Shadow.png
+
 #begin Miscellaneous/Stone.png
 /importer:TextureImporter
 /processor:TextureProcessor

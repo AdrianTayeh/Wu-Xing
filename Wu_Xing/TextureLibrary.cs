@@ -62,6 +62,7 @@ namespace Wu_Xing
         public static Texture2D IconDelete { get; private set; }
         public static Texture2D IconPlus { get; private set; }
         public static Texture2D MinimapIcons { get; private set; }
+        public static Texture2D Shadow { get; private set; }
         public static Texture2D Stone { get; private set; }
         public static Texture2D Tiles { get; private set; }
 
@@ -132,6 +133,7 @@ namespace Wu_Xing
             IconDelete = Content.Load<Texture2D>("Miscellaneous\\Icon Delete");
             IconPlus = Content.Load<Texture2D>("Miscellaneous\\Icon Plus");
             MinimapIcons = Content.Load<Texture2D>("Miscellaneous\\Minimap Icons");
+            Shadow = Content.Load<Texture2D>("Miscellaneous\\Shadow");
             Stone = Content.Load<Texture2D>("Miscellaneous\\Stone");
             Tiles = Content.Load<Texture2D>("Miscellaneous\\Tiles");
 

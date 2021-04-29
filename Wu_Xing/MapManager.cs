@@ -17,6 +17,8 @@ namespace Wu_Xing
         private Room currentRoom;
         private Element element;
 
+        private bool drawHitboxes;
+
         private Point currentRoomLocation;
         private Point transitionRoom;
         private Vector2 transitionPosition;
@@ -68,10 +70,18 @@ namespace Wu_Xing
             }
         }
 
-        public void Update(float elapsedSeconds, KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        public void Update(float elapsedSeconds, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
         {
-            currentRoom.Update(elapsedSeconds, currentKeyboard, adam, this);
+            CheckKeyboardInput(currentKeyboard, previousKeyboard);
+            currentRoom.Update(elapsedSeconds, currentKeyboard, adam, this, random);
             UpdateMinimapOpacityAndScale(currentKeyboard, previousKeyboard);
+        }
+
+        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        {
+            //H - Toggle draw hitbox
+            if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
+                drawHitboxes = !drawHitboxes;
         }
 
         public void GenerateNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
@@ -260,13 +270,13 @@ namespace Wu_Xing
             spriteBatch.Draw(fullMinimap, new Vector2(window.Width - 50, 50), minimapSource, Color.FromNonPremultiplied(255, 255, 255, (int)(255 * minimapOpacity)), 0, new Vector2(minimapSource.Width, 0), minimapScale, SpriteEffects.None, 0);
         }
 
-        public void DrawWorld(SpriteBatch spriteBatch, bool drawHitbox)
+        public void DrawWorld(SpriteBatch spriteBatch)
         {
-            adam.Draw(spriteBatch, Vector2.Zero, drawHitbox);
-            currentRoom.Draw(spriteBatch, element, Vector2.Zero, drawHitbox);
+            adam.Draw(spriteBatch, Vector2.Zero, drawHitboxes);
+            currentRoom.Draw(spriteBatch, element, Vector2.Zero, drawHitboxes);
 
             if (transitionRoom != new Point(-1, -1))
-                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition, drawHitbox);
+                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition, drawHitboxes);
         }
     }
 }

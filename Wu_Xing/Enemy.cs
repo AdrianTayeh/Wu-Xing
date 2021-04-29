@@ -12,9 +12,9 @@ namespace Wu_Xing
 
         }
 
-        public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
+        public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
-            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
     }
 }

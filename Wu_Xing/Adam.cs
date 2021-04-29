@@ -20,21 +20,22 @@ namespace Wu_Xing
             texture = TextureLibrary.Adam;
             source = new Rectangle(140, 0, 140, 140);
             origin = source.Size.ToVector2() / 2;
-            hitbox.Size = new Point(90);
+            hitbox.Size = new Point(86);
             MoveTo(position);
 
             //Character
             movingSpeed = 1;
             maxHealth = health = 6;
+            shadowSize = 100;
 
             //Adam
             aimingArmSource = new Rectangle(0, 140, 40, 70);
             restingArmSource = new Rectangle(40, 140, 40, 70);
-            leftArmPosition = new Vector2(28, 22);
-            rightArmPosition = new Vector2(-28, 22);
+            leftArmPosition = new Vector2(28, 16);
+            rightArmPosition = new Vector2(-28, 16);
         }
 
-        public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
+        public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
             //Speed cheat for developers
             movingSpeed = currentKeyboard.IsKeyDown(Keys.LeftShift) ? 2.5f : 1;
@@ -44,7 +45,7 @@ namespace Wu_Xing
             DetermineRotationTarget();
             RotateTowardTarget();
 
-            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             CheckDoors(mapManager);
         }
@@ -148,8 +149,8 @@ namespace Wu_Xing
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
         {
             //Arms
-            spriteBatch.Draw(texture, roomPosition + position + Rotate.PointAroundZero(leftArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, color, rotation + (aimingDirection == Vector2.Zero ? -0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, layerDepth - 0.001f);
-            spriteBatch.Draw(texture, roomPosition + position + Rotate.PointAroundZero(rightArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, color, rotation + (aimingDirection == Vector2.Zero ? 0.3f : 0), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, layerDepth - 0.001f);
+            spriteBatch.Draw(texture, roomPosition + position + Rotate.PointAroundZero(leftArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, color, rotation + (aimingDirection == Vector2.Zero ? -0.3f : 0.12f), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, layerDepth - 0.001f);
+            spriteBatch.Draw(texture, roomPosition + position + Rotate.PointAroundZero(rightArmPosition, rotation), aimingDirection == Vector2.Zero ? restingArmSource : aimingArmSource, color, rotation + (aimingDirection == Vector2.Zero ? 0.3f : -0.12f), new Vector2(aimingArmSource.Width / 2, aimingArmSource.Height / 4), 1, SpriteEffects.None, layerDepth - 0.001f);
 
             //Head
             base.Draw(spriteBatch, roomPosition, drawHitbox);

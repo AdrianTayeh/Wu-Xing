@@ -13,7 +13,8 @@ namespace Wu_Xing
     {
         // Initialized in constructor
         protected Element? element;
-        
+        protected Color color;
+
         // Will be initialized in subclass constructor
         protected Vector2 position;
         protected Texture2D texture;
@@ -24,13 +25,17 @@ namespace Wu_Xing
 
         // May be initialized in subclass constructor
         protected float animationFPS;
+        protected float rotation;
 
         // Not initialized
         protected float animationTimer;
+        protected bool dead;
 
         public GameObject(Vector2 position, Element? element, Random random)
         {
             this.element = element;
+            color = Color.White;
+
             //No use of calling MoveTo, since hitboxes havn't been initialized at this point
         }
 
@@ -39,8 +44,9 @@ namespace Wu_Xing
         public Rectangle Hitbox { get { return hitbox; } }
         public Rectangle Source { get { return source; } }
         public Element? Element { get { return element; } }
+        public bool IsDead { get { return dead; } }
 
-        public virtual void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
+        public virtual void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
             if (animationFPS != 0)
                 UpdateAnimation(elapsedSeconds);
@@ -71,7 +77,7 @@ namespace Wu_Xing
             }
         }
 
-        public void NewRandomSourceLocation(Random random)
+        public void RandomSourceLocation(Random random)
         {
             //Using the size of an objects texture and source,
             //a new source location can be randomized, assuming the texture consists of a grid of same sized sources
@@ -79,18 +85,17 @@ namespace Wu_Xing
             source.Location = new Point(random.Next(texture.Width / source.Width) * source.Width, random.Next(texture.Height / source.Height) * source.Height);
         }
 
-        //Used by Tile, overidden by Character
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
+        public void RandomRotation(Random random, int steps)
         {
-            spriteBatch.Draw(texture, roomPosition + position, source, Color.White, 0, origin, 1, SpriteEffects.None, layerDepth);
-
-            if (drawHitbox)
-                DrawHitbox(spriteBatch);
+            rotation = (float)(random.Next(steps) * Math.PI * 2 / steps);
         }
 
-        public void DrawHitbox(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
         {
-            spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
+            spriteBatch.Draw(texture, roomPosition + position, source, color, rotation, origin, 1, SpriteEffects.None, layerDepth);
+
+            if (drawHitbox)
+                spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
         }
 
     }

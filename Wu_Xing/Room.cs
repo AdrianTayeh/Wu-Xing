@@ -37,15 +37,15 @@ namespace Wu_Xing
         public State RoomState { get { return roomState; } set { roomState = value; } }
         public List<Door> Doors { get { return doors; } }
 
-        public void Update(float elapsedSeconds, KeyboardState currentKeyboard, Adam adam, MapManager mapManager)
+        public void Update(float elapsedSeconds, KeyboardState currentKeyboard, Adam adam, MapManager mapManager, Random random)
         {
-            adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+            adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             foreach (GameObject gameObject in gameObjects)
-                gameObject.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
+                gameObject.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             for (int i = gameObjects.Count - 1; i >= 0; i--)
-                if (gameObjects[i] is Enemy && ((Enemy)gameObjects[i]).IsDead)
+                if (gameObjects[i].IsDead)
                     gameObjects.RemoveAt(i);
         }
 

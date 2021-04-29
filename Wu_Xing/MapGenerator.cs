@@ -384,11 +384,6 @@ namespace Wu_Xing
             rows.Add(Room.Type.Center, new Dictionary<Point, List<string>>());
             rows.Add(Room.Type.Boss, new Dictionary<Point, List<string>>());
 
-            //Initialize rows[Room.Type] dictionaries
-            /*rows[Room.Type.Normal] = new Dictionary<Point, List<string>>();
-            rows[Room.Type.Center] = new Dictionary<Point, List<string>>();
-            rows[Room.Type.Boss] = new Dictionary<Point, List<string>>();*/
-            
             //Points to be used
             List<Point> sizes = new List<Point>();
             sizes.Add(new Point(1, 1));
@@ -403,16 +398,8 @@ namespace Wu_Xing
             //Add pairs of points and lists to rows[Room.Type] dictionaries
             foreach (Point size in sizes)
             {
-                try
-                {
-                    rows[Room.Type.Normal].Add(size, File.ReadAllLines(roomContentFolderPath + "/Normal " + size.X + "x" + size.Y + ".txt").ToList());
-                    rows[Room.Type.Center].Add(size, File.ReadAllLines(roomContentFolderPath + "/Center " + size.X + "x" + size.Y + ".txt").ToList());
-                }
-
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
+                rows[Room.Type.Normal].Add(size, File.ReadAllLines(roomContentFolderPath + "/Normal " + size.X + "x" + size.Y + ".txt").ToList());
+                rows[Room.Type.Center].Add(size, File.ReadAllLines(roomContentFolderPath + "/Center " + size.X + "x" + size.Y + ".txt").ToList());
             }
 
             rows[Room.Type.Boss].Add(new Point(1, 1), File.ReadAllLines(roomContentFolderPath + "/Boss 1x1.txt").ToList());

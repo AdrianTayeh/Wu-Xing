@@ -13,16 +13,21 @@ namespace Wu_Xing
             color = ColorLibrary.Element[element];
             source.Size = new Point(100, 130);
             hitbox.Size = new Point(60);
-            origin = source.Size.ToVector2() / 2 + new Vector2(0, 13);
+            origin = source.Size.ToVector2() / 2 + new Vector2(0, 15);
             animationFPS = 60;
             MoveTo(position);
-            NewRandomSourceLocation(random);
+            RandomSourceLocation(random);
+
+            //Character
+            maxHealth = health = 30;
+            movingSpeed = 1.1f;
+            shadowSize = 80;
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
         {
             base.Draw(spriteBatch, roomPosition, drawHitbox);
-            spriteBatch.Draw(TextureLibrary.ElementalEyes, roomPosition + position + new Vector2(0, 34), null, Color.White, 0, origin, 1, SpriteEffects.None, layerDepth + 0.001f);
+            spriteBatch.Draw(TextureLibrary.ElementalEyes, roomPosition + position + new Vector2(0, 35), null, Color.White, 0, origin, 1, SpriteEffects.None, layerDepth + 0.001f);
         }
     }
 }
