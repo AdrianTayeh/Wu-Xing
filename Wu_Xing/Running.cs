@@ -12,7 +12,6 @@ namespace Wu_Xing
 {
     class Running
     {
-        private Adam adam;
         private enum State { Running, Paused, Transition, GameOver }
         private State gameState;
 
@@ -21,9 +20,7 @@ namespace Wu_Xing
         private int hours;
 
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
-
         private MapManager mapManager;
-        private List<GameObject> gameObjects = new List<GameObject>();
         private bool drawHitbox;
         private bool drawKeyBindings;
 
@@ -59,15 +56,14 @@ namespace Wu_Xing
                 ));
         }
 
-        public Vector2 CameraFocus { get { return mapManager.TransitionPosition == Vector2.Zero ? adam.Position : mapManager.TransitionPosition; } }
+        public Vector2 CameraFocus { get { return mapManager.TransitionPosition == Vector2.Zero ? mapManager.Adam.Position : mapManager.TransitionPosition; } }
         public bool LimitCameraFocusToBounds { get { return mapManager.TransitionPosition == Vector2.Zero; } }
         public Point CurrentRoomSize { get { return mapManager == null ? new Point(1, 1) : mapManager.CurrentRoom.Size; } }
         public bool MapInitialized { get { return mapManager.Rooms != null; } }
 
         public void InitializeNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
         {
-            mapManager.GenerateNewMap(GraphicsDevice, random, size, gemToFind);
-            adam = new Adam(mapManager.CenterOfCenterRoom, elementToChannel, random);
+            mapManager.GenerateNewMap(GraphicsDevice, random, size, gemToFind, elementToChannel);
         }
 
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, Rectangle window, GraphicsDevice GraphicsDevice)
@@ -85,7 +81,8 @@ namespace Wu_Xing
                     break;
 
                 case State.Transition:
-                    UpdateTransition();
+                    if (!mapManager.Transition)
+                        gameState = State.Running;
                     break;
 
                 case State.GameOver:
@@ -102,7 +99,7 @@ namespace Wu_Xing
 
             //R - Reset run
             else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
-                InitializeNewMap(GraphicsDevice, random, mapManager.Size, mapManager.Element, (Element)adam.Element);
+                mapManager.RegenerateMap(random);
 
             //H - Toggle draw hitbox
             else if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
@@ -115,19 +112,7 @@ namespace Wu_Xing
 
         private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Rectangle window)
         {
-            //Update adam and other characters
-            adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
-
-            foreach (GameObject gameObject in gameObjects)
-                gameObject.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager);
-
-            //Remove dead characters from gameObjects list
-            for (int i = gameObjects.Count - 1; i >= 0; i--)
-                if (gameObjects[i] is Character)
-                    if (((Character)gameObjects[i]).IsDead)
-                        gameObjects.RemoveAt(i);
-
-            mapManager.Update(currentKeyboard, previousKeyboard);
+            mapManager.Update(elapsedSeconds, currentKeyboard, previousKeyboard);
             UpdateTimer(elapsedSeconds);
 
             if (mapManager.Transition)
@@ -156,15 +141,6 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdateTransition()
-        {
-            if (mapManager.Transition)
-                return;
-
-            gameState = State.Running;
-            adam.MoveTo(adam.ExitPosition);
-        }
-
         private void UpdateTimer(float elapsedSeconds)
         {
             seconds += elapsedSeconds;
@@ -189,17 +165,13 @@ namespace Wu_Xing
         public void DrawWorld(SpriteBatch spriteBatch)
         {
             mapManager.DrawWorld(spriteBatch, drawHitbox);
-            adam.Draw(spriteBatch, Vector2.Zero, drawHitbox);
-
-            foreach (GameObject gameObject in gameObjects)
-                gameObject.Draw(spriteBatch, Vector2.Zero, drawHitbox);
         }
 
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
             spriteBatch.Draw(TextureLibrary.Filter, Vector2.Zero, null, Color.White);
             mapManager.DrawMinimap(spriteBatch, window);
-            adam.DrawHearts(spriteBatch);
+            mapManager.Adam.DrawHearts(spriteBatch);
 
             if (drawKeyBindings)
             {

@@ -5,14 +5,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Wu_Xing
 {
-    class Tile : GameObject
+    class Enemy : Character
     {
-        public Tile(Vector2 position, Element? element, Random random) : base(position, element, random)
+        public Enemy(Vector2 position, Element? element, Random random) : base(position, element, random)
         {
-            //GameObject
-            layerDepth = 0.11f;
-            source.Size = new Point(100, 100);
-            origin = source.Size.ToVector2() / 2;
+
         }
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)

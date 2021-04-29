@@ -18,6 +18,10 @@ namespace Wu_Xing
 
         //Folder Characters
         public static Texture2D Adam { get; private set; }
+        public static Texture2D ElementalEyes { get; private set; }
+        public static Texture2D Orb { get; private set; }
+        public static Texture2D Soul { get; private set; }
+        public static Texture2D Wanderer { get; private set; }
 
         //Folder Doors
         public static Dictionary<Room.Type, Texture2D> DoorBottoms { get; private set; }
@@ -76,6 +80,10 @@ namespace Wu_Xing
 
             //Folder Characters
             Adam = Content.Load<Texture2D>("Characters\\Adam");
+            ElementalEyes = Content.Load<Texture2D>("Characters\\Elemental Eyes");
+            Orb = Content.Load<Texture2D>("Characters\\Orb");
+            Soul = Content.Load<Texture2D>("Characters\\Soul");
+            Wanderer = Content.Load<Texture2D>("Characters\\Wanderer");
 
             //Folder Doors
             DoorBottoms = new Dictionary<Room.Type, Texture2D>();

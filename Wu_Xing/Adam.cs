@@ -8,8 +8,6 @@ namespace Wu_Xing
 {
     class Adam : Character
     {
-        private Vector2 exitPosition;
-
         private Rectangle aimingArmSource;
         private Rectangle restingArmSource;
 
@@ -21,8 +19,8 @@ namespace Wu_Xing
             //GameObject
             texture = TextureLibrary.Adam;
             source = new Rectangle(140, 0, 140, 140);
-            origin = new Vector2(source.Width / 2, source.Height / 2);
-            hitbox.Size = new Point(90, 90);
+            origin = source.Size.ToVector2() / 2;
+            hitbox.Size = new Point(90);
             MoveTo(position);
 
             //Character
@@ -35,8 +33,6 @@ namespace Wu_Xing
             leftArmPosition = new Vector2(28, 22);
             rightArmPosition = new Vector2(-28, 22);
         }
-
-        public Vector2 ExitPosition { get { return exitPosition; } }
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
         {
@@ -60,7 +56,6 @@ namespace Wu_Xing
                 if (door.EntranceArea.Contains(position))
                 {
                     position = door.TransitionExitPosition;
-                    exitPosition = door.ExitPosition;
                     mapManager.StartRoomTransition(door);
                     break;
                 }

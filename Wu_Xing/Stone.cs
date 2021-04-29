@@ -9,10 +9,8 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.Stone;
-            source.Location = new Point(random.Next(3) * 100, random.Next(3) * 100);
-            hitbox.Size = new Point(100, 100);
-
-            //Tile
+            hitbox.Size = new Point(100);
+            MoveTo(position);
             NewRandomSourceLocation(random);
         }
     }
