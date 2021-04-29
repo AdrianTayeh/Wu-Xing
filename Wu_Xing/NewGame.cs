@@ -135,7 +135,7 @@ namespace Wu_Xing
             gemButton["Water"].Active = waterGemObtained;
         }
 
-        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, Running running, GameTime gameTime, GraphicsDevice GraphicsDevice)
+        public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, Running running, float elapsedSeconds, GraphicsDevice GraphicsDevice)
         {
             switch (stage)
             {
@@ -150,17 +150,15 @@ namespace Wu_Xing
                     break;
 
                 case Stage.Versus:
-                    UpdateVersus(ref screen, gameTime);
+                    UpdateVersus(ref screen, elapsedSeconds);
                     break;
             }
         }
 
         private void UpdateEnergy()
         {
-            //Rotate energy circle
             energyCircleRotation = (energyCircleRotation + 0.01f) % ((float)Math.PI * 2);
 
-            //Move energy line sources
             for (int i = 0; i < energyLineSource.Length; i++)
                 energyLineSource[i].X = (energyLineSource[i].X + 2) % (TextureLibrary.EnergyLine.Width - energyLineSource[i].Width);  
         }
@@ -248,9 +246,9 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdateVersus(ref Screen screen, GameTime gameTime)
+        private void UpdateVersus(ref Screen screen, float elapsedSeconds)
         {
-            versusScreenTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            versusScreenTimer += elapsedSeconds;
             if (versusScreenTimer >= 4 && generateMap.IsCompleted)
             {
                 versusScreenTimer = 0;

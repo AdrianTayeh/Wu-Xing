@@ -70,6 +70,10 @@
     <Compile Include="MapManager.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Stone.cs" />
+    <Compile Include="Enemy.cs" />
+    <Compile Include="Orb.cs" />
+    <Compile Include="Soul.cs" />
+    <Compile Include="Wanderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

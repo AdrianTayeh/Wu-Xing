@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Wu_Xing
 {
@@ -9,11 +11,10 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.Stone;
-            source.Location = new Point(random.Next(3) * 100, random.Next(3) * 100);
-            hitbox.Size = new Point(100, 100);
-
-            //Tile
-            NewRandomSourceLocation(random);
+            hitbox.Size = new Point(100);
+            MoveTo(position);
+            RandomSourceLocation(random);
+            RandomRotation(random, 4);
         }
     }
 }

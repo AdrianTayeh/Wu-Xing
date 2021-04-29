@@ -18,6 +18,10 @@ namespace Wu_Xing
 
         //Folder Characters
         public static Texture2D Adam { get; private set; }
+        public static Texture2D ElementalEyes { get; private set; }
+        public static Texture2D Orb { get; private set; }
+        public static Texture2D Soul { get; private set; }
+        public static Texture2D Wanderer { get; private set; }
 
         //Folder Doors
         public static Dictionary<Room.Type, Texture2D> DoorBottoms { get; private set; }
@@ -58,6 +62,7 @@ namespace Wu_Xing
         public static Texture2D IconDelete { get; private set; }
         public static Texture2D IconPlus { get; private set; }
         public static Texture2D MinimapIcons { get; private set; }
+        public static Texture2D Shadow { get; private set; }
         public static Texture2D Stone { get; private set; }
         public static Texture2D Tiles { get; private set; }
 
@@ -76,6 +81,10 @@ namespace Wu_Xing
 
             //Folder Characters
             Adam = Content.Load<Texture2D>("Characters\\Adam");
+            ElementalEyes = Content.Load<Texture2D>("Characters\\Elemental Eyes");
+            Orb = Content.Load<Texture2D>("Characters\\Orb");
+            Soul = Content.Load<Texture2D>("Characters\\Soul");
+            Wanderer = Content.Load<Texture2D>("Characters\\Wanderer");
 
             //Folder Doors
             DoorBottoms = new Dictionary<Room.Type, Texture2D>();
@@ -124,6 +133,7 @@ namespace Wu_Xing
             IconDelete = Content.Load<Texture2D>("Miscellaneous\\Icon Delete");
             IconPlus = Content.Load<Texture2D>("Miscellaneous\\Icon Plus");
             MinimapIcons = Content.Load<Texture2D>("Miscellaneous\\Minimap Icons");
+            Shadow = Content.Load<Texture2D>("Miscellaneous\\Shadow");
             Stone = Content.Load<Texture2D>("Miscellaneous\\Stone");
             Tiles = Content.Load<Texture2D>("Miscellaneous\\Tiles");
 

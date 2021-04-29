@@ -9,28 +9,34 @@ using System.Threading.Tasks;
 
 namespace Wu_Xing
 {
-    abstract class GameObject : ICloneable
+    abstract class GameObject
     {
-        // Initialized in constructor head
-        protected Vector2 position;
-        protected Rectangle source;
+        // Initialized in constructor
+        protected Element? element;
+        protected Color color;
 
-        // To be initialized in subclass constructor
+        // Will be initialized in subclass constructor
+        protected Vector2 position;
         protected Texture2D texture;
+        protected Rectangle source;
         protected Rectangle hitbox;
         protected Vector2 origin;
         protected float layerDepth;
-        protected Element? element;
+
+        // May be initialized in subclass constructor
+        protected float animationFPS;
+        protected float rotation;
+
+        // Not initialized
+        protected float animationTimer;
+        protected bool dead;
 
         public GameObject(Vector2 position, Element? element, Random random)
         {
             this.element = element;
-            //No use of calling MoveTo, since hitboxes havn't been initialized at this point
-        }
+            color = Color.White;
 
-        public object Clone()
-        {
-            return MemberwiseClone();
+            //No use of calling MoveTo, since hitboxes havn't been initialized at this point
         }
 
         public Texture2D Texture { get { return texture; } }
@@ -38,10 +44,12 @@ namespace Wu_Xing
         public Rectangle Hitbox { get { return hitbox; } }
         public Rectangle Source { get { return source; } }
         public Element? Element { get { return element; } }
+        public bool IsDead { get { return dead; } }
 
-        public virtual void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager)
+        public virtual void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
-            
+            if (animationFPS != 0)
+                UpdateAnimation(elapsedSeconds);
         }
 
         public void MoveTo(Vector2 newPosition)
@@ -50,18 +58,44 @@ namespace Wu_Xing
             hitbox.Location = (position - hitbox.Size.ToVector2() / 2).ToPoint();
         }
 
-        //Used by Tile, overidden by Character
-        public virtual void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
+        protected void UpdateAnimation(float elapsedSeconds)
         {
-            spriteBatch.Draw(texture, roomPosition + position, source, Color.White, 0, origin, 1, SpriteEffects.None, layerDepth);
+            animationTimer += elapsedSeconds;
+            if (animationTimer >= 1 / animationFPS)
+            {
+                animationTimer -= 1 / animationFPS;
+                source.X += source.Width;
 
-            if (drawHitbox)
-                DrawHitbox(spriteBatch);
+                if (source.X >= texture.Bounds.Width)
+                {
+                    source.X = 0;
+                    source.Y += source.Height;
+
+                    if (source.Y >= texture.Bounds.Height)
+                        source.Y = 0;
+                }
+            }
         }
 
-        public void DrawHitbox(SpriteBatch spriteBatch)
+        public void RandomSourceLocation(Random random)
         {
-            spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
+            //Using the size of an objects texture and source,
+            //a new source location can be randomized, assuming the texture consists of a grid of same sized sources
+            //Does not fail even if the texture only holds one source
+            source.Location = new Point(random.Next(texture.Width / source.Width) * source.Width, random.Next(texture.Height / source.Height) * source.Height);
+        }
+
+        public void RandomRotation(Random random, int steps)
+        {
+            rotation = (float)(random.Next(steps) * Math.PI * 2 / steps);
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
+        {
+            spriteBatch.Draw(texture, roomPosition + position, source, color, rotation, origin, 1, SpriteEffects.None, layerDepth);
+
+            if (drawHitbox)
+                spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
         }
 
     }

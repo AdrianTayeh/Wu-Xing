@@ -122,11 +122,11 @@ namespace Wu_Xing
                     break;
 
                 case Screen.NewGame:
-                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, random, running, gameTime, GraphicsDevice);
+                    newGame.Update(ref screen, mouse, currentKeyboard, previousKeyboard, random, running, (float)gameTime.ElapsedGameTime.TotalSeconds, GraphicsDevice);
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, (float)gameTime.ElapsedGameTime.TotalSeconds, random, window, GraphicsDevice);
+                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, (float)gameTime.ElapsedGameTime.TotalSeconds, random, GraphicsDevice);
                     break;
             }
 
@@ -152,8 +152,9 @@ namespace Wu_Xing
             // 0.11 Tiles
             // 0.12 Door Bottoms
             // 0.13 Door Fronts
-            // 0.5 GameObjects Bottom
-            // 0.51 GameObjects Top
+            // 0.4 GameObject Shadows
+            // 0.5 GameObject Bottoms
+            // 0.51 GameObject Tops
             // 0.9 Door Tops
 
             if (screen == Screen.Running)
