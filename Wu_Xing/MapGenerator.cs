@@ -393,7 +393,11 @@ namespace Wu_Xing
             sizes.Add(new Point(3, 1));
             sizes.Add(new Point(2, 2));
 
-            string roomContentFolderPath = Environment.CurrentDirectory.Replace("bin/DesktopGL/AnyCPU/Debug", "Room Content");
+            string roomContentFolderPath = Environment.CurrentDirectory;
+            //For Windows
+            roomContentFolderPath = roomContentFolderPath.Replace(@"bin\DesktopGL\AnyCPU\Debug", "Room Content");
+            //For MacOS
+            roomContentFolderPath = roomContentFolderPath.Replace(@"bin/DesktopGL/AnyCPU/Debug", "Room Content");
 
             //Add pairs of points and lists to rows[Room.Type] dictionaries
             foreach (Point size in sizes)
