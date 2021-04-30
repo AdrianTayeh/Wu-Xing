@@ -495,6 +495,18 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Hitbox.png
 
+#begin Miscellaneous/Hole.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Hole.png
+
 #begin Miscellaneous/Icon Delete.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -566,6 +578,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Tiles.jpg
+
+#begin Miscellaneous/WoodBox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/WoodBox.png
 
 #begin Normal.spritefont
 /importer:FontDescriptionImporter

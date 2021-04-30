@@ -393,7 +393,12 @@ namespace Wu_Xing
             sizes.Add(new Point(3, 1));
             sizes.Add(new Point(2, 2));
 
-            string roomContentFolderPath = Environment.CurrentDirectory.Replace("bin/DesktopGL/AnyCPU/Debug", "Room Content");
+            string roomContentFolderPath = Environment.CurrentDirectory;
+
+            //For Windows
+            roomContentFolderPath = roomContentFolderPath.Replace(@"bin\DesktopGL\AnyCPU\Debug", "Room Content");
+            //For MacOS
+            roomContentFolderPath = roomContentFolderPath.Replace(@"bin/DesktopGL/AnyCPU/Debug", "Room Content");
 
             //Add pairs of points and lists to rows[Room.Type] dictionaries
             foreach (Point size in sizes)
@@ -434,7 +439,13 @@ namespace Wu_Xing
                     for (int i = 0; i < length; i++)
                     {
                         if (objectID == "S")
-                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), null, random));
+                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), Element.Earth, random));
+
+                        else if (objectID == "W")
+                            gameObjects.Add(new WoodBox(new Vector2(position.X + i * 100, position.Y), Element.Wood, random));
+
+                        else if (objectID == "H")
+                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), null, random));
                     }
                 }
 
@@ -451,6 +462,10 @@ namespace Wu_Xing
                         gameObjects.Add(new Wanderer(position, element, random));
                 }
             }
+
+            foreach (GameObject gameObject in gameObjects)
+                if (gameObject is Hole)
+                    ((Hole)gameObject).UpdateAppearence(gameObjects);
         }
 
         private List<Door> GetListOfDoors(int x, int y)

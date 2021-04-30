@@ -74,6 +74,8 @@
     <Compile Include="Orb.cs" />
     <Compile Include="Soul.cs" />
     <Compile Include="Wanderer.cs" />
+    <Compile Include="WoodBox.cs" />
+    <Compile Include="Hole.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

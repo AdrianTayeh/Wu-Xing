@@ -59,12 +59,13 @@ namespace Wu_Xing
         public static Texture2D Filter { get; private set; }
         public static Texture2D Heart { get; private set; }
         public static Texture2D Hitbox { get; private set; }
+        public static Texture2D Hole { get; private set; }
         public static Texture2D IconDelete { get; private set; }
         public static Texture2D IconPlus { get; private set; }
         public static Texture2D MinimapIcons { get; private set; }
         public static Texture2D Shadow { get; private set; }
         public static Texture2D Stone { get; private set; }
-        public static Texture2D Tiles { get; private set; }
+        public static Texture2D WoodBox { get; private set; }
 
         //Folder Rooms
         public static Dictionary<string, Texture2D> Rooms { get; private set; }
@@ -130,12 +131,13 @@ namespace Wu_Xing
             Filter = Content.Load<Texture2D>("Miscellaneous\\Filter");
             Heart = Content.Load<Texture2D>("Miscellaneous\\Heart");
             Hitbox = Content.Load<Texture2D>("Miscellaneous\\Hitbox");
+            Hole = Content.Load<Texture2D>("Miscellaneous\\Hole");
             IconDelete = Content.Load<Texture2D>("Miscellaneous\\Icon Delete");
             IconPlus = Content.Load<Texture2D>("Miscellaneous\\Icon Plus");
             MinimapIcons = Content.Load<Texture2D>("Miscellaneous\\Minimap Icons");
             Shadow = Content.Load<Texture2D>("Miscellaneous\\Shadow");
             Stone = Content.Load<Texture2D>("Miscellaneous\\Stone");
-            Tiles = Content.Load<Texture2D>("Miscellaneous\\Tiles");
+            WoodBox = Content.Load<Texture2D>("Miscellaneous\\WoodBox");
 
             //Folder Rooms
             Rooms = new Dictionary<string, Texture2D>();
