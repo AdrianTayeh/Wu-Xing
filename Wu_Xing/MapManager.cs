@@ -82,10 +82,6 @@ namespace Wu_Xing
             //H - Toggle draw hitbox
             if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
                 drawHitboxes = !drawHitboxes;
-
-            //R - Reset run
-            else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
-                RegenerateMap(random);
         }
 
         public void GenerateNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
