@@ -100,6 +100,12 @@ namespace Wu_Xing
             adam = new Adam(CenterOfCenterRoom, adam.Element, random);
         }
 
+        public void NullMap()
+        {
+            rooms = null;
+            adam = null;
+        }
+
         private void MakeCenterCurrentRoom()
         {
             //Find the room with type Center and set currentRoom to the rooms location in the map grid

@@ -67,7 +67,7 @@ namespace Wu_Xing
 
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, GraphicsDevice GraphicsDevice)
         {
-            CheckKeyboardInput(currentKeyboard, previousKeyboard, random, GraphicsDevice);
+            CheckKeyboardInput(ref screen, currentKeyboard, previousKeyboard, random, GraphicsDevice);
 
             switch (gameState)
             {
@@ -90,19 +90,35 @@ namespace Wu_Xing
             }
         }
 
-        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, GraphicsDevice GraphicsDevice)
+        private void CheckKeyboardInput(ref Screen screen, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, GraphicsDevice GraphicsDevice)
         {
             //Escape - Toggle pause
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
-                gameState = gameState == State.Running ? State.Paused : State.Running;
-
+            {
+                if (gameState == State.Running || gameState == State.Paused)
+                {
+                    gameState = gameState == State.Running ? State.Paused : State.Running;
+                }
+                    
+                else if (gameState == State.GameOver)
+                {
+                    screen = Screen.Pregame;
+                    mapManager.NullMap();
+                }  
+            }
+                
             //R - Reset run
             else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
+            {
+                gameState = State.Running;
                 mapManager.RegenerateMap(random);
+            }
 
             //T - Toggle draw tips
             else if (currentKeyboard.IsKeyDown(Keys.K) && previousKeyboard.IsKeyUp(Keys.K))
+            {
                 drawKeyBindings = !drawKeyBindings;
+            }
         }
 
         private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random)
@@ -110,7 +126,10 @@ namespace Wu_Xing
             mapManager.Update(elapsedSeconds, currentKeyboard, previousKeyboard, random);
             UpdateTimer(elapsedSeconds);
 
-            if (mapManager.Transition)
+            if (mapManager.Adam.IsDead)
+                gameState = State.GameOver;
+
+            else if (mapManager.Transition)
                 gameState = State.Transition;
         }
 
@@ -189,6 +208,15 @@ namespace Wu_Xing
 
                 foreach (KeyValuePair<string, Button> item in button)
                     item.Value.Draw(spriteBatch);
+            }
+
+            else if (gameState == State.GameOver)
+            {
+                spriteBatch.Draw(TextureLibrary.WhitePixel, window, Color.FromNonPremultiplied(0, 0, 0, 150));
+                spriteBatch.DrawString(FontLibrary.Huge, "YOU DIED", new Vector2(window.Width / 2, 450), Color.White, 0, FontLibrary.Huge.MeasureString("YOU DIED") / 2, 1, SpriteEffects.None, 0);
+                spriteBatch.DrawString(FontLibrary.Normal, "PRESS R TO RESTART", new Vector2(window.Width / 2, 530), Color.White, 0, FontLibrary.Normal.MeasureString("PRESS R TO RESTART") / 2, 1, SpriteEffects.None, 0);
+                spriteBatch.DrawString(FontLibrary.Normal, "OR ESC TO RETURN TO MENU", new Vector2(window.Width / 2, 530 + FontLibrary.Normal.LineSpacing), Color.White, 0, FontLibrary.Normal.MeasureString("OR ESC TO RETURN TO MENU") / 2, 1, SpriteEffects.None, 0);
+
             }
         }
     }

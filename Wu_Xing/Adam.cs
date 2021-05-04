@@ -40,6 +40,9 @@ namespace Wu_Xing
             //Speed cheat for developers
             movingSpeed = currentKeyboard.IsKeyDown(Keys.LeftShift) ? 2.5f : 1;
 
+            if (currentKeyboard.IsKeyDown(Keys.D1))
+                TakeDamage(1);
+
             DetermineMovingDirection(currentKeyboard);
             DetermineAimingDirection(currentKeyboard);
             DetermineRotationTarget();
