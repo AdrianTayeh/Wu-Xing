@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Wu_Xing
 {
@@ -14,13 +15,14 @@ namespace Wu_Xing
             MoveTo(position);
         }
 
-        public void UpdateAppearence(List<GameObject> gameObjects)
+        public void UpdateAppearence(List<GameObject> gameObjects, Random random)
         {
             Vector2[] relativePositions = new Vector2[8];
             relativePositions[0] = new Vector2(-100, -100);
             relativePositions[1] = new Vector2(100, -100);
             relativePositions[2] = new Vector2(100, 100);
             relativePositions[3] = new Vector2(-100, 100);
+
             relativePositions[4] = new Vector2(0, -100);
             relativePositions[5] = new Vector2(100, 0);
             relativePositions[6] = new Vector2(0, 100);
@@ -31,7 +33,7 @@ namespace Wu_Xing
 
             foreach (GameObject gameObject in gameObjects)
             {
-                if (gameObject is Hole)
+                if (gameObject is Hole && gameObject.Element == element)
                 {
                     for (int i = 0; i < relativePositions.Length; i++)
                     {
@@ -63,6 +65,7 @@ namespace Wu_Xing
             if (cardinalConnections == 0)
             {
                 source.Location = new Point(100, 100);
+                RandomRotation(random, 4);
             }
 
             //0,1
@@ -87,9 +90,14 @@ namespace Wu_Xing
                 {
                     int i = 0;
                     for (; i < cardinalHoles.Length; i++)
+                    {
                         if (cardinalHoles[i] && cardinalHoles[(i + 1) % 4])
+                        {
                             rotation = (float)Math.PI / 2 * i;
-
+                            break;
+                        }
+                    }
+                        
                     //2,2
                     if (!diagonalHoles[(i + 1) % 4])
                         source.Location = new Point(200, 200);
@@ -104,9 +112,14 @@ namespace Wu_Xing
             {
                 int i = 0;
                 for (; i < cardinalHoles.Length; i++)
+                {
                     if (!cardinalHoles[i])
+                    {
                         rotation = (float)Math.PI / 2 * i;
-
+                        break;
+                    }
+                }
+                
                 //1,3
                 if (!diagonalHoles[(i + 2) % 4] && !diagonalHoles[(i + 3) % 4])
                     source.Location = new Point(100, 300);
@@ -172,6 +185,14 @@ namespace Wu_Xing
                             rotation = (float)Math.PI / 2 * i;
                 }
             }
+        }
+
+        public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
+        {
+            base.Draw(spriteBatch, roomPosition, drawHitbox);
+
+            if (element != null)
+                spriteBatch.Draw(TextureLibrary.WaterHole, roomPosition + position, source, color, rotation, origin, 1, SpriteEffects.None, layerDepth + 0.001f);
         }
     }
 }

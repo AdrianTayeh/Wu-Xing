@@ -76,6 +76,10 @@
     <Compile Include="Wanderer.cs" />
     <Compile Include="WoodBox.cs" />
     <Compile Include="Hole.cs" />
+    <Compile Include="MetalBox.cs" />
+    <Compile Include="Conveyor.cs" />
+    <Compile Include="Spikes.cs" />
+    <Compile Include="Fire.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

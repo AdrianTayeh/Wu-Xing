@@ -66,12 +66,12 @@ namespace Wu_Xing
                 animationTimer -= 1 / animationFPS;
                 source.X += source.Width;
 
-                if (source.X >= texture.Bounds.Width)
+                if (source.X >= texture.Width)
                 {
                     source.X = 0;
                     source.Y += source.Height;
 
-                    if (source.Y >= texture.Bounds.Height)
+                    if (source.Y >= texture.Height)
                         source.Y = 0;
                 }
             }

@@ -96,10 +96,6 @@ namespace Wu_Xing
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 gameState = gameState == State.Running ? State.Paused : State.Running;
 
-            //R - Reset run
-            else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
-                mapManager.RegenerateMap(random);
-
             //T - Toggle draw tips
             else if (currentKeyboard.IsKeyDown(Keys.K) && previousKeyboard.IsKeyUp(Keys.K))
                 drawKeyBindings = !drawKeyBindings;
