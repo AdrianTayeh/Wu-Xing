@@ -11,8 +11,12 @@ namespace Level_Editor
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+<<<<<<< Updated upstream
         Rectangle window;
         Menu menu;
+=======
+
+>>>>>>> Stashed changes
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -38,10 +42,17 @@ namespace Level_Editor
         /// </summary>
         protected override void LoadContent()
         {
+<<<<<<< Updated upstream
             spriteBatch = new SpriteBatch(GraphicsDevice);
             window.Height = 1080;
             window.Width = 1920;
             menu = new Menu(window);
+=======
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // TODO: use this.Content to load your game content here
+>>>>>>> Stashed changes
         }
 
         /// <summary>
