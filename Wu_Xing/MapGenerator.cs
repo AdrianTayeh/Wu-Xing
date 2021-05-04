@@ -430,15 +430,36 @@ namespace Wu_Xing
                 string objectID = components[2];
                 Vector2 position = new Vector2(gridOffset + x * 100 + 50, gridOffset + y * 100 + 50);
 
-                //If the block consists of four components, it is a number of tiles
-                if (components.Count() == 4)
+                //If the block consists of more than three components, it is a number of tiles
+                if (components.Count() > 3)
                 {
                     int length = int.Parse(components[3]);
                     
                     for (int i = 0; i < length; i++)
                     {
                         if (objectID == "S")
-                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), null, random));
+                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), Element.Earth, random));
+
+                        else if (objectID == "W")
+                            gameObjects.Add(new WoodBox(new Vector2(position.X + i * 100, position.Y), Element.Wood, random));
+
+                        else if (objectID == "H")
+                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), null, random));
+
+                        else if (objectID == "WH")
+                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), Element.Water, random));
+
+                        else if (objectID == "M")
+                            gameObjects.Add(new MetalBox(new Vector2(position.X + i * 100, position.Y), Element.Metal, random));
+
+                        else if (objectID == "C") //Uniqe block format: x,y,objectID,length,direction,speed
+                            gameObjects.Add(new Conveyor(new Vector2(position.X + i * 100, position.Y), null, random, int.Parse(components[4]), float.Parse(components[5].Replace('.', ','))));
+
+                        else if (objectID == "SP") //Uniqe block format: x,y,objectID,length,interval
+                            gameObjects.Add(new Spikes(new Vector2(position.X + i * 100, position.Y), null, random, float.Parse(components[4].Replace('.', ','))));
+
+                        else if (objectID == "F")
+                            gameObjects.Add(new Fire(new Vector2(position.X + i * 100, position.Y), Element.Fire, random));
                     }
                 }
 
@@ -455,6 +476,10 @@ namespace Wu_Xing
                         gameObjects.Add(new Wanderer(position, element, random));
                 }
             }
+
+            foreach (GameObject gameObject in gameObjects)
+                if (gameObject is Hole)
+                    ((Hole)gameObject).UpdateAppearence(gameObjects, random);
         }
 
         private List<Door> GetListOfDoors(int x, int y)
@@ -577,6 +602,5 @@ namespace Wu_Xing
                 }
             }
         }
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,6 +14,8 @@ namespace Wu_Xing
 
         private Vector2 leftArmPosition;
         private Vector2 rightArmPosition;
+
+        private float invulnerableTimer;
 
         public Adam(Vector2 position, Element? element, Random random) : base(position, element, random)
         {
@@ -47,6 +50,9 @@ namespace Wu_Xing
             DetermineAimingDirection(currentKeyboard);
             DetermineRotationTarget();
             RotateTowardTarget();
+
+            if (invulnerableTimer > 0)
+                invulnerableTimer -= elapsedSeconds;
 
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
@@ -147,6 +153,15 @@ namespace Wu_Xing
 
             if (distanceWithoutCrossingZero2 <= rotationSpeed || distanceCrossingZero2 <= rotationSpeed)
                 rotation = rotationTarget;
+        }
+
+        public override void TakeDamage(int damage)
+        {
+            if (invulnerableTimer <= 0)
+            {
+                invulnerableTimer = 2;
+                base.TakeDamage(damage);
+            }   
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)

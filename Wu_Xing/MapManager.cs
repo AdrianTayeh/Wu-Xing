@@ -72,16 +72,20 @@ namespace Wu_Xing
 
         public void Update(float elapsedSeconds, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
         {
-            CheckKeyboardInput(currentKeyboard, previousKeyboard);
+            CheckKeyboardInput(currentKeyboard, previousKeyboard, random);
             currentRoom.Update(elapsedSeconds, currentKeyboard, adam, this, random);
             UpdateMinimapOpacityAndScale(currentKeyboard, previousKeyboard);
         }
 
-        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
         {
             //H - Toggle draw hitbox
             if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
                 drawHitboxes = !drawHitboxes;
+
+            //R - Reset run
+            else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
+                RegenerateMap(random);
         }
 
         public void GenerateNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)

@@ -46,7 +46,7 @@ namespace Wu_Xing
             health = health > maxHealth ? maxHealth : health;
         }
 
-        public void TakeDamage(int damage)
+        public virtual void TakeDamage(int damage)
         {
             health -= damage;
             if (health <= 0)

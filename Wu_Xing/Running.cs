@@ -106,13 +106,6 @@ namespace Wu_Xing
                     mapManager.NullMap();
                 }  
             }
-                
-            //R - Reset run
-            else if (currentKeyboard.IsKeyDown(Keys.R) && previousKeyboard.IsKeyUp(Keys.R))
-            {
-                gameState = State.Running;
-                mapManager.RegenerateMap(random);
-            }
 
             //T - Toggle draw tips
             else if (currentKeyboard.IsKeyDown(Keys.K) && previousKeyboard.IsKeyUp(Keys.K))
