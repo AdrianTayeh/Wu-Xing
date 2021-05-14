@@ -19,8 +19,8 @@ namespace Wu_Xing
             RandomSourceLocation(random);
 
             //Character
-            maxHealth = health = 30;
-            movingSpeed = 1.1f;
+            health = maxHealth = 30;
+            speed = 1.1f;
             shadowSize = 80;
         }
 

@@ -555,6 +555,30 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Icon Plus.png
 
+#begin Miscellaneous/Magic Ball Center.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Magic Ball Center.png
+
+#begin Miscellaneous/Magic Ball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Magic Ball.png
+
 #begin Miscellaneous/Metal Box.jpg
 /importer:TextureImporter
 /processor:TextureProcessor

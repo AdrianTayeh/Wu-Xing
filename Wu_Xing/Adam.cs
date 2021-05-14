@@ -17,7 +17,11 @@ namespace Wu_Xing
 
         private float invulnerableTimer;
 
-        public Adam(Vector2 position, Element? element, Random random) : base(position, element, random)
+        //For demonstrative purpose only
+        private bool randomElement;
+        public bool RandomElement { get { return randomElement; } }
+
+        public Adam(Vector2 position, Element element, Random random) : base(position, element, random)
         {
             //GameObject
             texture = TextureLibrary.Adam;
@@ -27,9 +31,12 @@ namespace Wu_Xing
             MoveTo(position);
 
             //Character
-            movingSpeed = 1;
-            maxHealth = health = 6;
+            speed = 1;
+            health = maxHealth = 6;
             shadowSize = 100;
+            projectileAttributes = new ProjectileAttributes(5, 7, 1.25f);
+            shotsPerSecond = 1.2f;
+            accuracy = 0.6f;
 
             //Adam
             aimingArmSource = new Rectangle(0, 140, 40, 70);
@@ -40,11 +47,7 @@ namespace Wu_Xing
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
-            //Speed cheat for developers
-            movingSpeed = currentKeyboard.IsKeyDown(Keys.LeftShift) ? 2.5f : 1;
-
-            if (currentKeyboard.IsKeyDown(Keys.D1))
-                TakeDamage(1);
+            CheckCheatInput(currentKeyboard);
 
             DetermineMovingDirection(currentKeyboard);
             DetermineAimingDirection(currentKeyboard);
@@ -57,6 +60,108 @@ namespace Wu_Xing
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             CheckDoors(mapManager);
+        }
+
+        private void CheckCheatInput(KeyboardState currentKeyboard)
+        {
+            //Base
+            if (currentKeyboard.IsKeyDown(Keys.D1))
+            {
+                projectileAttributes = new ProjectileAttributes(5, 7, 1.25f);
+                shotsPerSecond = 1.2f;
+                health = maxHealth = 6;
+                speed = 1;
+                accuracy = 0.6f;
+                randomElement = false;
+            }
+
+            //Upgraded
+            else if (currentKeyboard.IsKeyDown(Keys.D2))
+            {
+                projectileAttributes = new ProjectileAttributes(7, 10, 1.5f);
+                shotsPerSecond = 4;
+                health = maxHealth = 8;
+                speed = 1.2f;
+                accuracy = 0.7f;
+                randomElement = false;
+            }
+
+            //Slow
+            else if (currentKeyboard.IsKeyDown(Keys.D3))
+            {
+                projectileAttributes = new ProjectileAttributes(15, 7, 0.8f);
+                shotsPerSecond = 1;
+                health = maxHealth = 12;
+                speed = 0.9f;
+                accuracy = 0.8f;
+                randomElement = false;
+            }
+
+            //Sniper
+            else if (currentKeyboard.IsKeyDown(Keys.D4))
+            {
+                projectileAttributes = new ProjectileAttributes(10, 12, 5f);
+                shotsPerSecond = 2;
+                health = maxHealth = 14;
+                speed = 1f;
+                accuracy = 1;
+                randomElement = false;
+            }
+
+            //Laser
+            else if (currentKeyboard.IsKeyDown(Keys.D5))
+            {
+                projectileAttributes = new ProjectileAttributes(15, 14, 3f);
+                shotsPerSecond = 60;
+                health = maxHealth = 6;
+                speed = 1.5f;
+                accuracy = 1f;
+                randomElement = false;
+            }
+
+            //Rainbow laser
+            else if (currentKeyboard.IsKeyDown(Keys.D6))
+            {
+                projectileAttributes = new ProjectileAttributes(15, 14, 5f);
+                shotsPerSecond = 60;
+                health = maxHealth = 6;
+                speed = 1.5f;
+                accuracy = 1f;
+                randomElement = true;
+            }
+
+            //Small machinegun
+            else if (currentKeyboard.IsKeyDown(Keys.D7))
+            {
+                projectileAttributes = new ProjectileAttributes(3, 14, 1.75f);
+                shotsPerSecond = 60;
+                health = maxHealth = 4;
+                speed = 1;
+                accuracy = 0.3f;
+                randomElement = false;
+            }
+
+            //Big machine gun
+            else if (currentKeyboard.IsKeyDown(Keys.D8))
+            {
+                projectileAttributes = new ProjectileAttributes(8, 14, 1.75f);
+                shotsPerSecond = 60;
+                health = maxHealth = 2;
+                speed = 1;
+                accuracy = 0f;
+                randomElement = false;
+            }
+
+            //Big rainbow machine gun
+            else if (currentKeyboard.IsKeyDown(Keys.D9))
+            {
+                projectileAttributes = new ProjectileAttributes(12, 14, 1.5f);
+                shotsPerSecond = 60;
+                health = maxHealth = 2;
+                speed = 1;
+                accuracy = 0f;
+                randomElement = true;
+            }
         }
 
         private void CheckDoors(MapManager mapManager)
@@ -155,7 +260,7 @@ namespace Wu_Xing
                 rotation = rotationTarget;
         }
 
-        public override void TakeDamage(int damage)
+        public override void TakeDamage(float damage)
         {
             if (invulnerableTimer <= 0)
             {
@@ -179,6 +284,5 @@ namespace Wu_Xing
             for (int i = 1; i <= maxHealth / 2; i++)
                 spriteBatch.Draw(TextureLibrary.Heart, new Vector2(175 + i * 65, 65), new Rectangle(health >= i * 2 ? 0 : health == i * 2 - 1 ? 60 : 120, 0, 60, 60), Color.White);
         }
-
     }
 }

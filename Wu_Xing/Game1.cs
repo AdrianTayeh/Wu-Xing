@@ -152,9 +152,10 @@ namespace Wu_Xing
             // 0.11 Tiles
             // 0.12 Door Bottoms
             // 0.13 Door Fronts
-            // 0.4 GameObject Shadows
-            // 0.5 GameObject Bottoms
-            // 0.51 GameObject Tops
+            // 0.3 Character Shadows
+            // 0.4 Projectiles
+            // 0.5 Character Bottoms (Secondary)
+            // 0.51 Character Tops (Primary)
             // 0.9 Door Tops
 
             if (screen == Screen.Running)

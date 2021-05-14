@@ -20,8 +20,8 @@ namespace Wu_Xing
             RandomRotation(random, 8);
 
             //Character
-            maxHealth = health = 70;
-            movingSpeed = 1.1f;
+            health = maxHealth = 70;
+            speed = 1.1f;
             shadowSize = 80;
         }
     }

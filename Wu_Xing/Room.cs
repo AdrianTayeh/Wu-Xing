@@ -39,6 +39,18 @@ namespace Wu_Xing
 
         public void Update(float elapsedSeconds, KeyboardState currentKeyboard, Adam adam, MapManager mapManager, Random random)
         {
+            UpdateGameObjects(elapsedSeconds, currentKeyboard, adam, mapManager, random);
+
+            if (roomState == State.Discovered && CheckIfCleared())
+            {
+                roomState = State.Cleared;
+                foreach (Door door in doors)
+                    door.Open();
+            }
+        }
+
+        private void UpdateGameObjects(float elapsedSeconds, KeyboardState currentKeyboard, Adam adam, MapManager mapManager, Random random)
+        {
             adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             foreach (GameObject gameObject in gameObjects)
@@ -69,6 +81,13 @@ namespace Wu_Xing
                     foreach (Door door in doors)
                         door.Close();
             }
+        }
+
+        public void IsLeft()
+        {
+            for (int i = gameObjects.Count - 1; i >= 0; i--)
+                if (gameObjects[i] is Projectile)
+                    gameObjects.RemoveAt(i);
         }
 
         private bool CheckIfCleared()

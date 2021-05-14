@@ -80,6 +80,7 @@
     <Compile Include="Conveyor.cs" />
     <Compile Include="Spikes.cs" />
     <Compile Include="Fire.cs" />
+    <Compile Include="Projectile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

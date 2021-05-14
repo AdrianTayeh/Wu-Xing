@@ -97,7 +97,7 @@ namespace Wu_Xing
         {
             rooms = new MapGenerator(random).NewMap(rooms.GetLength(0), element);
             MakeCenterCurrentRoom();
-            adam = new Adam(CenterOfCenterRoom, adam.Element, random);
+            adam = new Adam(CenterOfCenterRoom, (Element)adam.Element, random);
         }
 
         public void NullMap()
@@ -215,12 +215,13 @@ namespace Wu_Xing
             }
 
             //Transition finished
+            currentRoom.IsLeft();
             currentRoomLocation = door.LeadsToRoom;
             currentRoom = rooms[currentRoomLocation.X, currentRoomLocation.Y];
             adam.MoveTo(door.ExitPosition);
             transitionPosition = Vector2.Zero;
             transitionRoom = new Point(-1, -1);
-            minimapSource = CalculateMinimapSource(currentRoomLocation);
+            minimapSource.Location = minimapSourceEndPosition.ToPoint();
         }
 
         private Rectangle CalculateMinimapSource(Point roomLocation)
