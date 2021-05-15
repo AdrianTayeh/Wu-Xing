@@ -2,7 +2,6 @@
 
 namespace Level_Editor
 {
-#if WINDOWS || LINUX
     /// <summary>
     /// The main class.
     /// </summary>
@@ -18,5 +17,4 @@ namespace Level_Editor
                 game.Run();
         }
     }
-#endif
 }

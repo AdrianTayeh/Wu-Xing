@@ -11,7 +11,7 @@ namespace Level_Editor
 {
     class TextureLibrary
     {
-        public enum RoomType { Normal, Center, Boss};
+        public enum RoomType { Normal, Center, Boss };
         private RoomType roomType;
 
 
@@ -22,6 +22,7 @@ namespace Level_Editor
         public static Texture2D Shadow { get; private set; }
         public static Texture2D Stone { get; private set; }
         public static Texture2D Tiles { get; private set; }
+        public static Texture2D BackgroundGray { get; private set; }
 
         public static Dictionary<string, Texture2D> Rooms { get; private set; }
 
@@ -30,6 +31,8 @@ namespace Level_Editor
 
         public static void Load(ContentManager Content, GraphicsDevice GraphicsDevice)
         {
+            BackgroundGray = Content.Load<Texture2D>("Background Gray");
+
             //Folder Doors
             DoorBottoms = new Dictionary<RoomType, Texture2D>();
             DoorBottoms.Add(RoomType.Normal, Content.Load<Texture2D>("Doors\\Door Bottom Normal"));

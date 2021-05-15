@@ -3,7 +3,7 @@
 
 /outputDir:bin/$(Platform)
 /intermediateDir:obj/$(Platform)
-/platform:Windows
+/platform:DesktopGL
 /config:
 /profile:Reach
 /compress:False
@@ -13,8 +13,25 @@
 
 #---------------------------------- Content ---------------------------------#
 
-<<<<<<< Updated upstream
-=======
+#begin Background Gray.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Background Gray.jpg
+
+#begin Big.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Big.spritefont
+
 #begin Doors/Door Bottom Black Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -39,7 +56,6 @@
 /processorParam:TextureFormat=Color
 /build:Doors/Door Bottom Black Normal.png
 
->>>>>>> Stashed changes
 #begin Doors/Door Bottom Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -64,8 +80,6 @@
 /processorParam:TextureFormat=Color
 /build:Doors/Door Bottom Normal.png
 
-<<<<<<< Updated upstream
-=======
 #begin Doors/Door Front Black Normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -78,7 +92,6 @@
 /processorParam:TextureFormat=Color
 /build:Doors/Door Front Black Normal.png
 
->>>>>>> Stashed changes
 #begin Doors/Door Front Normal.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -91,8 +104,6 @@
 /processorParam:TextureFormat=Color
 /build:Doors/Door Front Normal.png
 
-<<<<<<< Updated upstream
-=======
 #begin Doors/Door Top Black Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -117,7 +128,6 @@
 /processorParam:TextureFormat=Color
 /build:Doors/Door Top Black Normal.png
 
->>>>>>> Stashed changes
 #begin Doors/Door Top Boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -141,6 +151,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Doors/Door Top Normal.png
+
+#begin Huge.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Huge.spritefont
 
 #begin Miscellaneous/Filter.png
 /importer:TextureImporter
@@ -250,6 +267,13 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Tiles.jpg
 
+#begin Normal.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Normal.spritefont
+
 #begin Rooms/Room 1x1.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -322,8 +346,6 @@
 /processorParam:TextureFormat=Color
 /build:Rooms/Room 3x1.jpg
 
-<<<<<<< Updated upstream
-=======
 #begin Rooms/Room Black 1x1.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -396,4 +418,3 @@
 /processorParam:TextureFormat=Color
 /build:Rooms/Room Black 3x1.jpg
 
->>>>>>> Stashed changes
