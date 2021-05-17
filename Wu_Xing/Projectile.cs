@@ -88,19 +88,37 @@ namespace Wu_Xing
             MoveTo(position + (direction * 600 * elapsedSeconds * attributes.Speed));
             tilesTraveled += Vector2.Distance(previousPosition, position) / 100;
             dead = tilesTraveled >= attributes.Range ? true : false;
-            FadeOut();
 
-            foreach (GameObject gameObject in gameObjects)
+            FadeOut();
+            HitGameObjects(gameObjects, adam);
+
+            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
+        }
+
+        private void HitGameObjects(List<GameObject> gameObjects, Adam adam)
+        {
+            if (shotByAdam)
             {
-                if (((gameObject is Enemy && shotByAdam) || (gameObject is Adam && !shotByAdam)) && hitbox.Intersects(gameObject.Hitbox))
+                foreach (GameObject gameObject in gameObjects)
                 {
-                    ((Character)gameObject).TakeDamage(attributes.Damage);
-                    dead = true;
-                    break;
+                    if (gameObject is Character && hitbox.Intersects(gameObject.Hitbox))
+                    {
+                        ((Character)gameObject).TakeDamage(attributes.Damage);
+                        ((Character)gameObject).TakeKnockback(direction, attributes.Knockback);
+                        dead = true;
+                        break;
+                    }
                 }
             }
-                
-            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
+
+            else
+            {
+                if (hitbox.Intersects(adam.Hitbox))
+                {
+                    adam.TakeDamage(attributes.Damage);
+                    dead = true;
+                }
+            }
         }
 
         private void FadeOut()

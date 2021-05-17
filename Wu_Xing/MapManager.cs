@@ -219,9 +219,11 @@ namespace Wu_Xing
             currentRoomLocation = door.LeadsToRoom;
             currentRoom = rooms[currentRoomLocation.X, currentRoomLocation.Y];
             adam.MoveTo(door.ExitPosition);
-            transitionPosition = Vector2.Zero;
             transitionRoom = new Point(-1, -1);
             minimapSource.Location = minimapSourceEndPosition.ToPoint();
+
+            //Lets running know that the transition is finished
+            transitionPosition = Vector2.Zero;
         }
 
         private Rectangle CalculateMinimapSource(Point roomLocation)

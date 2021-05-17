@@ -53,8 +53,8 @@ namespace Wu_Xing
         {
             adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
-            foreach (GameObject gameObject in gameObjects)
-                gameObject.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
+            for (int i = gameObjects.Count - 1; i >= 0; i--)
+                gameObjects[i].Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             for (int i = gameObjects.Count - 1; i >= 0; i--)
                 if (gameObjects[i].IsDead)
@@ -102,8 +102,8 @@ namespace Wu_Xing
         {
             spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
 
-            foreach (GameObject gameObject in gameObjects)
-                gameObject.Draw(spriteBatch, position, drawHitbox);
+            for (int i = gameObjects.Count - 1; i >= 0; i--)
+                gameObjects[i].Draw(spriteBatch, position, drawHitbox);
 
             foreach (Door door in doors)
                 door.Draw(spriteBatch, position);

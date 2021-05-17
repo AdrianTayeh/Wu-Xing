@@ -16,10 +16,10 @@ namespace Wu_Xing
         private Vector2 rightArmPosition;
 
         private float invulnerableTimer;
+        private Vector2 aimingDirection;
 
         //For demonstrative purpose only
         private bool randomElement;
-        public bool RandomElement { get { return randomElement; } }
 
         public Adam(Vector2 position, Element element, Random random) : base(position, element, random)
         {
@@ -31,6 +31,7 @@ namespace Wu_Xing
             MoveTo(position);
 
             //Character
+            rotationSpeed = 0.3f;
             speed = 1;
             health = maxHealth = 6;
             shadowSize = 100;
@@ -52,11 +53,12 @@ namespace Wu_Xing
             DetermineMovingDirection(currentKeyboard);
             DetermineAimingDirection(currentKeyboard);
             DetermineRotationTarget();
-            RotateTowardTarget();
 
             if (invulnerableTimer > 0)
                 invulnerableTimer -= elapsedSeconds;
 
+            MoveTo(position + (movingDirection * 600 * elapsedSeconds * speed));
+            Shoot(elapsedSeconds, gameObjects, random);
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             CheckDoors(mapManager);
@@ -122,7 +124,7 @@ namespace Wu_Xing
             //Rainbow laser
             else if (currentKeyboard.IsKeyDown(Keys.D6))
             {
-                projectileAttributes = new ProjectileAttributes(15, 14, 5f);
+                projectileAttributes = new ProjectileAttributes(15, 14, 3f);
                 shotsPerSecond = 60;
                 health = maxHealth = 6;
                 speed = 1.5f;
@@ -133,7 +135,7 @@ namespace Wu_Xing
             //Small machinegun
             else if (currentKeyboard.IsKeyDown(Keys.D7))
             {
-                projectileAttributes = new ProjectileAttributes(3, 14, 1.75f);
+                projectileAttributes = new ProjectileAttributes(2, 14, 1.75f);
                 shotsPerSecond = 60;
                 health = maxHealth = 4;
                 speed = 1;
@@ -162,13 +164,24 @@ namespace Wu_Xing
                 accuracy = 0f;
                 randomElement = true;
             }
+
+            //Chaos
+            else if (currentKeyboard.IsKeyDown(Keys.D0))
+            {
+                projectileAttributes = new ProjectileAttributes(30, 20, 3f);
+                shotsPerSecond = 60;
+                health = maxHealth = 16;
+                speed = 3;
+                accuracy = -3f;
+                randomElement = true;
+            }
         }
 
         private void CheckDoors(MapManager mapManager)
         {
             foreach (Door door in mapManager.Rooms[mapManager.CurrentRoomLocation.X, mapManager.CurrentRoomLocation.Y].Doors)
             {
-                if (door.EntranceArea.Contains(position))
+                if (door.IsOpen && door.EntranceArea.Contains(position))
                 {
                     position = door.TransitionExitPosition;
                     mapManager.StartRoomTransition(door);
@@ -228,43 +241,48 @@ namespace Wu_Xing
             rotationTarget %= (float)Math.PI * 2;
         }
 
-        private void RotateTowardTarget()
+        private void Shoot(float elapsedSeconds, List<GameObject> gameObjects, Random random)
         {
-            if (rotation == rotationTarget)
-                return;
+            //Decrease cooldown
+            if (shotCooldown > 0)
+                shotCooldown -= elapsedSeconds;
 
-            //Find closest rotation path
-            float larger = rotationTarget > rotation ? rotationTarget : rotation;
-            float smaller = rotationTarget > rotation ? rotation : rotationTarget;
+            //If ready to shoot, is aiming, and is facing the right way
+            if (shotCooldown <= 0 && aimingDirection != Vector2.Zero && rotation == rotationTarget)
+            {
+                //Reset cooldown
+                shotCooldown += 1 / shotsPerSecond;
 
-            float distanceWithoutCrossingZero = larger - smaller;
-            float distanceCrossingZero = smaller + ((float)Math.PI * 2f - larger);
+                //Create projectile
+                CreateProjectile(gameObjects, random);
+            }
+        }
 
-            //Rotate
-            if (distanceWithoutCrossingZero < distanceCrossingZero)
-                rotation += rotation == smaller ? rotationSpeed : -rotationSpeed;
+        private void CreateProjectile(List<GameObject> gameObjects, Random random)
+        {
+            Vector2 position = this.position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * hitbox.Width * 0.7f;
 
-            else
-                rotation += rotation == smaller ? -rotationSpeed : rotationSpeed;
+            ProjectileAttributes attributes = new ProjectileAttributes(projectileAttributes);
+            attributes.Speed *= movingDirection == aimingDirection ? 1.25f : 1;
+            attributes.Speed *= movingDirection == -aimingDirection ? 0.75f : 1;
 
-            rotation %= (float)Math.PI * 2;
+            //For demonstrative purpose only
+            Element element = (Element)this.element;
+            if (randomElement)
+            {
+                Array elements = Enum.GetValues(typeof(Element));
+                element = (Element)elements.GetValue(random.Next(elements.Length));
+            }
 
-            //Check if rotation is complete
-            float larger2 = rotationTarget > rotation ? rotationTarget : rotation;
-            float smaller2 = rotationTarget > rotation ? rotation : rotationTarget;
-
-            float distanceWithoutCrossingZero2 = larger - smaller;
-            float distanceCrossingZero2 = smaller + ((float)Math.PI * 2f - larger);
-
-            if (distanceWithoutCrossingZero2 <= rotationSpeed || distanceCrossingZero2 <= rotationSpeed)
-                rotation = rotationTarget;
+            gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + AccuracyOffset(random), true));
+            gameObjects[gameObjects.Count - 1].MoveTo(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f);
         }
 
         public override void TakeDamage(float damage)
         {
             if (invulnerableTimer <= 0)
             {
-                invulnerableTimer = 2;
+                invulnerableTimer = 1.2f;
                 base.TakeDamage(damage);
             }   
         }

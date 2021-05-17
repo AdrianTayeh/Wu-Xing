@@ -63,7 +63,7 @@ namespace Wu_Xing
                     {
                         foreach (GameObject otherConveyor in gameObjects)
                         {
-                            if (otherConveyor is Conveyor && otherConveyor != this && (otherConveyor.Position.X > position.X || otherConveyor.Position.Y > position.Y) && otherConveyor.Hitbox.Contains(character.Position))
+                            if (otherConveyor is Conveyor && otherConveyor != this && (otherConveyor.Position.X < position.X || otherConveyor.Position.Y < position.Y) && otherConveyor.Hitbox.Contains(character.Position))
                             {
                                 charactersToBeIgnored.Add(character);
                                 break;

@@ -39,6 +39,7 @@ namespace Wu_Xing
         public Rectangle EntranceArea { get { return entranceArea; } }
         public Vector2 TransitionExitPosition { get { return Rotate.PointAroundCenter(new Vector2(position.X, position.Y - MapGenerator.GridOffset - 50), position, rotation); } }
         public float Rotation { get { return rotation; } }
+        public bool IsOpen { get { return frontSource.Location.ToVector2() == TextureLibrary.DoorFronts[doorType].Bounds.Size.ToVector2() - frontSource.Size.ToVector2(); } }
 
         public void OpenInstantly()
         {

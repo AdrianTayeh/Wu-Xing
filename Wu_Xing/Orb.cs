@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Wu_Xing
 {
@@ -19,9 +21,35 @@ namespace Wu_Xing
             RandomSourceLocation(random);
 
             //Character
-            health = maxHealth = 30;
-            speed = 1.1f;
+            health = maxHealth = 20;
+            speed = 0.4f;
             shadowSize = 80;
+
+            //Enemy
+            detectionRange = 5;
+        }
+
+        public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
+        {
+            DetermineMovingDirection(adam);
+            MoveTo(position + (movingDirection * 600 * elapsedSeconds * speed));
+            base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
+        }
+
+        private void DetermineMovingDirection(Adam adam)
+        {
+            float distanceToAdam = Vector2.Distance(position, adam.Position);
+
+            if (distanceToAdam < detectionRange * 100 && distanceToAdam > hitbox.Width * 0.75)
+            {
+                movingDirection = adam.Position - position;
+                movingDirection.Normalize();
+            }
+
+            else
+            {
+                movingDirection = Vector2.Zero;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)

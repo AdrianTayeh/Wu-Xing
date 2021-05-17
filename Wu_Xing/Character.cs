@@ -10,8 +10,8 @@ namespace Wu_Xing
 {
     abstract class Character : GameObject
     {
-        // Initialized in constructor
-        protected static float rotationSpeed;
+        // Initialized in fields
+        private static float maximumOffsetAngle = (float)Math.PI / 8; //22.5 degrees
 
         // Will be initialized in subclass constructor
         protected int maxHealth;
@@ -20,6 +20,7 @@ namespace Wu_Xing
         protected int shadowSize;
 
         // May be initialized in subclass constructor
+        protected float rotationSpeed;
         protected ProjectileAttributes projectileAttributes;
         protected float shotsPerSecond;
         protected float shotCooldown;
@@ -28,67 +29,23 @@ namespace Wu_Xing
         // Not initialized
         protected float rotationTarget;
         protected Vector2 movingDirection;
-        protected Vector2 aimingDirection;
         protected float flashTimer;
 
         public Character(Vector2 position, Element? element, Random random) : base(position, element, random)
         {
             //GameObject
             layerDepth = 0.5f;
-
-            //Character
-            rotationSpeed = 0.3f;
         }
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
-            MoveTo(position + (movingDirection * 600 * elapsedSeconds * speed));
-            Shoot(elapsedSeconds, gameObjects, random);
-
+            RotateTowardTarget();
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void Shoot(float elapsedSeconds, List<GameObject> gameObjects, Random random)
+        protected float AccuracyOffset(Random random)
         {
-            //If character can shoot
-            if (shotsPerSecond > 0)
-            {
-                //Decrease cooldown
-                if (shotCooldown > 0)
-                    shotCooldown -= elapsedSeconds;
-
-                //If ready to shoot, is aiming, and is facing the right way
-                if (shotCooldown <= 0 && aimingDirection != Vector2.Zero && rotation == rotationTarget)
-                {
-                    //Reset cooldown
-                    shotCooldown += 1 / shotsPerSecond;
-
-                    //Create projectile
-                    CreateProjectile(gameObjects, random);
-                }
-            }
-        }
-
-        private void CreateProjectile(List<GameObject> gameObjects, Random random)
-        {
-            Vector2 position = this.position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * hitbox.Width * 0.7f;
-
-            ProjectileAttributes attributes = new ProjectileAttributes(projectileAttributes);
-            attributes.Speed *= movingDirection == aimingDirection ? 1.25f : 1;
-            attributes.Speed *= movingDirection == -aimingDirection ? 0.75f : 1;
-
-            float maximumOffsetAngle = (float)Math.PI / 8; //22.5 degrees
-            float accuracyOffset = (float)((random.NextDouble() - 0.5) * 2 * maximumOffsetAngle * Math.Abs(accuracy - 1));
-
-            //For demonstrative purpose only
-            Element element = (Element)this.element;
-            if (this is Adam && ((Adam)this).RandomElement)
-            {
-                Array elements = Enum.GetValues(typeof(Element));
-                element = (Element)elements.GetValue(random.Next(elements.Length));
-            }
-
-            gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + accuracyOffset, this is Adam));
+            return (float)((random.NextDouble() - 0.5) * 2 * maximumOffsetAngle * Math.Abs(accuracy - 1));
         }
 
         public void Heal(float heal)
@@ -106,6 +63,19 @@ namespace Wu_Xing
 
             else
                 Flash();
+        }
+
+        public async void TakeKnockback(Vector2 direction, float knockback)
+        {
+            float duration = 0.05f;
+            int fps = 60;
+            int frames = (int)(duration * fps);
+
+            for (int i = 0; i < frames; i++)
+            {
+                MoveTo(position + direction * knockback * 4);
+                await Task.Delay(1000 / fps);
+            }
         }
 
         private async void Flash()
@@ -139,6 +109,39 @@ namespace Wu_Xing
                 flashTimer = 0;
             } 
         }
+
+        private void RotateTowardTarget()
+        {
+            if (rotation == rotationTarget)
+                return;
+
+            //Find closest rotation path
+            float larger = rotationTarget > rotation ? rotationTarget : rotation;
+            float smaller = rotationTarget > rotation ? rotation : rotationTarget;
+
+            float distanceWithoutCrossingZero = larger - smaller;
+            float distanceCrossingZero = smaller + ((float)Math.PI * 2f - larger);
+
+            //Rotate
+            if (distanceWithoutCrossingZero < distanceCrossingZero)
+                rotation += rotation == smaller ? rotationSpeed : -rotationSpeed;
+
+            else
+                rotation += rotation == smaller ? -rotationSpeed : rotationSpeed;
+
+            rotation %= (float)Math.PI * 2;
+
+            //Check if rotation is complete
+            float larger2 = rotationTarget > rotation ? rotationTarget : rotation;
+            float smaller2 = rotationTarget > rotation ? rotation : rotationTarget;
+
+            float distanceWithoutCrossingZero2 = larger - smaller;
+            float distanceCrossingZero2 = smaller + ((float)Math.PI * 2f - larger);
+
+            if (distanceWithoutCrossingZero2 <= rotationSpeed || distanceCrossingZero2 <= rotationSpeed)
+                rotation = rotationTarget;
+        }
+
 
         private void Kill()
         {
