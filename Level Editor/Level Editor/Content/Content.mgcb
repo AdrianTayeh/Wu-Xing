@@ -159,6 +159,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Huge.spritefont
 
+#begin Miscellaneous/Conveyor.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Conveyor.jpg
+
 #begin Miscellaneous/Filter.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -170,6 +182,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Filter.png
+
+#begin Miscellaneous/Fire.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Fire.png
 
 #begin Miscellaneous/Heart.png
 /importer:TextureImporter
@@ -219,6 +243,18 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Icon Plus.png
 
+#begin Miscellaneous/Metal Box.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Metal Box.jpg
+
 #begin Miscellaneous/Minimap Icons.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -243,6 +279,18 @@
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Shadow.png
 
+#begin Miscellaneous/Spikes.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Spikes.png
+
 #begin Miscellaneous/Stone.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -266,6 +314,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Miscellaneous/Tiles.jpg
+
+#begin Miscellaneous/Water Hole.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Water Hole.png
+
+#begin Miscellaneous/Wood Box.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Miscellaneous/Wood Box.jpg
 
 #begin Normal.spritefont
 /importer:FontDescriptionImporter

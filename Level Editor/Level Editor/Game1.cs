@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Level_Editor
 {
@@ -25,6 +26,7 @@ namespace Level_Editor
         private Camera camera;
         private Vector2 cameraPosition;
         private SpriteBatch cameraSpriteBatch;
+        private List<Texture2D> tileList;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -59,6 +61,7 @@ namespace Level_Editor
             menu = new Menu(window);
             mouse = new Mouse(window, resolution, windowScale);
             camera = new Camera(window);
+            tileList = new List<Texture2D>();
             cameraPosition = new Vector2((size.X * 1500) / 2, (size.Y * 700) / 2);
 
 

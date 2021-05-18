@@ -23,7 +23,13 @@ namespace Level_Editor
         public static Texture2D Stone { get; private set; }
         public static Texture2D Tiles { get; private set; }
         public static Texture2D BackgroundGray { get; private set; }
-
+        public static Texture2D Conveyor { get; private set; }
+        public static Texture2D Fire { get; private set; }
+        public static Texture2D MetalBox { get; private set; }
+        public static Texture2D Spikes { get; private set; }
+        public static Texture2D WaterHole { get; private set; }
+        public static Texture2D WoodBox { get; private set; }
+            
         public static Dictionary<string, Texture2D> Rooms { get; private set; }
 
         public static Texture2D WhitePixel { get; private set; }
@@ -49,6 +55,12 @@ namespace Level_Editor
             Shadow = Content.Load<Texture2D>("Miscellaneous\\Shadow");
             Stone = Content.Load<Texture2D>("Miscellaneous\\Stone");
             Tiles = Content.Load<Texture2D>("Miscellaneous\\Tiles");
+            Conveyor = Content.Load<Texture2D>("Miscellaneous\\Conveyor");
+            Fire = Content.Load<Texture2D>("Miscellaneous\\Fire");
+            MetalBox = Content.Load<Texture2D>("Miscellaneous\\Metal Box");
+            Spikes = Content.Load<Texture2D>("Miscellaneous\\Spikes");
+            WaterHole = Content.Load<Texture2D>("Miscellaneous\\Water Hole");
+            WoodBox = Content.Load<Texture2D>("Miscellaneous\\Wood Box");
 
             //Folder Rooms
             Rooms = new Dictionary<string, Texture2D>();
