@@ -30,7 +30,7 @@ namespace Wu_Xing
             health = maxHealth = 30;
             speed = random.Next(5, 16) / 10f; //0.5-1.5
             shadowSize = 80;
-            projectileAttributes = new ProjectileAttributes(1, 4, 0.7f, 0.5f);
+            projectileAttributes = new ProjectileAttributes(1, 0, 4, 0.7f, 0.5f);
             shotsPerSecond = random.Next(4, 8) / 10f; //0.4-0.7
             accuracy = 0.9f;
 

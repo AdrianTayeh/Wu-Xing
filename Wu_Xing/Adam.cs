@@ -35,7 +35,7 @@ namespace Wu_Xing
             speed = 1;
             health = maxHealth = 6;
             shadowSize = 100;
-            projectileAttributes = new ProjectileAttributes(5, 7, 1.25f);
+            projectileAttributes = new ProjectileAttributes(5, 3, 7, 1.25f);
             shotsPerSecond = 1.2f;
             accuracy = 0.6f;
 
@@ -69,7 +69,7 @@ namespace Wu_Xing
             //Base
             if (currentKeyboard.IsKeyDown(Keys.D1))
             {
-                projectileAttributes = new ProjectileAttributes(5, 7, 1.25f);
+                projectileAttributes = new ProjectileAttributes(5, 3, 7, 1.25f);
                 shotsPerSecond = 1.2f;
                 health = maxHealth = 6;
                 speed = 1;
@@ -80,7 +80,7 @@ namespace Wu_Xing
             //Upgraded
             else if (currentKeyboard.IsKeyDown(Keys.D2))
             {
-                projectileAttributes = new ProjectileAttributes(7, 10, 1.5f);
+                projectileAttributes = new ProjectileAttributes(7, 3, 10, 1.5f);
                 shotsPerSecond = 4;
                 health = maxHealth = 8;
                 speed = 1.2f;
@@ -91,7 +91,7 @@ namespace Wu_Xing
             //Slow
             else if (currentKeyboard.IsKeyDown(Keys.D3))
             {
-                projectileAttributes = new ProjectileAttributes(15, 7, 0.8f);
+                projectileAttributes = new ProjectileAttributes(15, 3, 7, 0.8f);
                 shotsPerSecond = 1;
                 health = maxHealth = 12;
                 speed = 0.9f;
@@ -102,7 +102,7 @@ namespace Wu_Xing
             //Sniper
             else if (currentKeyboard.IsKeyDown(Keys.D4))
             {
-                projectileAttributes = new ProjectileAttributes(10, 12, 5f);
+                projectileAttributes = new ProjectileAttributes(10, 5, 12, 5f);
                 shotsPerSecond = 2;
                 health = maxHealth = 14;
                 speed = 1f;
@@ -113,7 +113,7 @@ namespace Wu_Xing
             //Laser
             else if (currentKeyboard.IsKeyDown(Keys.D5))
             {
-                projectileAttributes = new ProjectileAttributes(15, 14, 3f);
+                projectileAttributes = new ProjectileAttributes(15, 2, 14, 3f);
                 shotsPerSecond = 60;
                 health = maxHealth = 6;
                 speed = 1.5f;
@@ -124,7 +124,7 @@ namespace Wu_Xing
             //Rainbow laser
             else if (currentKeyboard.IsKeyDown(Keys.D6))
             {
-                projectileAttributes = new ProjectileAttributes(15, 14, 3f);
+                projectileAttributes = new ProjectileAttributes(15, 2, 14, 3f);
                 shotsPerSecond = 60;
                 health = maxHealth = 6;
                 speed = 1.5f;
@@ -135,7 +135,7 @@ namespace Wu_Xing
             //Small machinegun
             else if (currentKeyboard.IsKeyDown(Keys.D7))
             {
-                projectileAttributes = new ProjectileAttributes(2, 14, 1.75f);
+                projectileAttributes = new ProjectileAttributes(2, 5, 14, 1.75f);
                 shotsPerSecond = 60;
                 health = maxHealth = 4;
                 speed = 1;
@@ -146,7 +146,7 @@ namespace Wu_Xing
             //Big machine gun
             else if (currentKeyboard.IsKeyDown(Keys.D8))
             {
-                projectileAttributes = new ProjectileAttributes(8, 14, 1.75f);
+                projectileAttributes = new ProjectileAttributes(8, 3, 14, 1.75f);
                 shotsPerSecond = 60;
                 health = maxHealth = 2;
                 speed = 1;
@@ -157,7 +157,7 @@ namespace Wu_Xing
             //Big rainbow machine gun
             else if (currentKeyboard.IsKeyDown(Keys.D9))
             {
-                projectileAttributes = new ProjectileAttributes(12, 14, 1.5f);
+                projectileAttributes = new ProjectileAttributes(12, 2, 14, 1.5f);
                 shotsPerSecond = 60;
                 health = maxHealth = 2;
                 speed = 1;
@@ -168,7 +168,7 @@ namespace Wu_Xing
             //Chaos
             else if (currentKeyboard.IsKeyDown(Keys.D0))
             {
-                projectileAttributes = new ProjectileAttributes(30, 20, 3f);
+                projectileAttributes = new ProjectileAttributes(30, 10, 20, 3f);
                 shotsPerSecond = 60;
                 health = maxHealth = 16;
                 speed = 3;

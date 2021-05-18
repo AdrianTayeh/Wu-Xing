@@ -9,43 +9,51 @@ namespace Wu_Xing
 {
     class ProjectileAttributes
     {
-        public float Scale;
+        public int CriticalChance;
         public float Damage;
         public float Range;
         public float Speed;
+        public float Scale { get; private set; }
         public float Knockback { get; private set; }
 
         /// <summary>Create a set of projectile attributes with custom scale.</summary>
         /// <param name="range">How far the projectile will travel, measured in tiles.</param>
         /// <param name="speed">How fast the projectile will travel, 1 being 100%.</param>
-        public ProjectileAttributes(float damage, float range, float speed, float scale)
+        public ProjectileAttributes(float damage, int criticalChance, float range, float speed, float scale)
         {
             Scale = scale;
-            CommonConstructor(damage, range, speed);
+            CommonConstructor(damage, criticalChance, range, speed);
         }
 
         /// <summary>Create a set of projectile attributes with scale proportionate to damage.</summary>
         /// <param name="range">How far the projectile will travel, measured in tiles.</param>
         /// <param name="speed">How fast the projectile will travel, 1 being 100%.</param>
-        public ProjectileAttributes(float damage, float range, float speed)
+        public ProjectileAttributes(float damage, int criticalChance, float range, float speed)
         {
-            //Scale = 1 at 10 damage
             Scale = damage * 0.1f;
-            CommonConstructor(damage, range, speed);
+            CommonConstructor(damage, criticalChance, range, speed);
         }
 
         /// <summary>Create a set of projectile attributes using an existing set.</summary>
         public ProjectileAttributes(ProjectileAttributes projectileAttributes)
         {
             Scale = projectileAttributes.Scale;
-            CommonConstructor(projectileAttributes.Damage, projectileAttributes.Range, projectileAttributes.Speed);
+            CommonConstructor(projectileAttributes.Damage, projectileAttributes.CriticalChance, projectileAttributes.Range, projectileAttributes.Speed);
         }
 
-        private void CommonConstructor(float damage, float range, float speed)
+        private void CommonConstructor(float damage, int criticalChance, float range, float speed)
         {
             Damage = damage;
+            CriticalChance = criticalChance;
             Range = range;
             Speed = speed;
+            Knockback = Speed * Scale;
+        }
+
+        /// <summary>Should be called after modifying Damage or Speed.</summary>
+        public void UpdateScaleAndKnockback()
+        {
+            Scale = Damage * 0.1f;
             Knockback = Speed * Scale;
         }
     }
@@ -90,12 +98,12 @@ namespace Wu_Xing
             dead = tilesTraveled >= attributes.Range ? true : false;
 
             FadeOut();
-            HitGameObjects(gameObjects, adam);
+            HitGameObjects(gameObjects, adam, random);
 
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void HitGameObjects(List<GameObject> gameObjects, Adam adam)
+        private void HitGameObjects(List<GameObject> gameObjects, Adam adam, Random random)
         {
             if (shotByAdam)
             {
@@ -103,7 +111,10 @@ namespace Wu_Xing
                 {
                     if (gameObject is Character && hitbox.Intersects(gameObject.Hitbox))
                     {
-                        ((Character)gameObject).TakeDamage(attributes.Damage);
+                        int criticalChance = 3;
+                        int criticalDamageMultiplier = random.Next(100) < criticalChance ? 2 : 1;
+
+                        ((Character)gameObject).TakeDamage(attributes.Damage * criticalDamageMultiplier);
                         ((Character)gameObject).TakeKnockback(direction, attributes.Knockback);
                         dead = true;
                         break;
