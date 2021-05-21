@@ -14,10 +14,9 @@ namespace Wu_Xing
             texture = TextureLibrary.Wanderer;
             color = ColorLibrary.Element[element];
             source.Size = new Point(150, 195);
-            hitbox.Size = new Point(70);
+            hitbox = new Hitbox(Hitbox.HitboxType.OnGround, true, position, new Point(70));
             origin = source.Size.ToVector2() / 2;
             animationFPS = 60;
-            MoveTo(position);
             RandomSourceLocation(random);
             RandomRotation(random, 8);
 
@@ -35,7 +34,7 @@ namespace Wu_Xing
             DetermineMovingDirection(adam);
 
             if (movingDirection != Vector2.Zero)
-                MoveTo(position + (Rotate.PointAroundZero(Vector2.UnitY, rotation) * 600 * elapsedSeconds * speed));
+                Move(position + (Rotate.PointAroundZero(Vector2.UnitY, rotation) * 600 * elapsedSeconds * speed), gameObjects, mapManager.CurrentRoom.Hitboxes);
 
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -80,30 +81,77 @@ namespace Wu_Xing
                 texture = TextureLibrary.MagicBall;
                 animationFPS = 60;
                 color = ColorLibrary.Element[(Element)element];
-                hitbox.Size = new Point((int)(40 * attributes.Scale));
+                hitbox = new Hitbox(Hitbox.HitboxType.Flying, true, position, new Point((int)(40 * attributes.Scale)));
                 source.Size = new Point(200, 320);
                 origin = new Vector2(source.Width / 2, source.Height * 0.6f);
             }
 
             layerDepth = 0.4f;
             RandomSourceLocation(random);
-            MoveTo(position);
+        }
+
+        public override void Move(Vector2 newPosition, List<GameObject> gameObjects, List<Hitbox> roomHitboxes)
+        {
+            position = newPosition;
+            hitbox.Move(newPosition);
+
+            //Return if this is non-colliding
+            if (!hitbox.Colliding)
+                return;
+
+            //Check all gameObjects and die upon intersection
+            for (int i = gameObjects.Count - 1; i >= 0; i--)
+            {
+                //Ignore if non-colliding
+                if (!gameObjects[i].Hitbox.Colliding)
+                    continue;
+
+                //Ignore if not Tile
+                if (!(gameObjects[i] is Tile))
+                    continue;
+
+                //Ignore if HitboxType.Flat
+                if (gameObjects[i].Hitbox.Type == Hitbox.HitboxType.Flat)
+                    continue;
+
+                //Check for intersection
+                if (hitbox.Intersects(gameObjects[i].Hitbox))
+                {
+                    dead = true;
+                    return;
+                }
+            }
+
+            foreach (Hitbox roomHitbox in roomHitboxes)
+            {
+                //Check for intersection
+                if (roomHitbox.Colliding && hitbox.Intersects(roomHitbox))
+                {
+                    dead = true;
+                    return;
+                }
+            }
         }
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
             Vector2 previousPosition = position;
-            MoveTo(position + (direction * 600 * elapsedSeconds * attributes.Speed));
+            Move(position + (direction * 600 * elapsedSeconds * attributes.Speed), gameObjects, mapManager.CurrentRoom.Hitboxes);
             tilesTraveled += Vector2.Distance(previousPosition, position) / 100;
-            dead = tilesTraveled >= attributes.Range ? true : false;
+
+            //If traveled too far, or outside of the room's bounds, or already dead from intersection with tile
+            if (tilesTraveled >= attributes.Range || !mapManager.CurrentRoom.Bounds.Contains(hitbox.Center) || dead)
+            {
+                dead = true;
+                return;
+            }
 
             FadeOut();
-            HitGameObjects(gameObjects, adam, random);
-
+            HitGameObjects(gameObjects, adam, random, mapManager.CurrentRoom.Hitboxes);
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void HitGameObjects(List<GameObject> gameObjects, Adam adam, Random random)
+        private void HitGameObjects(List<GameObject> gameObjects, Adam adam, Random random, List<Hitbox> roomHitboxes)
         {
             if (shotByAdam)
             {
@@ -115,7 +163,7 @@ namespace Wu_Xing
                         int criticalDamageMultiplier = random.Next(100) < criticalChance ? 2 : 1;
 
                         ((Character)gameObject).TakeDamage(attributes.Damage * criticalDamageMultiplier);
-                        ((Character)gameObject).TakeKnockback(direction, attributes.Knockback);
+                        ((Character)gameObject).TakeKnockback(direction, attributes.Knockback, gameObjects, roomHitboxes);
                         dead = true;
                         break;
                     }
@@ -152,7 +200,7 @@ namespace Wu_Xing
                 spriteBatch.Draw(TextureLibrary.MagicBallCenter, roomPosition + position, source, Color.FromNonPremultiplied(255, 255, 255, color.A), rotation, origin, attributes.Scale, SpriteEffects.None, layerDepth + 0.001f);
 
             if (drawHitbox)
-                spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
+                hitbox.Draw(spriteBatch, layerDepth);
         }
     }
 }

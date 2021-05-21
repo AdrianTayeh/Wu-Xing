@@ -144,7 +144,7 @@ namespace Wu_Xing
             }
         }
 
-        public async void StartRoomTransition(Door door)
+        public async void StartRoomTransition(Door door, List<GameObject> gameObjects)
         {
             transitionRoom = door.LeadsToRoom;
             rooms[transitionRoom.X, transitionRoom.Y].IsEntered(rooms);
@@ -218,7 +218,7 @@ namespace Wu_Xing
             currentRoom.IsLeft();
             currentRoomLocation = door.LeadsToRoom;
             currentRoom = rooms[currentRoomLocation.X, currentRoomLocation.Y];
-            adam.MoveTo(door.ExitPosition);
+            adam.Move(door.ExitPosition, gameObjects, currentRoom.Hitboxes);
             transitionRoom = new Point(-1, -1);
             minimapSource.Location = minimapSourceEndPosition.ToPoint();
 

@@ -9,10 +9,9 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.Fire;
-            hitbox.Size = new Point(60);
+            hitbox = new Hitbox(Hitbox.HitboxType.OnGround, true, position, new Point(60));
             source.Size = new Point(150, 200);
             RandomSourceLocation(random);
-            MoveTo(position);
             animationFPS = 60;
             origin = new Vector2(source.Width / 2, source.Height * 0.6f);
         }

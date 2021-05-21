@@ -11,8 +11,7 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.Hole;
-            hitbox.Size = new Point(100);
-            MoveTo(position);
+            hitbox = new Hitbox(Hitbox.HitboxType.Flat, true, position, new Point(100));
         }
 
         public void UpdateAppearence(List<GameObject> gameObjects, Random random)
