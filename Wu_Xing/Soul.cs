@@ -20,10 +20,9 @@ namespace Wu_Xing
             texture = TextureLibrary.Soul;
             color = ColorLibrary.Element[element];
             source.Size = new Point(100, 130);
-            hitbox.Size = new Point(60);
+            hitbox = new Hitbox(Hitbox.HitboxType.Flying, false, position, new Point(60));
             origin = source.Size.ToVector2() / 2 + new Vector2(0, 30);
             animationFPS = 60;
-            MoveTo(position);
             RandomSourceLocation(random);
 
             //Character
@@ -56,18 +55,18 @@ namespace Wu_Xing
             //If has destination, move
             else if (destination != null)
             {
-                MoveToDestination(elapsedSeconds, gameObjects, adam, random);
+                MoveToDestination(elapsedSeconds, gameObjects, adam, random, mapManager.CurrentRoom.Hitboxes);
             }
 
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void MoveToDestination(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, Random random)
+        private void MoveToDestination(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, Random random, List<Hitbox> roomHitboxes)
         {
             Vector2 positionRelativeToDestination = position - (Vector2)destination;
             float angleBefore = (float)Math.Atan2(-positionRelativeToDestination.X, positionRelativeToDestination.Y);
 
-            MoveTo(position + (movingDirection * 600 * elapsedSeconds * speed));
+            Move(position + (movingDirection * 600 * elapsedSeconds * speed), gameObjects, roomHitboxes);
 
             positionRelativeToDestination = position - (Vector2)destination;
             float angleAfter = (float)Math.Atan2(-positionRelativeToDestination.X, positionRelativeToDestination.Y);
@@ -79,7 +78,7 @@ namespace Wu_Xing
                 destination = null;
 
                 if (attack)
-                    CreateProjectile(adam, gameObjects, random);
+                    CreateProjectile(adam, gameObjects, random, roomHitboxes);
             }
         }
 
@@ -120,7 +119,7 @@ namespace Wu_Xing
             movingDirection.Normalize();
         }
 
-        private void CreateProjectile(Adam adam, List<GameObject> gameObjects, Random random)
+        private void CreateProjectile(Adam adam, List<GameObject> gameObjects, Random random, List<Hitbox> roomHitboxes)
         {
             for (int i = -1; i <= 1; i += 2)
             {
@@ -131,7 +130,7 @@ namespace Wu_Xing
                 Vector2 position = this.position + aimingDirection * hitbox.Width * 0.7f;
 
                 gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, projectileAttributes, rotation + 0.3f * i + AccuracyOffset(random), false));
-                gameObjects[gameObjects.Count - 1].MoveTo(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f);
+                gameObjects[gameObjects.Count - 1].Move(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f, gameObjects, roomHitboxes);
             }
         }
 

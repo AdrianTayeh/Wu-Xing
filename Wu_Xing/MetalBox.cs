@@ -9,8 +9,7 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.MetalBox;
-            hitbox.Size = new Point(100);
-            MoveTo(position);
+            hitbox = new Hitbox(Hitbox.HitboxType.OnGround, true, position, new Point(100));
             RandomSourceLocation(random);
         }
     }

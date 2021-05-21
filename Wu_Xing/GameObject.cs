@@ -19,7 +19,7 @@ namespace Wu_Xing
         protected Vector2 position;
         protected Texture2D texture;
         protected Rectangle source;
-        protected Rectangle hitbox;
+        protected Hitbox hitbox;
         protected Vector2 origin;
         protected float layerDepth;
 
@@ -33,15 +33,14 @@ namespace Wu_Xing
 
         public GameObject(Vector2 position, Element? element, Random random)
         {
+            this.position = position;
             this.element = element;
             color = Color.White;
-
-            //No use of calling MoveTo, since hitboxes havn't been initialized at this point
         }
 
         public Texture2D Texture { get { return texture; } }
         public Vector2 Position { get { return position; } }
-        public Rectangle Hitbox { get { return hitbox; } }
+        public Hitbox Hitbox { get { return hitbox; } }
         public Rectangle Source { get { return source; } }
         public Element? Element { get { return element; } }
         public bool IsDead { get { return dead; } }
@@ -52,11 +51,7 @@ namespace Wu_Xing
                 UpdateAnimation(elapsedSeconds);
         }
 
-        public void MoveTo(Vector2 newPosition)
-        {
-            position = newPosition;
-            hitbox.Location = (position - hitbox.Size.ToVector2() / 2).ToPoint();
-        }
+        public abstract void Move(Vector2 newPosition, List<GameObject> gameObjects, List<Hitbox> roomHitboxes);
 
         protected void UpdateAnimation(float elapsedSeconds)
         {
@@ -95,8 +90,7 @@ namespace Wu_Xing
             spriteBatch.Draw(texture, roomPosition + position, source, color, rotation, origin, 1, SpriteEffects.None, layerDepth);
 
             if (drawHitbox)
-                spriteBatch.Draw(TextureLibrary.Hitbox, hitbox, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, layerDepth + 0.001f);
+                hitbox.Draw(spriteBatch, layerDepth);
         }
-
     }
 }

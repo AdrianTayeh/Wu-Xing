@@ -358,128 +358,20 @@ namespace Wu_Xing
                     //Positive means it it a room and not a pointer
                     if (mapTile[x, y] != null && mapTile[x, y].Size.X > 0 && mapTile[x, y].Size.Y > 0)
                     {
-                        //Get gameObjects from random string
+                        List<Door> doors = GetListOfDoors(x, y);
+                        List<Hitbox> hitboxes = GetListOfHitboxes(mapTile[x, y].Size, doors);
                         List<GameObject> gameObjects = new List<GameObject>();
 
+                        //Get gameObjects from random string
                         string randomString = rows[mapTile[x, y].Type][mapTile[x, y].Size][random.Next(rows[mapTile[x, y].Type][mapTile[x, y].Size].Count)];
                         if (randomString != "")
                             GetRoomContentsFromString(gameObjects, randomString, element, chance);
 
-                        //Get doors
-                        List<Door> doors = GetListOfDoors(x, y);
-
                         //Initialize room
-                        rooms[x, y] = new Room(mapTile[x, y].Size, mapTile[x, y].Type, doors, gameObjects);
+                        rooms[x, y] = new Room(mapTile[x, y].Size, mapTile[x, y].Type, doors, gameObjects, hitboxes);
                     }
                 }
             }
-        }
-
-        private Dictionary<Room.Type, Dictionary<Point, List<string>>> GetDictionaryWithAllRooms()
-        {
-            Dictionary<Room.Type, Dictionary<Point, List<string>>> rows = new Dictionary<Room.Type, Dictionary<Point, List<string>>>();
-
-            //Add pairs of room types and dictionaries to rows dictionary
-            rows.Add(Room.Type.Normal, new Dictionary<Point, List<string>>());
-            rows.Add(Room.Type.Center, new Dictionary<Point, List<string>>());
-            rows.Add(Room.Type.Boss, new Dictionary<Point, List<string>>());
-
-            //Points to be used
-            List<Point> sizes = new List<Point>();
-            sizes.Add(new Point(1, 1));
-            sizes.Add(new Point(1, 2));
-            sizes.Add(new Point(1, 3));
-            sizes.Add(new Point(2, 1));
-            sizes.Add(new Point(3, 1));
-            sizes.Add(new Point(2, 2));
-
-            string roomContentFolderPath = Environment.CurrentDirectory;
-            //For Windows
-            roomContentFolderPath = roomContentFolderPath.Replace(@"bin\DesktopGL\AnyCPU\Debug", "Room Content");
-            //For MacOS
-            roomContentFolderPath = roomContentFolderPath.Replace(@"bin/DesktopGL/AnyCPU/Debug", "Room Content");
-
-            //Add pairs of points and lists to rows[Room.Type] dictionaries
-            foreach (Point size in sizes)
-            {
-                rows[Room.Type.Normal].Add(size, File.ReadAllLines(roomContentFolderPath + "/Normal " + size.X + "x" + size.Y + ".txt").ToList());
-                rows[Room.Type.Center].Add(size, File.ReadAllLines(roomContentFolderPath + "/Center " + size.X + "x" + size.Y + ".txt").ToList());
-            }
-
-            rows[Room.Type.Boss].Add(new Point(1, 1), File.ReadAllLines(roomContentFolderPath + "/Boss 1x1.txt").ToList());
-
-            return rows;
-        }
-
-        //Incomplete
-        private void GetRoomContentsFromString(List<GameObject> gameObjects, string row, Element element, int chance)
-        {
-            //Row format:
-            //block;block;block
-            string[] blocks = row.Split(';');
-
-            foreach (string block in blocks)
-            {
-                //Block formats:
-                //x,y,objectID
-                //x,y,objectID,length
-                string[] components = block.Split(',');
-
-                int x = int.Parse(components[0]);
-                int y = int.Parse(components[1]);
-                string objectID = components[2];
-                Vector2 position = new Vector2(gridOffset + x * 100 + 50, gridOffset + y * 100 + 50);
-
-                //If the block consists of more than three components, it is a number of tiles
-                if (components.Count() > 3)
-                {
-                    int length = int.Parse(components[3]);
-                    
-                    for (int i = 0; i < length; i++)
-                    {
-                        if (objectID == "S")
-                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), Element.Earth, random));
-
-                        else if (objectID == "W")
-                            gameObjects.Add(new WoodBox(new Vector2(position.X + i * 100, position.Y), Element.Wood, random));
-
-                        else if (objectID == "H")
-                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), null, random));
-
-                        else if (objectID == "WH")
-                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), Element.Water, random));
-
-                        else if (objectID == "M")
-                            gameObjects.Add(new MetalBox(new Vector2(position.X + i * 100, position.Y), Element.Metal, random));
-
-                        else if (objectID == "C") //Uniqe block format: x,y,objectID,length,direction,speed
-                            gameObjects.Add(new Conveyor(new Vector2(position.X + i * 100, position.Y), null, random, int.Parse(components[4]), float.Parse(components[5].Replace('.', ','))));
-
-                        else if (objectID == "SP") //Uniqe block format: x,y,objectID,length,interval
-                            gameObjects.Add(new Spikes(new Vector2(position.X + i * 100, position.Y), null, random, float.Parse(components[4].Replace('.', ','))));
-
-                        else if (objectID == "F")
-                            gameObjects.Add(new Fire(new Vector2(position.X + i * 100, position.Y), Element.Fire, random));
-                    }
-                }
-
-                //If the block consists of three components, it is a character
-                else
-                {
-                    if (objectID == "O")
-                        gameObjects.Add(new Orb(position, element, random));
-
-                    else if (objectID == "S")
-                        gameObjects.Add(new Soul(position, element, random));
-
-                    else if (objectID == "W")
-                        gameObjects.Add(new Wanderer(position, element, random));
-                }
-            }
-
-            foreach (GameObject gameObject in gameObjects)
-                if (gameObject is Hole)
-                    ((Hole)gameObject).UpdateAppearence(gameObjects, random);
         }
 
         private List<Door> GetListOfDoors(int x, int y)
@@ -561,6 +453,152 @@ namespace Wu_Xing
             Room.Type doorType = mapTile[x, y].Type == Room.Type.Boss || mapTile[leadsToRoom.X, leadsToRoom.Y].Type == Room.Type.Boss ? Room.Type.Boss : Room.Type.Normal;
 
             return new Door(position, exitPosition, entranceArea, rotation, leadsToRoom, doorType);
+        }
+
+        private List<Hitbox> GetListOfHitboxes(Point size, List<Door> doors)
+        {
+            Rectangle horizontal = new Rectangle(0, 0, 700, gridOffset);
+            Rectangle vertical = new Rectangle(0, 0, gridOffset, 300);
+            Rectangle oneFloor = new Rectangle(gridOffset, gridOffset, 1500, 700);
+            Rectangle fullFloor = new Rectangle(gridOffset, gridOffset, oneFloor.Width * size.X, oneFloor.Height * size.Y);
+
+            List<Hitbox> hitboxes = new List<Hitbox>();
+
+            //Horizontal hitboxes
+            for (int x = 0; x < size.X; x++)
+            {
+                //North
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(oneFloor.Left + x * oneFloor.Width, 0, horizontal.Width, horizontal.Height)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(hitboxes[hitboxes.Count - 1].Right, 0, 100, horizontal.Height)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(hitboxes[hitboxes.Count - 1].Right, 0, horizontal.Width, horizontal.Height)));
+
+                //South
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(hitboxes[hitboxes.Count - 3].Left, fullFloor.Bottom, horizontal.Width, horizontal.Height)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(hitboxes[hitboxes.Count - 3].Left, fullFloor.Bottom, 100, horizontal.Height)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(hitboxes[hitboxes.Count - 3].Left, fullFloor.Bottom, horizontal.Width, horizontal.Height)));
+            }
+
+            //Vertical hitboxes
+            for (int y = 0; y < size.Y; y++)
+            {
+                //West
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(0, oneFloor.Top + y * oneFloor.Height, vertical.Width, vertical.Height)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(0, hitboxes[hitboxes.Count - 1].Bottom, vertical.Width, 100)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(0, hitboxes[hitboxes.Count - 1].Bottom, vertical.Width, vertical.Height)));
+
+                //East
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(fullFloor.Right, hitboxes[hitboxes.Count - 3].Top, vertical.Width, vertical.Height)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(fullFloor.Right, hitboxes[hitboxes.Count - 3].Top, vertical.Width, 100)));
+                hitboxes.Add(new Hitbox(Hitbox.HitboxType.Flying, true, new Rectangle(fullFloor.Right, hitboxes[hitboxes.Count - 3].Top, vertical.Width, vertical.Height)));  
+            }
+
+            return hitboxes;
+        }
+
+        private Dictionary<Room.Type, Dictionary<Point, List<string>>> GetDictionaryWithAllRooms()
+        {
+            Dictionary<Room.Type, Dictionary<Point, List<string>>> rows = new Dictionary<Room.Type, Dictionary<Point, List<string>>>();
+
+            //Add pairs of room types and dictionaries to rows dictionary
+            rows.Add(Room.Type.Normal, new Dictionary<Point, List<string>>());
+            rows.Add(Room.Type.Center, new Dictionary<Point, List<string>>());
+            rows.Add(Room.Type.Boss, new Dictionary<Point, List<string>>());
+
+            //Points to be used
+            List<Point> sizes = new List<Point>();
+            sizes.Add(new Point(1, 1));
+            sizes.Add(new Point(1, 2));
+            sizes.Add(new Point(1, 3));
+            sizes.Add(new Point(2, 1));
+            sizes.Add(new Point(3, 1));
+            sizes.Add(new Point(2, 2));
+
+            string roomContentFolderPath = Environment.CurrentDirectory;
+            //For Windows
+            roomContentFolderPath = roomContentFolderPath.Replace(@"bin\DesktopGL\AnyCPU\Debug", "Room Content");
+            //For MacOS
+            roomContentFolderPath = roomContentFolderPath.Replace(@"bin/DesktopGL/AnyCPU/Debug", "Room Content");
+
+            //Add pairs of points and lists to rows[Room.Type] dictionaries
+            foreach (Point size in sizes)
+            {
+                rows[Room.Type.Normal].Add(size, File.ReadAllLines(roomContentFolderPath + "/Normal " + size.X + "x" + size.Y + ".txt").ToList());
+                rows[Room.Type.Center].Add(size, File.ReadAllLines(roomContentFolderPath + "/Center " + size.X + "x" + size.Y + ".txt").ToList());
+            }
+
+            rows[Room.Type.Boss].Add(new Point(1, 1), File.ReadAllLines(roomContentFolderPath + "/Boss 1x1.txt").ToList());
+
+            return rows;
+        }
+
+        private void GetRoomContentsFromString(List<GameObject> gameObjects, string row, Element element, int chance)
+        {
+            //Row format:
+            //block;block;block
+            string[] blocks = row.Split(';');
+
+            foreach (string block in blocks)
+            {
+                //Block formats:
+                //x,y,objectID
+                //x,y,objectID,length
+                string[] components = block.Split(',');
+
+                int x = int.Parse(components[0]);
+                int y = int.Parse(components[1]);
+                string objectID = components[2];
+                Vector2 position = new Vector2(gridOffset + x * 100 + 50, gridOffset + y * 100 + 50);
+
+                //If the block consists of more than three components, it is a number of tiles
+                if (components.Count() > 3)
+                {
+                    int length = int.Parse(components[3]);
+                    
+                    for (int i = 0; i < length; i++)
+                    {
+                        if (objectID == "S")
+                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), Element.Earth, random));
+
+                        else if (objectID == "W")
+                            gameObjects.Add(new WoodBox(new Vector2(position.X + i * 100, position.Y), Element.Wood, random));
+
+                        else if (objectID == "H")
+                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), null, random));
+
+                        else if (objectID == "WH")
+                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), Element.Water, random));
+
+                        else if (objectID == "M")
+                            gameObjects.Add(new MetalBox(new Vector2(position.X + i * 100, position.Y), Element.Metal, random));
+
+                        else if (objectID == "C") //Uniqe block format: x,y,objectID,length,direction,speed
+                            gameObjects.Add(new Conveyor(new Vector2(position.X + i * 100, position.Y), null, random, int.Parse(components[4]), float.Parse(components[5].Replace('.', ','))));
+
+                        else if (objectID == "SP") //Uniqe block format: x,y,objectID,length,interval
+                            gameObjects.Add(new Spikes(new Vector2(position.X + i * 100, position.Y), null, random, float.Parse(components[4].Replace('.', ','))));
+
+                        else if (objectID == "F")
+                            gameObjects.Add(new Fire(new Vector2(position.X + i * 100, position.Y), Element.Fire, random));
+                    }
+                }
+
+                //If the block consists of three components, it is a character
+                else
+                {
+                    if (objectID == "O")
+                        gameObjects.Add(new Orb(position, element, random));
+
+                    else if (objectID == "S")
+                        gameObjects.Add(new Soul(position, element, random));
+
+                    else if (objectID == "W")
+                        gameObjects.Add(new Wanderer(position, element, random));
+                }
+            }
+
+            foreach (GameObject gameObject in gameObjects)
+                if (gameObject is Hole)
+                    ((Hole)gameObject).UpdateAppearence(gameObjects, random);
         }
 
         private void SwapDoorExitPositions()

@@ -14,10 +14,9 @@ namespace Wu_Xing
             texture = TextureLibrary.Orb;
             color = ColorLibrary.Element[element];
             source.Size = new Point(100, 130);
-            hitbox.Size = new Point(60);
+            hitbox = new Hitbox(Hitbox.HitboxType.OnGround, true, position, new Point(60));
             origin = source.Size.ToVector2() / 2 + new Vector2(0, 15);
             animationFPS = 60;
-            MoveTo(position);
             RandomSourceLocation(random);
 
             //Character
@@ -32,7 +31,7 @@ namespace Wu_Xing
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
             DetermineMovingDirection(adam);
-            MoveTo(position + (movingDirection * 600 * elapsedSeconds * speed));
+            Move(position + (movingDirection * 600 * elapsedSeconds * speed), gameObjects, mapManager.CurrentRoom.Hitboxes);
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 

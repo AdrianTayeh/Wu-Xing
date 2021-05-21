@@ -16,8 +16,7 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.Conveyor;
-            hitbox.Size = new Point(100);
-            MoveTo(position);
+            hitbox = new Hitbox(Hitbox.HitboxType.Flat, false, position, new Point(100));
             rotation = (float)Math.PI / 2 * direction;
 
             //Conveyor
@@ -30,13 +29,13 @@ namespace Wu_Xing
             if (powered)
             {
                 Animate(elapsedSeconds);
-                PushCharacters(elapsedSeconds, gameObjects, adam);
+                PushCharacters(elapsedSeconds, gameObjects, adam, mapManager.CurrentRoom.Hitboxes);
             }
 
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void PushCharacters(float elapsedSeconds, List<GameObject> gameObjects, Adam adam)
+        private void PushCharacters(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, List<Hitbox> roomHitboxes)
         {
             foreach (GameObject character in gameObjects)
                 if (character is Character && hitbox.Contains(character.Position))
@@ -54,7 +53,7 @@ namespace Wu_Xing
 
                 else
                 {
-                    character.MoveTo(character.Position + speed * 100 * elapsedSeconds * Rotate.PointAroundZero(new Vector2(0, -1), rotation));
+                    character.Move(character.Position + speed * 100 * elapsedSeconds * Rotate.PointAroundZero(new Vector2(0, -1), rotation), gameObjects, roomHitboxes);
 
                     //If this character was moved out of this conveyor's hitbox
                     //into another conveyor's hitbox, which has not yet been updated this frame,

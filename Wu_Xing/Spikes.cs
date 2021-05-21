@@ -16,8 +16,7 @@ namespace Wu_Xing
         {
             //GameObject
             texture = TextureLibrary.Spikes;
-            hitbox.Size = new Point(50);
-            MoveTo(position);
+            hitbox = new Hitbox(Hitbox.HitboxType.Flat, false, position, new Point(50));
 
             //Spikes
             this.interval = interval;

@@ -9,6 +9,8 @@ namespace Wu_Xing
 {
     class Room
     {
+        private static float layerDepth = 0.1f;
+        private List<Hitbox> hitboxes;
         private List<GameObject> gameObjects;
         private List<Door> doors;
         private Point size;
@@ -23,19 +25,22 @@ namespace Wu_Xing
         //Discovered  At any point entered or adjacent to entered room
         //Cleared     Has been discovered, no enemies present
 
-        public Room(Point size, Type roomType, List<Door> doors, List<GameObject> gameObjects)
+        public Room(Point size, Type roomType, List<Door> doors, List<GameObject> gameObjects, List<Hitbox> hitboxes)
         {
             this.size = size;
             this.roomType = roomType;
             this.doors = doors;
             this.gameObjects = gameObjects;
+            this.hitboxes = hitboxes;
             roomState = State.Unknown;
         }
 
         public Point Size { get { return size; } }
+        public Rectangle Bounds { get { return TextureLibrary.Rooms[size.X + "x" + size.Y].Bounds; } }
         public Type RoomType { get { return roomType; } }
         public State RoomState { get { return roomState; } set { roomState = value; } }
         public List<Door> Doors { get { return doors; } }
+        public List<Hitbox> Hitboxes { get { return hitboxes; } }
 
         public void Update(float elapsedSeconds, KeyboardState currentKeyboard, Adam adam, MapManager mapManager, Random random)
         {
@@ -44,6 +49,7 @@ namespace Wu_Xing
             if (roomState == State.Discovered && CheckIfCleared())
             {
                 roomState = State.Cleared;
+                ToggleDoorHitboxes(false);
                 foreach (Door door in doors)
                     door.Open();
             }
@@ -61,6 +67,14 @@ namespace Wu_Xing
                     gameObjects.RemoveAt(i);
         }
 
+        private void ToggleDoorHitboxes(bool colliding)
+        {
+            foreach (Hitbox hitbox in hitboxes)
+                if (hitbox.Width == 100 || hitbox.Height == 100)
+                    if (doors.FindIndex(door => hitbox.Contains(door.EntranceArea.Center.ToVector2())) != -1)
+                        hitbox.Colliding = colliding;
+        }
+
         public void IsEntered(Room[,] rooms)
         {
             if (roomState == State.Unknown)
@@ -75,11 +89,17 @@ namespace Wu_Xing
                         rooms[door.LeadsToRoom.X, door.LeadsToRoom.Y].RoomState = State.Discovered;
 
                 if (CheckIfCleared())
+                {
                     roomState = State.Cleared;
+                    ToggleDoorHitboxes(false);
+                }
 
                 else
+                {
+                    ToggleDoorHitboxes(true);
                     foreach (Door door in doors)
                         door.Close();
+                }  
             }
         }
 
@@ -100,7 +120,11 @@ namespace Wu_Xing
 
         public void Draw(SpriteBatch spriteBatch, Element element, Vector2 position, bool drawHitbox)
         {
-            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
+            spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, layerDepth);
+
+            if (drawHitbox)
+                foreach (Hitbox hitbox in hitboxes)
+                    hitbox.Draw(spriteBatch, layerDepth);
 
             for (int i = gameObjects.Count - 1; i >= 0; i--)
                 gameObjects[i].Draw(spriteBatch, position, drawHitbox);

@@ -81,6 +81,7 @@
     <Compile Include="Spikes.cs" />
     <Compile Include="Fire.cs" />
     <Compile Include="Projectile.cs" />
+    <Compile Include="Hitbox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

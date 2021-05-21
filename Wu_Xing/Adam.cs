@@ -27,8 +27,7 @@ namespace Wu_Xing
             texture = TextureLibrary.Adam;
             source = new Rectangle(140, 0, 140, 140);
             origin = source.Size.ToVector2() / 2;
-            hitbox.Size = new Point(86);
-            MoveTo(position);
+            hitbox = new Hitbox(Hitbox.HitboxType.OnGround, true, position, new Point(80));
 
             //Character
             rotationSpeed = 0.3f;
@@ -57,11 +56,11 @@ namespace Wu_Xing
             if (invulnerableTimer > 0)
                 invulnerableTimer -= elapsedSeconds;
 
-            MoveTo(position + (movingDirection * 600 * elapsedSeconds * speed));
-            Shoot(elapsedSeconds, gameObjects, random);
+            Move(position + (movingDirection * 600 * elapsedSeconds * speed), gameObjects, mapManager.CurrentRoom.Hitboxes);
+            Shoot(elapsedSeconds, gameObjects, random, mapManager.CurrentRoom.Hitboxes);
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
-            CheckDoors(mapManager);
+            CheckDoors(mapManager, gameObjects);
         }
 
         private void CheckCheatInput(KeyboardState currentKeyboard)
@@ -177,14 +176,14 @@ namespace Wu_Xing
             }
         }
 
-        private void CheckDoors(MapManager mapManager)
+        private void CheckDoors(MapManager mapManager, List<GameObject> gameObjects)
         {
             foreach (Door door in mapManager.Rooms[mapManager.CurrentRoomLocation.X, mapManager.CurrentRoomLocation.Y].Doors)
             {
-                if (door.IsOpen && door.EntranceArea.Contains(position))
+                if (door.EntranceArea.Contains(position))
                 {
                     position = door.TransitionExitPosition;
-                    mapManager.StartRoomTransition(door);
+                    mapManager.StartRoomTransition(door, gameObjects);
                     break;
                 }
             }
@@ -241,7 +240,7 @@ namespace Wu_Xing
             rotationTarget %= (float)Math.PI * 2;
         }
 
-        private void Shoot(float elapsedSeconds, List<GameObject> gameObjects, Random random)
+        private void Shoot(float elapsedSeconds, List<GameObject> gameObjects, Random random, List<Hitbox> roomHitboxes)
         {
             //Decrease cooldown
             if (shotCooldown > 0)
@@ -254,11 +253,11 @@ namespace Wu_Xing
                 shotCooldown += 1 / shotsPerSecond;
 
                 //Create projectile
-                CreateProjectile(gameObjects, random);
+                CreateProjectile(gameObjects, random, roomHitboxes);
             }
         }
 
-        private void CreateProjectile(List<GameObject> gameObjects, Random random)
+        private void CreateProjectile(List<GameObject> gameObjects, Random random, List<Hitbox> roomHitboxes)
         {
             Vector2 position = this.position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * hitbox.Width * 0.7f;
 
@@ -275,7 +274,7 @@ namespace Wu_Xing
             }
 
             gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + AccuracyOffset(random), true));
-            gameObjects[gameObjects.Count - 1].MoveTo(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f);
+            gameObjects[gameObjects.Count - 1].Move(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f, gameObjects, roomHitboxes);
         }
 
         public override void TakeDamage(float damage)
