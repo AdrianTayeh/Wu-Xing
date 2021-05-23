@@ -12,6 +12,7 @@ namespace Wu_Xing
     {
         private Vector2? destination;
         private bool attack;
+        private float timeTraveled;
         private static float maximumMovingDistance = 200;
 
         public Soul(Vector2 position, Element element, Random random) : base(position, element, random)
@@ -46,9 +47,7 @@ namespace Wu_Xing
             //If ready, not moving, and within detectionRange
             if (shotCooldown <= 0 && destination == null && Vector2.Distance(position, adam.Position) <= detectionRange * 100)
             {
-                //Reset cooldown
                 shotCooldown += 1 / shotsPerSecond;
-
                 DetermineMovingDirection(adam, random);
             }
 
@@ -71,10 +70,23 @@ namespace Wu_Xing
             positionRelativeToDestination = position - (Vector2)destination;
             float angleAfter = (float)Math.Atan2(-positionRelativeToDestination.X, positionRelativeToDestination.Y);
 
-            //If the destination was surpassed
+            timeTraveled += elapsedSeconds;
+
+            //If destination was surpassed
             if (Math.Abs(angleBefore - angleAfter) > Math.PI / 2)
             {
                 position = (Vector2)destination;
+                timeTraveled = 0;
+                destination = null;
+
+                if (attack)
+                    CreateProjectile(adam, gameObjects, random, roomHitboxes);
+            }
+
+            //If time traveled surpassed the expected amount
+            else if (timeTraveled >= 0.5f)
+            {
+                timeTraveled = 0;
                 destination = null;
 
                 if (attack)
@@ -97,6 +109,7 @@ namespace Wu_Xing
             //If more than one move away from ideal position, move closer to ideal position
             if (distanceToIdealPosition > maximumMovingDistance)
             {
+                Debug.WriteLine("Too far");
                 destination = position + Rotate.PointAroundZero(new Vector2(0, -maximumMovingDistance), angleRelativeToIdealPosition + (float)Math.PI);
                 attack = false;
             }
@@ -104,13 +117,15 @@ namespace Wu_Xing
             //If less than half a move away from ideal position, mode sideways and attack
             else if (distanceToIdealPosition < maximumMovingDistance / 2)
             {
-                destination = Rotate.PointAroundCenter(idealPosition, adam.Position, random.Next(2) == 0 ? 0.7f : -0.7f);
+                Debug.WriteLine("Sideways and attack");
+                destination = Rotate.PointAroundCenter(idealPosition, adam.Position, random.Next(2) == 0 ? 0.5f : -0.5f);
                 attack = true;
             }
 
             //If one move away from ideal position, move to ideal position and attack
             else
             {
+                Debug.WriteLine("Move and attack");
                 destination = idealPosition;
                 attack = true;
             }

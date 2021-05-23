@@ -95,30 +95,29 @@ namespace Wu_Xing
             position = newPosition;
             hitbox.Move(newPosition);
 
-            //Return if this is non-colliding
-            if (!hitbox.Colliding)
-                return;
-
-            //Check all gameObjects and die upon intersection
-            for (int i = gameObjects.Count - 1; i >= 0; i--)
+            if (hitbox.Colliding)
             {
-                //Ignore if non-colliding
-                if (!gameObjects[i].Hitbox.Colliding)
-                    continue;
-
-                //Ignore if not Tile
-                if (!(gameObjects[i] is Tile))
-                    continue;
-
-                //Ignore if HitboxType.Flat
-                if (gameObjects[i].Hitbox.Type == Hitbox.HitboxType.Flat)
-                    continue;
-
-                //Check for intersection
-                if (hitbox.Intersects(gameObjects[i].Hitbox))
+                //Check all gameObjects and die upon intersection
+                for (int i = gameObjects.Count - 1; i >= 0; i--)
                 {
-                    dead = true;
-                    return;
+                    //Ignore if non-colliding
+                    if (!gameObjects[i].Hitbox.Colliding)
+                        continue;
+
+                    //Ignore if not Tile
+                    if (!(gameObjects[i] is Tile))
+                        continue;
+
+                    //Ignore if HitboxType.Flat
+                    if (gameObjects[i].Hitbox.Type == Hitbox.HitboxType.Flat)
+                        continue;
+
+                    //Check for intersection
+                    if (hitbox.Intersects(gameObjects[i].Hitbox))
+                    {
+                        dead = true;
+                        return;
+                    }
                 }
             }
 

@@ -102,7 +102,7 @@ namespace Wu_Xing
                         source.Location = new Point(200, 200);
 
                     //1,0
-                    else // (diagonalHoles[(i + 1) % 4])
+                    else
                         source.Location = new Point(100, 0);
                 }
             }
@@ -136,7 +136,7 @@ namespace Wu_Xing
                     source.Location = new Point(0, 0);
             }
 
-            else // (cardinalConnections == 4)
+            else
             {
                 //2,3
                 if (diagonalConnections == 0)

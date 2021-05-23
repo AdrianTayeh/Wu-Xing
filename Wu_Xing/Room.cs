@@ -118,13 +118,13 @@ namespace Wu_Xing
             return true;
         }
 
-        public void Draw(SpriteBatch spriteBatch, Element element, Vector2 position, bool drawHitbox)
+        public void Draw(SpriteBatch spriteBatch, Vector2 position, bool drawHitbox)
         {
             spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, layerDepth);
 
             if (drawHitbox)
                 foreach (Hitbox hitbox in hitboxes)
-                    hitbox.Draw(spriteBatch, layerDepth);
+                    hitbox.Draw(spriteBatch, 0.95f);
 
             for (int i = gameObjects.Count - 1; i >= 0; i--)
                 gameObjects[i].Draw(spriteBatch, position, drawHitbox);

@@ -48,7 +48,7 @@ namespace Wu_Xing
                 }
             }
 
-            else // (state == State.Recharging)
+            else
             {
                 animationTimer += elapsedSeconds;
                 if (animationTimer >= interval)
@@ -82,7 +82,7 @@ namespace Wu_Xing
                 }
             }
 
-            else // (state == State.Recharging)
+            else
             {
                 animationTimer += elapsedSeconds;
                 if (animationTimer >= 2)

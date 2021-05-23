@@ -42,68 +42,68 @@ namespace Wu_Xing
             position = newPosition;
             hitbox.Move(newPosition);
 
-            //Return if this is non-colliding
-            if (!hitbox.Colliding)
-                return;
-
-            #region Why the complicated for loop?
-
-            // The method Hitbox.MoveOutOfCollision checks for vertical collisions before horizontal ones
-            // This gets characters stuck when sliding up or down against a flat wall of tiles, since the character
-            // gets moved vertically first, into another hitbox of the wall, which then moves the character outwards,
-            // meaning the character ends up in the same position it started in.
-
-            // When looping the gameObjects in numerical order, characters gets stuck when moving up.
-            // When looping the gameObjects in reversed order, characters gets stuck when moving down.
-
-            // This could be solved by not checking vertical collisions for tiles that characters should not be able
-            // to collide with vertically, but an easier way to solve it is to change the order in which the
-            // gameObjects are looped, depending on whether the character is moving up or down.
-
-            // (This problem occurs for all hitboxes, not just the characters', but the situation is not as common
-            // for other gameObjects, simply due to how they move.)
-
-            #endregion
-
-            int collisions = 0;
             bool numerical = movingDirection.Y >= 0;
 
-            //Check all gameObjects and move out of collision
-            for (int i = numerical ? 0 : (gameObjects.Count - 1); i != (numerical ? gameObjects.Count : -1); i += numerical ? 1 : -1)
+            if (hitbox.Colliding)
             {
-                //Ignore if same gameObject
-                if (this == gameObjects[i])
-                    continue;
+                int collisions = 0;
 
-                //Ignore if non-colliding
-                if (!gameObjects[i].Hitbox.Colliding)
-                    continue;
+                #region Why the complicated for loop?
 
-                //Ignore if Projectile
-                if (gameObjects[i] is Projectile)
-                    continue;
+                // The method Hitbox.MoveOutOfCollision checks for vertical collisions before horizontal ones
+                // This gets characters stuck when sliding up or down against a flat wall of tiles, since the character
+                // gets moved vertically first, into another hitbox of the wall, which then moves the character outwards,
+                // meaning the character ends up in the same position it started in.
 
-                //Ignore if Tile and this is HitboxType.Flying
-                if (gameObjects[i] is Tile && hitbox.Type == Hitbox.HitboxType.Flying)
-                    continue;
+                // When looping the gameObjects in numerical order, characters gets stuck when moving up.
+                // When looping the gameObjects in reversed order, characters gets stuck when moving down.
 
-                //Check for collision
-                //If the hitbox was moved
-                if (hitbox.MoveOutOfCollision(gameObjects[i].Hitbox))
+                // This could be solved by not checking vertical collisions for tiles that characters should not be able
+                // to collide with vertically, but an easier way to solve it is to change the order in which the
+                // gameObjects are looped, depending on whether the character is moving up or down.
+
+                // (This problem occurs for all hitboxes, not just the characters', but the situation is not as common
+                // for other gameObjects, simply due to how they move.)
+
+                #endregion
+
+                //Check all gameObjects and move out of collision
+                for (int i = numerical ? 0 : (gameObjects.Count - 1); i != (numerical ? gameObjects.Count : -1); i += numerical ? 1 : -1)
                 {
-                    //Adjust position to the hitbox's new center
-                    position = hitbox.Center;
+                    //Ignore if same gameObject
+                    if (this == gameObjects[i])
+                        continue;
 
-                    //If 10 collisions have been found so far, the character is most likely stuck
-                    collisions += 1;
-                    if (collisions == 10)
-                        break;
+                    //Ignore if non-colliding
+                    if (!gameObjects[i].Hitbox.Colliding)
+                        continue;
 
-                    //Check all gameObjects again
-                    i = numerical ? -1 : gameObjects.Count;
+                    //Ignore if Projectile
+                    if (gameObjects[i] is Projectile)
+                        continue;
+
+                    //Ignore if Tile and this is HitboxType.Flying
+                    if (gameObjects[i] is Tile && hitbox.Type == Hitbox.HitboxType.Flying)
+                        continue;
+
+                    //Check for collision
+                    //If the hitbox was moved
+                    if (hitbox.MoveOutOfCollision(gameObjects[i].Hitbox))
+                    {
+                        //Adjust position to the hitbox's new center
+                        position = hitbox.Center;
+
+                        //If 10 collisions have been found so far, the character is most likely stuck
+                        collisions += 1;
+                        if (collisions == 10)
+                            break;
+
+                        //Check all gameObjects again
+                        i = numerical ? -1 : gameObjects.Count;
+                    }
                 }
             }
-
+                
             for (int i = numerical ? 0 : (roomHitboxes.Count - 1); i != (numerical ? roomHitboxes.Count : -1); i += numerical ? 1 : -1)
             {
                 //Check for collision

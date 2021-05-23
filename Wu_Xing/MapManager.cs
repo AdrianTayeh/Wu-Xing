@@ -282,10 +282,10 @@ namespace Wu_Xing
         public void DrawWorld(SpriteBatch spriteBatch)
         {
             adam.Draw(spriteBatch, Vector2.Zero, drawHitboxes);
-            currentRoom.Draw(spriteBatch, element, Vector2.Zero, drawHitboxes);
+            currentRoom.Draw(spriteBatch, Vector2.Zero, drawHitboxes);
 
             if (transitionRoom != new Point(-1, -1))
-                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, element, transitionRoomPosition, drawHitboxes);
+                rooms[transitionRoom.X, transitionRoom.Y].Draw(spriteBatch, transitionRoomPosition, drawHitboxes);
         }
     }
 }
