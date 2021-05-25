@@ -224,6 +224,9 @@ namespace Wu_Xing
         {
             health = 0;
             dead = true;
+
+            if (this is Adam)
+                SoundLibrary.AdamDeath.Play();
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)

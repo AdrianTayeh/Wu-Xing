@@ -29,24 +29,13 @@ namespace Wu_Xing
         public static Dictionary<Room.Type, Texture2D> DoorFronts { get; private set; }
 
         //Folder Elements
+        public static Dictionary<Element, Texture2D> Gems { get; private set; }
+        public static Dictionary<Element, Texture2D> GemsHidden { get; private set; }
+        public static Dictionary<Element, Texture2D> Symbols { get; private set; }
+
         public static Texture2D EnergyCircle { get; private set; }
         public static Texture2D EnergyLine { get; private set; }
         public static Texture2D EnergyMask { get; private set; }
-        public static Texture2D GemEarthHidden { get; private set; }
-        public static Texture2D GemEarth { get; private set; }
-        public static Texture2D GemFireHidden { get; private set; }
-        public static Texture2D GemFire { get; private set; }
-        public static Texture2D GemMetalHidden { get; private set; }
-        public static Texture2D GemMetal { get; private set; }
-        public static Texture2D GemWaterHidden { get; private set; }
-        public static Texture2D GemWater { get; private set; }
-        public static Texture2D GemWoodHidden { get; private set; }
-        public static Texture2D GemWood { get; private set; }
-        public static Texture2D SymbolEarth { get; private set; }
-        public static Texture2D SymbolFire { get; private set; }
-        public static Texture2D SymbolMetal { get; private set; }
-        public static Texture2D SymbolWater { get; private set; }
-        public static Texture2D SymbolWood { get; private set; }
 
         //Folder Logos
         public static Texture2D WXLogoDarkDots { get; private set; }
@@ -108,24 +97,30 @@ namespace Wu_Xing
             DoorFronts.Add(Room.Type.Boss, Content.Load<Texture2D>("Doors\\Door Front Normal"));
 
             //Folder Elements
+            Gems = new Dictionary<Element, Texture2D>();
+            Gems.Add(Element.Fire, Content.Load<Texture2D>("Elements\\Gem Fire"));
+            Gems.Add(Element.Earth, Content.Load<Texture2D>("Elements\\Gem Earth"));
+            Gems.Add(Element.Metal, Content.Load<Texture2D>("Elements\\Gem Metal"));
+            Gems.Add(Element.Water, Content.Load<Texture2D>("Elements\\Gem Water"));
+            Gems.Add(Element.Wood, Content.Load<Texture2D>("Elements\\Gem Wood"));
+
+            GemsHidden = new Dictionary<Element, Texture2D>();
+            GemsHidden.Add(Element.Fire, Content.Load<Texture2D>("Elements\\Gem Fire Hidden"));
+            GemsHidden.Add(Element.Earth, Content.Load<Texture2D>("Elements\\Gem Earth Hidden"));
+            GemsHidden.Add(Element.Metal, Content.Load<Texture2D>("Elements\\Gem Metal Hidden"));
+            GemsHidden.Add(Element.Water, Content.Load<Texture2D>("Elements\\Gem Water Hidden"));
+            GemsHidden.Add(Element.Wood, Content.Load<Texture2D>("Elements\\Gem Wood Hidden"));
+
+            Symbols = new Dictionary<Element, Texture2D>();
+            Symbols.Add(Element.Fire, Content.Load<Texture2D>("Elements\\Symbol Fire"));
+            Symbols.Add(Element.Earth, Content.Load<Texture2D>("Elements\\Symbol Earth"));
+            Symbols.Add(Element.Metal, Content.Load<Texture2D>("Elements\\Symbol Metal"));
+            Symbols.Add(Element.Water, Content.Load<Texture2D>("Elements\\Symbol Water"));
+            Symbols.Add(Element.Wood, Content.Load<Texture2D>("Elements\\Symbol Wood"));
+
             EnergyCircle = Content.Load<Texture2D>("Elements\\Energy Circle");
             EnergyLine = Content.Load<Texture2D>("Elements\\Energy Line");
             EnergyMask = Content.Load<Texture2D>("Elements\\Energy Mask");
-            GemEarthHidden = Content.Load<Texture2D>("Elements\\Gem Earth Hidden");
-            GemEarth = Content.Load<Texture2D>("Elements\\Gem Earth");
-            GemFireHidden = Content.Load<Texture2D>("Elements\\Gem Fire Hidden");
-            GemFire = Content.Load<Texture2D>("Elements\\Gem Fire");
-            GemMetalHidden = Content.Load<Texture2D>("Elements\\Gem Metal Hidden");
-            GemMetal = Content.Load<Texture2D>("Elements\\Gem Metal");
-            GemWaterHidden = Content.Load<Texture2D>("Elements\\Gem Water Hidden");
-            GemWater = Content.Load<Texture2D>("Elements\\Gem Water");
-            GemWoodHidden = Content.Load<Texture2D>("Elements\\Gem Wood Hidden");
-            GemWood = Content.Load<Texture2D>("Elements\\Gem Wood");
-            SymbolEarth = Content.Load<Texture2D>("Elements\\Symbol Earth");
-            SymbolFire = Content.Load<Texture2D>("Elements\\Symbol Fire");
-            SymbolMetal = Content.Load<Texture2D>("Elements\\Symbol Metal");
-            SymbolWater = Content.Load<Texture2D>("Elements\\Symbol Water");
-            SymbolWood = Content.Load<Texture2D>("Elements\\Symbol Wood");
 
             //Folder Logos
             WXLogoDarkDots = Content.Load<Texture2D>("Logos\\WX Logo Dark Dots");

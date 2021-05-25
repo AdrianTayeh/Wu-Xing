@@ -35,7 +35,7 @@ namespace Wu_Xing
             health = maxHealth = 6;
             shadowSize = 100;
             projectileAttributes = new ProjectileAttributes(5, 3, 7, 1.25f);
-            shotsPerSecond = 1.2f;
+            shotsPerSecond = 1.4f;
             accuracy = 0.6f;
 
             //Adam
@@ -69,7 +69,7 @@ namespace Wu_Xing
             if (currentKeyboard.IsKeyDown(Keys.D1))
             {
                 projectileAttributes = new ProjectileAttributes(5, 3, 7, 1.25f);
-                shotsPerSecond = 1.2f;
+                shotsPerSecond = 1.4f;
                 health = maxHealth = 6;
                 speed = 1;
                 accuracy = 0.6f;
@@ -275,6 +275,8 @@ namespace Wu_Xing
 
             gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + AccuracyOffset(random), true));
             gameObjects[gameObjects.Count - 1].Move(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f, gameObjects, roomHitboxes);
+
+            SoundLibrary.FireAttack.Play();
         }
 
         public override void TakeDamage(float damage)

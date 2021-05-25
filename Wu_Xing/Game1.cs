@@ -70,6 +70,7 @@ namespace Wu_Xing
             TextureLibrary.Load(Content, GraphicsDevice);
             FontLibrary.Load(Content);
             ColorLibrary.Load();
+            SoundLibrary.Load(Content);
 
             screen = Screen.Start;
             mouse = new Mouse(window, resolution, windowScale);

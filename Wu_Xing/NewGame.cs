@@ -18,8 +18,8 @@ namespace Wu_Xing
         private Vector2 energyCirclePosition;
         private RenderTarget2D energyCircle;
 
-        private Texture2D elementToChannel;
-        private Texture2D gemToFind;
+        private Element? elementToChannel;
+        private Element? gemToFind;
 
         private Rectangle[] energyLineSource = new Rectangle[5];
         private Vector2[] energyLinePosition = new Vector2[5];
@@ -32,8 +32,8 @@ namespace Wu_Xing
         bool metalGemObtained;
         bool waterGemObtained;
 
-        private Dictionary<string, Button> gemButton = new Dictionary<string, Button>();
-        private Task generateMap;
+        private Dictionary<Element, Button> gemButtons = new Dictionary<Element, Button>();
+        private Thread mapGeneratorThread;
         private float versusScreenTimer;
 
         private enum Stage { PickElement, PickGem, Versus }
@@ -54,47 +54,47 @@ namespace Wu_Xing
                 energyLinePosition[i] = Rotate.PointAroundZero(new Vector2(0, -62), energyLineRotation[i]);
             }
 
-            gemButton.Add("Wood", new Button(
+            gemButtons.Add(Element.Wood, new Button(
                 (energyCirclePosition + energyLinePosition[0] * 3.5f).ToPoint(),
                 new Point(150, 150),
                 "", null,
-                TextureLibrary.GemWood, null,
+                null, null,
                 ColorLibrary.SolidWhiteButtonBackgroundColor,
                 null
                 ));
 
-            gemButton.Add("Fire", new Button(
+            gemButtons.Add(Element.Fire, new Button(
                 (energyCirclePosition + energyLinePosition[1] * 3.5f).ToPoint(),
                 new Point(150, 150),
                 "", null,
-                TextureLibrary.GemFire, null,
+                null, null,
                 ColorLibrary.SolidWhiteButtonBackgroundColor,
                 null
                 ));
 
-            gemButton.Add("Earth", new Button(
+            gemButtons.Add(Element.Earth, new Button(
                 (energyCirclePosition + energyLinePosition[2] * 3.5f).ToPoint(),
                 new Point(150, 150),
                 "", null,
-                TextureLibrary.GemEarth, null,
+                null, null,
                 ColorLibrary.SolidWhiteButtonBackgroundColor,
                 null
                 ));
 
-            gemButton.Add("Metal", new Button(
+            gemButtons.Add(Element.Metal, new Button(
                 (energyCirclePosition + energyLinePosition[3] * 3.5f).ToPoint(),
                 new Point(150, 150),
                 "", null,
-                TextureLibrary.GemMetal, null,
+                null, null,
                 ColorLibrary.SolidWhiteButtonBackgroundColor,
                 null
                 ));
 
-            gemButton.Add("Water", new Button(
+            gemButtons.Add(Element.Water, new Button(
                 (energyCirclePosition + energyLinePosition[4] * 3.5f).ToPoint(),
                 new Point(150, 150),
                 "", null,
-                TextureLibrary.GemWater, null,
+                null, null,
                 ColorLibrary.SolidWhiteButtonBackgroundColor,
                 null
                 ));
@@ -109,7 +109,7 @@ namespace Wu_Xing
             //Gems obtained in this save file
             woodGemObtained = true;
             fireGemObtained = true;
-            earthGemObtained = false;
+            earthGemObtained = true;
             metalGemObtained = true;
             waterGemObtained = true;
 
@@ -121,18 +121,18 @@ namespace Wu_Xing
             energyLineVisible[4] = metalGemObtained && woodGemObtained ? true : false;
 
             //Set texture of gem button
-            gemButton["Wood"].Background = woodGemObtained ? TextureLibrary.GemWood : TextureLibrary.GemWoodHidden;
-            gemButton["Fire"].Background = fireGemObtained ? TextureLibrary.GemFire : TextureLibrary.GemFireHidden;
-            gemButton["Earth"].Background = earthGemObtained ? TextureLibrary.GemEarth : TextureLibrary.GemEarthHidden;
-            gemButton["Metal"].Background = metalGemObtained ? TextureLibrary.GemMetal : TextureLibrary.GemMetalHidden;
-            gemButton["Water"].Background = waterGemObtained ? TextureLibrary.GemWater : TextureLibrary.GemWaterHidden;
+            gemButtons[Element.Wood].Background = woodGemObtained ? TextureLibrary.Gems[Element.Wood] : TextureLibrary.GemsHidden[Element.Wood];
+            gemButtons[Element.Fire].Background = fireGemObtained ? TextureLibrary.Gems[Element.Fire] : TextureLibrary.GemsHidden[Element.Fire];
+            gemButtons[Element.Earth].Background = earthGemObtained ? TextureLibrary.Gems[Element.Earth] : TextureLibrary.GemsHidden[Element.Earth];
+            gemButtons[Element.Metal].Background = metalGemObtained ? TextureLibrary.Gems[Element.Metal] : TextureLibrary.GemsHidden[Element.Metal];
+            gemButtons[Element.Water].Background = waterGemObtained ? TextureLibrary.Gems[Element.Water] : TextureLibrary.GemsHidden[Element.Water];
 
             //Set activity of gem button
-            gemButton["Wood"].Active = woodGemObtained;
-            gemButton["Fire"].Active = fireGemObtained;
-            gemButton["Earth"].Active = earthGemObtained;
-            gemButton["Metal"].Active = metalGemObtained;
-            gemButton["Water"].Active = waterGemObtained;
+            gemButtons[Element.Wood].Active = woodGemObtained;
+            gemButtons[Element.Fire].Active = fireGemObtained;
+            gemButtons[Element.Earth].Active = earthGemObtained;
+            gemButtons[Element.Metal].Active = metalGemObtained;
+            gemButtons[Element.Water].Active = waterGemObtained;
         }
 
         public void Update(ref Screen screen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, Running running, float elapsedSeconds, GraphicsDevice GraphicsDevice)
@@ -168,36 +168,30 @@ namespace Wu_Xing
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = Screen.Pregame;
 
-            foreach (KeyValuePair<string, Button> item in gemButton)
-                item.Value.Update(mouse);
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
+                button.Value.Update(mouse);
 
             //Preview element
-            if (gemButton["Wood"].IsHoveredOn && gemButton["Wood"].Active)
-                elementToChannel = TextureLibrary.SymbolWood;
-
-            else if (gemButton["Fire"].IsHoveredOn && gemButton["Fire"].Active)
-                elementToChannel = TextureLibrary.SymbolFire;
-
-            else if (gemButton["Earth"].IsHoveredOn && gemButton["Earth"].Active)
-                elementToChannel = TextureLibrary.SymbolEarth;
-
-            else if (gemButton["Metal"].IsHoveredOn && gemButton["Metal"].Active)
-                elementToChannel = TextureLibrary.SymbolMetal;
-
-            else if (gemButton["Water"].IsHoveredOn && gemButton["Water"].Active)
-                elementToChannel = TextureLibrary.SymbolWater;
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
+            {
+                if (button.Value.IsHoveredOn && button.Value.Active)
+                {
+                    elementToChannel = button.Key;
+                    break;
+                }
+            }
 
             //Check if element selected
-            foreach (KeyValuePair<string, Button> item in gemButton)
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
             {
-                if (item.Value.IsReleased && item.Value.Active && elementToChannel != null)
+                if (button.Value.IsReleased && button.Value.Active && elementToChannel != null)
                 {
                     //Next stage
                     stage = Stage.PickGem;
 
                     //Make all gem buttons active
-                    foreach (KeyValuePair<string, Button> item2 in gemButton)
-                        item2.Value.Active = true;
+                    foreach (KeyValuePair<Element, Button> button2 in gemButtons)
+                        button2.Value.Active = true;
 
                     break;
                 }
@@ -212,35 +206,30 @@ namespace Wu_Xing
                 gemToFind = null;
             }
                 
-            foreach (KeyValuePair<string, Button> item in gemButton)
-                item.Value.Update(mouse);
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
+                button.Value.Update(mouse);
 
             //Preview element
-            if (gemButton["Wood"].IsHoveredOn)
-                gemToFind = TextureLibrary.SymbolWood;
-
-            else if (gemButton["Fire"].IsHoveredOn)
-                gemToFind = TextureLibrary.SymbolFire;
-
-            else if (gemButton["Earth"].IsHoveredOn)
-                gemToFind = TextureLibrary.SymbolEarth;
-
-            else if (gemButton["Metal"].IsHoveredOn)
-                gemToFind = TextureLibrary.SymbolMetal;
-
-            else if (gemButton["Water"].IsHoveredOn)
-                gemToFind = TextureLibrary.SymbolWater;
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
+            {
+                if (button.Value.IsHoveredOn && button.Value.Active)
+                {
+                    gemToFind = button.Key;
+                    break;
+                }
+            }
 
             //Check if element selected
-            foreach (KeyValuePair<string, Button> item in gemButton)
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
             {
-                if (item.Value.IsReleased && gemToFind != null)
+                if (button.Value.IsReleased && gemToFind != null)
                 {
                     //Next stage
                     stage = Stage.Versus;
 
                     //Generate map on separate thread
-                    generateMap = Task.Run(() => running.InitializeNewMap(GraphicsDevice, random, 13, (Element)Enum.Parse(typeof(Element), item.Key), (Element)Enum.Parse(typeof(Element), elementToChannel.Name.Replace("Elements\\Symbol ", ""))));
+                    mapGeneratorThread = new Thread( () => running.InitializeNewMap(GraphicsDevice, random, 15, button.Key, (Element)elementToChannel));
+                    mapGeneratorThread.Start();
                     break;
                 }
             }
@@ -249,11 +238,11 @@ namespace Wu_Xing
         private void UpdateVersus(ref Screen screen, float elapsedSeconds)
         {
             versusScreenTimer += elapsedSeconds;
-            if (versusScreenTimer >= 4 && generateMap.IsCompleted)
+            if (versusScreenTimer >= 4 && !mapGeneratorThread.IsAlive)
             {
                 versusScreenTimer = 0;
                 screen = Screen.Running;
-                Debug.WriteLine("Task " + generateMap.Status + ", and at least four seconds elapsed.");
+                Debug.WriteLine("Map generation thread is dead, and at least four seconds elapsed.");
             }
         }
 
@@ -262,39 +251,36 @@ namespace Wu_Xing
             if (stage != Stage.Versus)
             {
                 spriteBatch.Draw(TextureLibrary.BackgroundGray, window, Color.White);
-
                 spriteBatch.Draw(energyCircle, energyCirclePosition, null, Color.White, 0, TextureLibrary.EnergyCircle.Bounds.Size.ToVector2() / 2, 1, SpriteEffects.None, 0);
 
                 for (int i = 0; i < energyLineSource.Length; i++)
                     if (energyLineVisible[i])
                         spriteBatch.Draw(TextureLibrary.EnergyLine, energyCirclePosition + energyLinePosition[i], energyLineSource[i], Color.White, energyLineRotation[i], energyLineSource[i].Size.ToVector2() / 2, 1, SpriteEffects.FlipHorizontally, 0);
 
-                foreach (KeyValuePair<string, Button> item in gemButton)
-                    item.Value.Draw(spriteBatch);
+                foreach (KeyValuePair<Element, Button> button in gemButtons)
+                    button.Value.Draw(spriteBatch);
 
                 string select = stage == Stage.PickElement ? "SELECT AN ELEMENT TO CHANNEL" : "SELECT A GEM TO FIND";
                 spriteBatch.DrawString(FontLibrary.Normal, select, new Vector2(window.Width / 2, 200), Color.White, 0, FontLibrary.Normal.MeasureString(select) / 2, 1, SpriteEffects.None, 0);
 
                 if (elementToChannel != null)
                 {
-                    spriteBatch.Draw(elementToChannel, new Vector2(window.Width * 0.2f, window.Height / 2), null, Color.White, 0, elementToChannel.Bounds.Size.ToVector2() / 2, 0.4f, SpriteEffects.None, 0);
-                    string element = elementToChannel.Name.Replace("Elements\\Symbol ", "").ToUpper();
-                    spriteBatch.DrawString(FontLibrary.Normal, element, new Vector2(window.Width * 0.2f, window.Height / 2 + 150), Color.White, 0, FontLibrary.Normal.MeasureString(element) / 2, 1, SpriteEffects.None, 0);
+                    spriteBatch.Draw(TextureLibrary.Symbols[(Element)elementToChannel], new Vector2(window.Width * 0.2f, window.Height / 2), null, Color.White, 0, TextureLibrary.Symbols[(Element)elementToChannel].Bounds.Size.ToVector2() / 2, 0.4f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(FontLibrary.Normal, elementToChannel.ToString().ToUpper(), new Vector2(window.Width * 0.2f, window.Height / 2 + 150), Color.White, 0, FontLibrary.Normal.MeasureString(elementToChannel.ToString().ToUpper()) / 2, 1, SpriteEffects.None, 0); ;
                 }
 
                 if (gemToFind != null)
                 {
-                    spriteBatch.Draw(gemToFind, new Vector2(window.Width * 0.8f, window.Height / 2), null, Color.White, 0, gemToFind.Bounds.Size.ToVector2() / 2, 0.4f, SpriteEffects.None, 0);
-                    string element = gemToFind.Name.Replace("Elements\\Symbol ", "").ToUpper();
-                    spriteBatch.DrawString(FontLibrary.Normal, element, new Vector2(window.Width * 0.8f, window.Height / 2 + 150), Color.White, 0, FontLibrary.Normal.MeasureString(element) / 2, 1, SpriteEffects.None, 0);
+                    spriteBatch.Draw(TextureLibrary.Symbols[(Element)gemToFind], new Vector2(window.Width * 0.8f, window.Height / 2), null, Color.White, 0, TextureLibrary.Symbols[(Element)gemToFind].Bounds.Size.ToVector2() / 2, 0.4f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(FontLibrary.Normal, gemToFind.ToString().ToUpper(), new Vector2(window.Width * 0.8f, window.Height / 2 + 150), Color.White, 0, FontLibrary.Normal.MeasureString(gemToFind.ToString().ToUpper()) / 2, 1, SpriteEffects.None, 0);
                 }
             }
 
             else
             {
                 spriteBatch.Draw(TextureLibrary.BackgroundSplit, window, Color.White);
-                spriteBatch.Draw(elementToChannel, new Vector2(window.Width * 0.3f, window.Height / 2), null, Color.White, 0, elementToChannel.Bounds.Size.ToVector2() / 2, 0.6f, SpriteEffects.None, 0);
-                spriteBatch.Draw(gemToFind, new Vector2(window.Width * 0.7f, window.Height / 2), null, Color.White, 0, gemToFind.Bounds.Size.ToVector2() / 2, 0.6f, SpriteEffects.None, 0);
+                spriteBatch.Draw(TextureLibrary.Symbols[(Element)elementToChannel], new Vector2(window.Width * 0.3f, window.Height / 2), null, Color.White, 0, TextureLibrary.Symbols[(Element)elementToChannel].Bounds.Size.ToVector2() / 2, 0.6f, SpriteEffects.None, 0);
+                spriteBatch.Draw(TextureLibrary.Symbols[(Element)gemToFind], new Vector2(window.Width * 0.7f, window.Height / 2), null, Color.White, 0, TextureLibrary.Symbols[(Element)gemToFind].Bounds.Size.ToVector2() / 2, 0.6f, SpriteEffects.None, 0);
             }
         }
 
