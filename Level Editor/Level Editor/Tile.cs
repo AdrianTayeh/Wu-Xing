@@ -12,31 +12,28 @@ namespace Level_Editor
     class Tile
     {
         private List<string> tileList;
-        private int mouseClick;
+        private int mouseClicks;
         private string tileString;
         private bool checkClick;
-        private MouseState mousePos;
         private Vector2 mousePosition;
-
 
         public Tile()
         {
             tileList = new List<string>() { "Conveyor", "Fire", "Metal Box", "Spikes", "Stone", "Water Hole", "Wood Box", "Hole", "Orb", "Soul", "Wanderer" };
-            mouseClick = 0;
+            mouseClicks = 0;
         }
         
         public void Update(ref Game1.Screen screen, Mouse mouse)
         {
-            mousePos = Microsoft.Xna.Framework.Input.Mouse.GetState();
-            mousePosition = new Vector2(mousePos.X, mousePos.Y);
+            mousePosition = mouse.Position.ToVector2();
+
             if (mouse.RightIsPressed)
-                mouseClick += 1;
+                mouseClicks += 1;
 
-
-            switch (mouseClick)
+            switch (mouseClicks)
             {
                 case 0:
-                    tileString = string.Empty;
+                    tileString = "None";
                     break;
 
                 case 1:
@@ -84,23 +81,21 @@ namespace Level_Editor
                     break;
             }
 
-            if (mouseClick >= 12)
-                mouseClick = 0;
-
-            if (mouse.LeftIsPressed)
-            {
-                checkClick = true;
-            }
-            else
-            {
-                checkClick = false;
-            }
+            mouseClicks = mouseClicks >= 12 ? 0 : mouseClicks;
+            checkClick = mouse.LeftIsPressed || mouse.LeftIsHeld;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        //Uses a camera matrix
+        public void DrawWorld(SpriteBatch spriteBatch)
         {
-            if(checkClick)
-                spriteBatch.DrawString(FontLibrary.Big, tileString, mousePosition, Color.White);
+
+        }
+
+        //Does not use camera metrix
+        public void DrawHUD(SpriteBatch spriteBatch)
+        {
+            if (checkClick)
+                spriteBatch.DrawString(FontLibrary.Big, tileString, mousePosition + new Vector2(20, -20), Color.White);
         }
     }
 }

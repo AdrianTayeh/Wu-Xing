@@ -12,21 +12,29 @@ namespace Level_Editor
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+        private RenderTarget2D mapRenderTarget;
+        private RenderTarget2D menuRenderTarget;
+
         private Rectangle window;
         private Rectangle resolution;
+        private float windowScale;
+
         private Menu menu;
+        private Tile tile;
+
         private Mouse mouse;
         private KeyboardState currentKeyboard;
-        private float windowScale;
+
         public enum RoomSize {Default, OneXOne, OneXTwo, OneXThree, TwoXOne, ThreeXOne, TwoXTwo }
         private RoomSize roomSize;
         private Point size;
+
         public enum Screen { Menu, Map }
         private Screen screen;
+
         private Camera camera;
         private Vector2 cameraPosition;
-        private SpriteBatch cameraSpriteBatch;
-        private Tile tile;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -42,7 +50,7 @@ namespace Level_Editor
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            cameraSpriteBatch = new SpriteBatch(GraphicsDevice);
+
             window.Width = 1920;
             window.Height = 1080;
             resolution.Width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
@@ -52,34 +60,29 @@ namespace Level_Editor
             graphics.PreferredBackBufferHeight = resolution.Height;
             graphics.ApplyChanges();
 
-            windowScale = (float)resolution.Height / resolution.Width >= (float)window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
+            mapRenderTarget = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
+            menuRenderTarget = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
 
+            windowScale = (float)resolution.Height / resolution.Width >= (float)window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
 
             TextureLibrary.Load(Content, GraphicsDevice);
             FontLibrary.Load(Content);
             ColorLibrary.Load();
+
             menu = new Menu(window);
             mouse = new Mouse(window, resolution, windowScale);
             camera = new Camera(window);
             tile = new Tile();
-            cameraPosition = new Vector2((size.X * 1500) / 2, (size.Y * 700) / 2);
-
-
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            cameraPosition = TextureLibrary.Rooms["1x1"].Bounds.Size.ToVector2() / 2;
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
             mouse.Update();
-            menu.Update(ref roomSize, mouse, ref screen);
-            tile.Update(ref screen, mouse);
             currentKeyboard = Keyboard.GetState();
 
+            if (currentKeyboard.IsKeyDown(Keys.Escape))
+                Exit();
 
             if (screen == Screen.Map)
             {
@@ -87,12 +90,18 @@ namespace Level_Editor
                     cameraPosition.Y -= 5;
                 else if (currentKeyboard.IsKeyDown(Keys.S))
                     cameraPosition.Y += 5;
-                else if (currentKeyboard.IsKeyDown(Keys.A))
+                if (currentKeyboard.IsKeyDown(Keys.A))
                     cameraPosition.X -= 5;
                 else if (currentKeyboard.IsKeyDown(Keys.D))
                     cameraPosition.X += 5;
 
                 camera.UpdateFocus(cameraPosition);
+                tile.Update(ref screen, mouse);
+            }
+
+            else
+            {
+                menu.Update(ref roomSize, mouse, ref screen);
             }
 
             switch (roomSize)
@@ -128,27 +137,46 @@ namespace Level_Editor
                     break;
             }
 
-            
-
-
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            Vector2 position = new Vector2((-size.X * 1500) / 2, (-size.Y * 700) / 2);
-            GraphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin();
-            if(screen == Screen.Menu)
-                menu.Draw(spriteBatch, window);           
-            spriteBatch.End();
-            cameraSpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Matrix);
+            //Render map
             if (screen == Screen.Map)
             {
-                tile.Draw(cameraSpriteBatch);
-                cameraSpriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
+                GraphicsDevice.SetRenderTarget(mapRenderTarget);
+                GraphicsDevice.Clear(Color.Transparent);
+                spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Matrix);
+
+                spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], Vector2.Zero, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
+                tile.DrawWorld(spriteBatch);
+
+                spriteBatch.End();
             }
-            cameraSpriteBatch.End();
+
+            //Render menu and HUD
+            GraphicsDevice.SetRenderTarget(menuRenderTarget);
+            GraphicsDevice.Clear(Color.Transparent);
+            spriteBatch.Begin();
+
+            if (screen == Screen.Menu)
+                menu.Draw(spriteBatch, window);
+
+            else
+                tile.DrawHUD(spriteBatch);
+
+            spriteBatch.End();
+
+            //Scale rendered layer to screen
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(mapRenderTarget, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
+            spriteBatch.Draw(menuRenderTarget, resolution.Size.ToVector2() / 2, null, Color.White, 0, window.Size.ToVector2() / 2, windowScale, SpriteEffects.None, 0);
+
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

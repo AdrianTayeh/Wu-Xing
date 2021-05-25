@@ -73,6 +73,7 @@ namespace Level_Editor
         {
             foreach (KeyValuePair<string, Button> item in button)
                 item.Value.Update(mouse);
+
             if (button["1x1"].IsReleased)
             {
                 roomSize = Game1.RoomSize.OneXOne;
@@ -103,7 +104,6 @@ namespace Level_Editor
                 roomSize = Game1.RoomSize.TwoXTwo;
                 screen = Game1.Screen.Map;
             }
-
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle window)
