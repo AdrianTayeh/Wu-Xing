@@ -26,7 +26,7 @@ namespace Level_Editor
         private Camera camera;
         private Vector2 cameraPosition;
         private SpriteBatch cameraSpriteBatch;
-        private List<Texture2D> tileList;
+        private Tile tile;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -61,7 +61,7 @@ namespace Level_Editor
             menu = new Menu(window);
             mouse = new Mouse(window, resolution, windowScale);
             camera = new Camera(window);
-            tileList = new List<Texture2D>();
+            tile = new Tile();
             cameraPosition = new Vector2((size.X * 1500) / 2, (size.Y * 700) / 2);
 
 
@@ -77,6 +77,7 @@ namespace Level_Editor
                 Exit();
             mouse.Update();
             menu.Update(ref roomSize, mouse, ref screen);
+            tile.Update(ref screen, mouse);
             currentKeyboard = Keyboard.GetState();
 
 
@@ -143,7 +144,10 @@ namespace Level_Editor
             spriteBatch.End();
             cameraSpriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Matrix);
             if (screen == Screen.Map)
+            {
+                tile.Draw(cameraSpriteBatch);
                 cameraSpriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], position, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
+            }
             cameraSpriteBatch.End();
             base.Draw(gameTime);
         }
