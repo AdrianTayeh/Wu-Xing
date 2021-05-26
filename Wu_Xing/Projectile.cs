@@ -66,6 +66,7 @@ namespace Wu_Xing
         private Vector2 direction;
         public enum Type { MagicBall }
         private bool shotByAdam;
+        private float opacity;
 
         public Projectile(Vector2 position, Element? element, Random random, Type type, ProjectileAttributes attributes, float rotation, bool shotByAdam) : base(position, element, random)
         {
@@ -74,6 +75,7 @@ namespace Wu_Xing
             this.attributes = attributes;
             this.rotation = rotation;
             direction = Rotate.PointAroundZero(Vector2.UnitY, rotation);
+            opacity = 1;
 
             //GameObject
             if (type == Type.MagicBall)
@@ -116,6 +118,7 @@ namespace Wu_Xing
                     if (hitbox.Intersects(gameObjects[i].Hitbox))
                     {
                         dead = true;
+                        SoundLibrary.EarthAttack.Play();
                         return;
                     }
                 }
@@ -181,22 +184,22 @@ namespace Wu_Xing
 
         private void FadeOut()
         {
-            //If the projectile has traveled at least 80% of its range
             float percentageTraveled = tilesTraveled / attributes.Range;
+
+            //If the projectile has traveled at least 80% of its range
             if (percentageTraveled >= 0.8f)
             {
-                //Calculate opacity and apply to alpha value. Alpha is 255 at 80% and 0 at 100%
-                float opacity = Math.Abs(percentageTraveled - 1) * 5;
-                color.A = (byte)(255 * opacity);
+                //Calculate opacity. Opacity is 1 at 80% and 0 at 100%
+                opacity = Math.Abs(percentageTraveled - 1) * 5;
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)
         {
-            spriteBatch.Draw(texture, roomPosition + position, source, Color.FromNonPremultiplied(color.R, color.G, color.B, color.A), rotation, origin, attributes.Scale, SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(texture, roomPosition + position, source, ColorLibrary.Opacity(color, opacity), rotation, origin, attributes.Scale, SpriteEffects.None, layerDepth);
 
             if (texture == TextureLibrary.MagicBall)
-                spriteBatch.Draw(TextureLibrary.MagicBallCenter, roomPosition + position, source, Color.FromNonPremultiplied(255, 255, 255, color.A), rotation, origin, attributes.Scale, SpriteEffects.None, layerDepth + 0.001f);
+                spriteBatch.Draw(TextureLibrary.MagicBallCenter, roomPosition + position, source, ColorLibrary.Opacity(Color.White, opacity), rotation, origin, attributes.Scale, SpriteEffects.None, layerDepth + 0.001f);
 
             if (drawHitbox)
                 hitbox.Draw(spriteBatch, layerDepth);

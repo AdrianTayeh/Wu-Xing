@@ -754,93 +754,75 @@
 /processorParam:TextureFormat=Color
 /build:Rooms/Room 3x1.jpg
 
-#begin Sound effects/adam death.wav
+#begin Sounds/Adam Death.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/adam death.wav
+/build:Sounds/Adam Death.wav
 
-#begin Sound effects/boss death.wav
+#begin Sounds/Boss Death.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/boss death.wav
+/build:Sounds/Boss Death.wav
 
-#begin Sound effects/boss spawn.wav
+#begin Sounds/Boss Spawn.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/boss spawn.wav
+/build:Sounds/Boss Spawn.wav
 
-#begin Sound effects/button.wav
+#begin Sounds/Button.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/button.wav
+/build:Sounds/Button.wav
 
-#begin Sound effects/doors.wav
+#begin Sounds/Earth Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/doors.wav
+/build:Sounds/Earth Attack.wav
 
-#begin Sound effects/earth attack.wav
+#begin Sounds/Enemy Death.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/earth attack.wav
+/build:Sounds/Enemy Death.wav
 
-#begin Sound effects/enemy death.wav
+#begin Sounds/Fire Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/enemy death.wav
+/build:Sounds/Fire Attack.wav
 
-#begin Sound effects/enemy.wav
+#begin Sounds/Metal Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/enemy.wav
+/build:Sounds/Metal Attack.wav
 
-#begin Sound effects/fire attack.wav
+#begin Sounds/Shooting.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/fire attack.wav
+/build:Sounds/Shooting.wav
 
-#begin Sound effects/footsteps.wav
+#begin Sounds/Upgrade.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/footsteps.wav
+/build:Sounds/Upgrade.wav
 
-#begin Sound effects/metal attack.wav
+#begin Sounds/Water Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/metal attack.wav
+/build:Sounds/Water Attack.wav
 
-#begin Sound effects/shooting.wav
+#begin Sounds/Wood Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sound effects/shooting.wav
-
-#begin Sound effects/upgrade.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sound effects/upgrade.wav
-
-#begin Sound effects/water attack.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sound effects/water attack.wav
-
-#begin Sound effects/wood attack.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Sound effects/wood attack.wav
+/build:Sounds/Wood Attack.wav
 

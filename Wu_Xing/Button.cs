@@ -103,6 +103,9 @@ namespace Wu_Xing
             {
                 state = State.None;
             }
+
+            if (state == State.Released)
+                SoundLibrary.Button.Play();
         }
 
         public void Draw(SpriteBatch spriteBatch)

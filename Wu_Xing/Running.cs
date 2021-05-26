@@ -186,16 +186,17 @@ namespace Wu_Xing
             spriteBatch.Draw(TextureLibrary.Filter, Vector2.Zero, null, Color.White);
             mapManager.DrawMinimap(spriteBatch, window);
             mapManager.Adam.DrawHearts(spriteBatch);
+            mapManager.DrawRealmDescription(spriteBatch, window);
 
             if (drawKeyBindings)
             {
-                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings \nR: Restart \nH: Show hitboxes \nEsc: Pause \nTab: Additional UI", new Vector2(100, 220), Color.White);
+                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings \nR: Restart \nH: Show hitboxes \nEsc: Pause \nTab: Extended UI", new Vector2(100, 220), Color.White);
                 spriteBatch.DrawString(FontLibrary.Normal, "LShift: Increased speed \n1-9: Attributes presets \n    1: Base \n    2: Upgraded \n    3: Slow  \n    4: Sniper \n    5: Laser \n    6: Rainbow laser \n    7: Machine gun \n    8: Big machine gun \n    9: Big rainbow machinegun \n    0: Chaos", new Vector2(100, 220 + FontLibrary.Normal.LineSpacing * 6), Color.Yellow);
             }
 
             else
             {
-                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 220), Color.White);
+                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 220), Color.FromNonPremultiplied(255, 255, 255, 60));
             } 
 
             if (gameState == State.Paused)

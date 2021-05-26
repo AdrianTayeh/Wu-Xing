@@ -70,5 +70,11 @@ namespace Wu_Xing
                 { Wu_Xing.Element.Water, Color.FromNonPremultiplied(10, 47, 60, 255) },
                 { Wu_Xing.Element.Wood, Color.FromNonPremultiplied(10, 60, 10, 255) } };
         }
+
+        public static Color Opacity(Color color, float opacity)
+        {
+            return Color.FromNonPremultiplied(color.R, color.G, color.B, (int)(color.A * opacity));
+        }
+
     }
 }
