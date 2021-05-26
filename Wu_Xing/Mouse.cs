@@ -19,17 +19,7 @@ namespace Wu_Xing
 
         public Mouse(Rectangle window, Rectangle resolution, float windowScale)
         {
-            if ((float)resolution.Height / resolution.Width >= (float)window.Height / window.Width)
-            {
-                multiplier = (float)window.Width / resolution.Width;
-                offset.Y = (int)((resolution.Height - (window.Height * windowScale)) / 2);
-            }
-
-            else
-            {
-                multiplier = (float)window.Height / resolution.Height;
-                offset.X = (int)((resolution.Width - (window.Width * windowScale)) / 2);
-            }
+            UpdateSettings(window, resolution, windowScale);
         }
 
         public Point Position { get { return position; } }
@@ -43,6 +33,27 @@ namespace Wu_Xing
         public bool RightIsPressed { get { return rightState == State.Pressed; } }
         public bool RightIsHeld { get { return rightState == State.Held; } }
         public bool RightIsReleased { get { return rightState == State.Released; } }
+
+        public void UpdateSettings(Rectangle window, Rectangle resolution, float windowScale)
+        {
+            if (resolution == window)
+            {
+                multiplier = 1;
+                offset = Point.Zero;
+            }
+
+            else if ((float)resolution.Height / resolution.Width >= (float)window.Height / window.Width)
+            {
+                multiplier = (float)window.Width / resolution.Width;
+                offset.Y = (int)((resolution.Height - (window.Height * windowScale)) / 2);
+            }
+
+            else
+            {
+                multiplier = (float)window.Height / resolution.Height;
+                offset.X = (int)((resolution.Width - (window.Width * windowScale)) / 2);
+            }
+        }
 
         public void Update()
         {

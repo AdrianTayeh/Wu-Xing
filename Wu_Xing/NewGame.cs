@@ -188,6 +188,7 @@ namespace Wu_Xing
                 {
                     //Next stage
                     stage = Stage.PickGem;
+                    SoundLibrary.Upgrade.Play();
 
                     //Make all gem buttons active
                     foreach (KeyValuePair<Element, Button> button2 in gemButtons)
