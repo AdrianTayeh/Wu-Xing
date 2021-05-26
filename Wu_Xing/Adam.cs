@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Wu_Xing
 {
@@ -285,6 +286,7 @@ namespace Wu_Xing
             {
                 invulnerableTimer = 1.2f;
                 base.TakeDamage(damage);
+                SoundLibrary.TakingDamage.Play();
             }   
         }
 

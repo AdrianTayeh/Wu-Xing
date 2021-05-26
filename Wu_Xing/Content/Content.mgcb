@@ -778,6 +778,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Button.wav
 
+#begin Sounds/Door.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Door.wav
+
 #begin Sounds/Earth Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -796,6 +802,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Fire Attack.wav
 
+#begin Sounds/Footsteps.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Footsteps.wav
+
 #begin Sounds/Metal Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -807,6 +819,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Shooting.wav
+
+#begin Sounds/Starting Screen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Starting Screen.wav
+
+#begin Sounds/Taking Damage.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Taking Damage.wav
 
 #begin Sounds/Upgrade.wav
 /importer:WavImporter

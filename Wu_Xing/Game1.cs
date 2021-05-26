@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
 namespace Wu_Xing
 {
     public class Game1 : Game
@@ -103,7 +104,7 @@ namespace Wu_Xing
             switch (screen)
             {
                 case Screen.Start:
-                    start.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
+                    start.Update(ref screen, mouse, currentKeyboard, previousKeyboard);  
                     break;
 
                 case Screen.Menu:

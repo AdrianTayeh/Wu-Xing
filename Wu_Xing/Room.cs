@@ -98,7 +98,11 @@ namespace Wu_Xing
                 {
                     ToggleDoorHitboxes(true);
                     foreach (Door door in doors)
+                    {
                         door.Close();
+                        SoundLibrary.Door.Play();
+                    }
+                        
                 }  
             }
         }

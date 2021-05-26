@@ -7,9 +7,11 @@ namespace Wu_Xing
     static class SoundLibrary
     {
         public static SoundEffect AdamDeath { get; private set; }
+        public static SoundEffect Footsteps { get; private set; }
         public static SoundEffect Shooting { get; private set; }
         public static SoundEffect Upgrade { get; private set; }
         public static SoundEffect Button { get; private set; }
+        public static SoundEffect TakingDamage { get; private set; }
 
         public static SoundEffect BossDeath { get; private set; }
         public static SoundEffect BossSpawn { get; private set; }
@@ -21,12 +23,18 @@ namespace Wu_Xing
         public static SoundEffect WaterAttack { get; private set; }
         public static SoundEffect WoodAttack { get; private set; }
 
+        public static SoundEffect Door { get; private set; }
+        public static SoundEffect StartingScreen { get; private set; }
+
         public static void Load(ContentManager Content)
         {
+            SoundEffect.MasterVolume = 0.4f;
             AdamDeath = Content.Load<SoundEffect>("Sounds\\Adam Death");
             Shooting = Content.Load<SoundEffect>("Sounds\\Shooting");
+            Footsteps = Content.Load<SoundEffect>("Sounds\\Footsteps");
             Upgrade = Content.Load<SoundEffect>("Sounds\\Upgrade");
             Button = Content.Load<SoundEffect>("Sounds\\Button");
+            TakingDamage = Content.Load<SoundEffect>("Sounds\\Taking Damage");
 
             BossDeath = Content.Load<SoundEffect>("Sounds\\Boss Death");
             BossSpawn = Content.Load<SoundEffect>("Sounds\\Boss Spawn");
@@ -37,6 +45,13 @@ namespace Wu_Xing
             MetalAttack = Content.Load<SoundEffect>("Sounds\\Metal Attack");
             WaterAttack = Content.Load<SoundEffect>("Sounds\\Water Attack");
             WoodAttack = Content.Load<SoundEffect>("Sounds\\Wood Attack");
+
+            Door = Content.Load<SoundEffect>("Sounds\\Door");
+            StartingScreen = Content.Load<SoundEffect>("Sounds\\Starting Screen");
+
+            SoundEffectInstance StartingScreenInstance = StartingScreen.CreateInstance();
+            StartingScreenInstance.Play();
+
         }
     }
 }
