@@ -188,6 +188,7 @@ namespace Wu_Xing
                 {
                     //Next stage
                     stage = Stage.PickGem;
+                    SoundLibrary.Upgrade.Play();
 
                     //Make all gem buttons active
                     foreach (KeyValuePair<Element, Button> button2 in gemButtons)
@@ -226,6 +227,7 @@ namespace Wu_Xing
                 {
                     //Next stage
                     stage = Stage.Versus;
+                    SoundLibrary.Upgrade.Play();
 
                     //Generate map on separate thread
                     mapGeneratorThread = new Thread( () => running.InitializeNewMap(GraphicsDevice, random, 15, button.Key, (Element)elementToChannel));

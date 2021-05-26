@@ -19,7 +19,7 @@ namespace Wu_Xing
         private float invulnerableTimer;
         private Vector2 aimingDirection;
 
-        //For demonstrative purpose only
+        private int shootCounter;
         private bool randomElement;
 
         public Adam(Vector2 position, Element element, Random random) : base(position, element, random)
@@ -81,7 +81,7 @@ namespace Wu_Xing
             else if (currentKeyboard.IsKeyDown(Keys.D2))
             {
                 projectileAttributes = new ProjectileAttributes(7, 3, 10, 1.5f);
-                shotsPerSecond = 4;
+                shotsPerSecond = 6;
                 health = maxHealth = 8;
                 speed = 1.2f;
                 accuracy = 0.7f;
@@ -277,7 +277,22 @@ namespace Wu_Xing
             gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + AccuracyOffset(random), true));
             gameObjects[gameObjects.Count - 1].Move(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f, gameObjects, roomHitboxes);
 
-            SoundLibrary.FireAttack.Play();
+            float volume = projectileAttributes.Damage / 5f >= 1 ? 1 : projectileAttributes.Damage / 5f;
+
+            if (shotsPerSecond >= 40)
+            {
+                shootCounter += 1;
+                if (shootCounter == 6)
+                {
+                    shootCounter = 0;
+                    SoundLibrary.FireAttack.Play(volume, 0, 0);
+                }
+            }
+
+            else
+            {
+                SoundLibrary.FireAttack.Play(volume, 0, 0);
+            }
         }
 
         public override void TakeDamage(float damage)

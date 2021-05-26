@@ -25,7 +25,7 @@ namespace Wu_Xing
             shadowSize = 80;
 
             //Enemy
-            detectionRange = 5;
+            detectionRange = 15;
         }
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)

@@ -58,11 +58,12 @@ namespace Wu_Xing
             resolution.Width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             resolution.Height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
+            Window.IsBorderless = true;
             graphics.PreferredBackBufferWidth = resolution.Width;
             graphics.PreferredBackBufferHeight = resolution.Height;
             //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
-
+            
             world = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
             HUD = new RenderTarget2D(GraphicsDevice, window.Width, window.Height);
 
@@ -112,7 +113,8 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Settings:
-                    settings.Update(ref screen, previousScreen, mouse, currentKeyboard, previousKeyboard, graphics);
+                    settings.Update(ref screen, previousScreen, mouse, currentKeyboard, previousKeyboard, graphics, window, ref resolution, ref windowScale);
+                    mouse.UpdateSettings(window, resolution, windowScale);
                     break;
 
                 case Screen.Pregame:
