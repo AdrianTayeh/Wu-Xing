@@ -226,6 +226,7 @@ namespace Wu_Xing
                 {
                     //Next stage
                     stage = Stage.Versus;
+                    SoundLibrary.Upgrade.Play();
 
                     //Generate map on separate thread
                     mapGeneratorThread = new Thread( () => running.InitializeNewMap(GraphicsDevice, random, 15, button.Key, (Element)elementToChannel));

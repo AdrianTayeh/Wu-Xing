@@ -318,7 +318,7 @@ namespace Wu_Xing
             {
                 for (int x = 0; x < rooms.GetLength(0); x++)
                 {
-                    if (rooms[x, y] != null /*&& rooms[x, y].RoomState != Room.State.Unknown*/)
+                    if (rooms[x, y] != null && rooms[x, y].RoomState != Room.State.Unknown)
                     {
                         Rectangle rectangle = new Rectangle(x * 68, y * 68, 68 * rooms[x, y].Size.X - 8, 68 * rooms[x, y].Size.Y - 8);
                         spriteBatch.Draw(TextureLibrary.WhitePixel, rectangle, new Point(x, y) == currentRoomLocation ? Color.White : minimapColor[rooms[x, y].RoomState]);

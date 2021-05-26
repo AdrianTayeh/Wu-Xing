@@ -18,6 +18,9 @@ namespace Wu_Xing
         private float invulnerableTimer;
         private Vector2 aimingDirection;
 
+        //For video
+        private int shootCounter;
+
         //For demonstrative purpose only
         private bool randomElement;
 
@@ -276,7 +279,22 @@ namespace Wu_Xing
             gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + AccuracyOffset(random), true));
             gameObjects[gameObjects.Count - 1].Move(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f, gameObjects, roomHitboxes);
 
-            SoundLibrary.FireAttack.Play();
+            float volume = projectileAttributes.Damage / 5f >= 1 ? 1 : projectileAttributes.Damage / 5f;
+
+            if (shotsPerSecond >= 40)
+            {
+                shootCounter += 1;
+                if (shootCounter == 6)
+                {
+                    shootCounter = 0;
+                    SoundLibrary.FireAttack.Play(volume, 0, 0);
+                }
+            }
+
+            else
+            {
+                SoundLibrary.FireAttack.Play(volume, 0, 0);
+            }
         }
 
         public override void TakeDamage(float damage)

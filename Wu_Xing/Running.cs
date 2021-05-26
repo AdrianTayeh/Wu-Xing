@@ -196,7 +196,8 @@ namespace Wu_Xing
 
             else
             {
-                spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 220), Color.FromNonPremultiplied(255, 255, 255, 60));
+                //Removed for video
+                //spriteBatch.DrawString(FontLibrary.Normal, "K: Show key bindings", new Vector2(100, 220), Color.FromNonPremultiplied(255, 255, 255, 60));
             } 
 
             if (gameState == State.Paused)
