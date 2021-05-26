@@ -83,7 +83,7 @@ namespace Wu_Xing
             else if (currentKeyboard.IsKeyDown(Keys.D2))
             {
                 projectileAttributes = new ProjectileAttributes(7, 3, 10, 1.5f);
-                shotsPerSecond = 4;
+                shotsPerSecond = 6;
                 health = maxHealth = 8;
                 speed = 1.2f;
                 accuracy = 0.7f;
