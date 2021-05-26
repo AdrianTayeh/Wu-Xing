@@ -23,10 +23,10 @@ namespace Wu_Xing
             SoundVolume = 1;
             MusicVolume = 0.7f;
 
-            button.Add("Resolution", new Button(
+            button.Add("Scaling", new Button(
                 new Point(window.Width / 2 + 140, window.Height / 2 - 270),
                 new Point(260, 70),
-                "1080p", FontLibrary.Normal,
+                "AUTOMATIC", FontLibrary.Normal,
                 TextureLibrary.WhitePixel, null,
                 ColorLibrary.WhiteButtonBackgroundColor,
                 ColorLibrary.WhiteButtonLabelColor
@@ -87,7 +87,7 @@ namespace Wu_Xing
                 ));
         }
 
-        public void Update(ref Screen screen, Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GraphicsDeviceManager graphics)
+        public void Update(ref Screen screen, Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, GraphicsDeviceManager graphics, Rectangle window, ref Rectangle resolution, ref float windowScale)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = previousScreen;
@@ -95,27 +95,28 @@ namespace Wu_Xing
             foreach (KeyValuePair<string, Button> item in button)
                 item.Value.Update(mouse);
 
-            if (button["Resolution"].IsReleased)
+            if (button["Scaling"].IsReleased)
             {
-                if (button["Resolution"].Label == "1080p")
+                if (button["Scaling"].Label == "AUTOMATIC")
                 {
-                    //Change resolution to 2560 x 1440
-                    button["Resolution"].Label = "1440p";
+                    button["Scaling"].Label = "NONE";
+                    resolution = window;
                 }
 
-                else if (button["Resolution"].Label == "1440p")
+                else if (button["Scaling"].Label == "NONE")
                 {
-                    //Change resolution to 3840 x 2160 (4K)
-                    button["Resolution"].Label = "4K";
+                    button["Scaling"].Label = "AUTOMATIC";
+                    resolution.Width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    resolution.Height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 }
 
-                else if (button["Resolution"].Label == "4K")
-                {
-                    //Change resolution to 1920 x 1080
-                    button["Resolution"].Label = "1080p";
-                }
+                graphics.PreferredBackBufferWidth = resolution.Width;
+                graphics.PreferredBackBufferHeight = resolution.Height;
+                graphics.ApplyChanges();
 
-                button["Resolution"].UpdateLabelOrigin();
+                windowScale = (float)resolution.Height / resolution.Width >= (float)window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
+
+                button["Scaling"].UpdateLabelOrigin();
             }
 
             else if (button["Window"].IsReleased)
@@ -124,7 +125,6 @@ namespace Wu_Xing
                 graphics.ApplyChanges();
                 button["Window"].Label = graphics.IsFullScreen ? "FULLSCREEN" : "WINDOWED";
                 button["Window"].UpdateLabelOrigin();
-                
             }
 
             else if (button["Music"].IsReleased)
@@ -189,7 +189,7 @@ namespace Wu_Xing
             spriteBatch.Draw(TextureLibrary.BackgroundGray, window, Color.White);
             spriteBatch.DrawString(FontLibrary.Normal, "SETTINGS", new Vector2(window.Width / 2, 150), Color.White, 0, FontLibrary.Normal.MeasureString("SETTINGS") / 2, 1, SpriteEffects.None, 0);
 
-            spriteBatch.DrawString(FontLibrary.Normal, "RESOLUTION", new Vector2(window.Width / 2 - 270, button["Resolution"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
+            spriteBatch.DrawString(FontLibrary.Normal, "SCALING", new Vector2(window.Width / 2 - 270, button["Scaling"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(FontLibrary.Normal, "WINDOW", new Vector2(window.Width / 2 - 270, button["Window"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(FontLibrary.Normal, "MUSIC", new Vector2(window.Width / 2 - 270, button["Music"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(FontLibrary.Normal, "SOUND", new Vector2(window.Width / 2 - 270, button["Sound"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
