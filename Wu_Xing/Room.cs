@@ -101,8 +101,7 @@ namespace Wu_Xing
                     {
                         door.Close();
                         SoundLibrary.Door.Play();
-                    }
-                        
+                    }       
                 }  
             }
         }

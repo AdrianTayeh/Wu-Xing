@@ -62,6 +62,7 @@ namespace Wu_Xing
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             CheckDoors(mapManager, gameObjects);
+            PlayMovementSounds(currentKeyboard);
         }
 
         private void CheckCheatInput(KeyboardState currentKeyboard)
@@ -292,6 +293,31 @@ namespace Wu_Xing
             else
             {
                 SoundLibrary.FireAttack.Play(volume, 0, 0);
+            }
+        }
+
+        private void PlayMovementSounds(KeyboardState currentKeyboard)
+        {
+            //walking sound effects
+            if (currentKeyboard.IsKeyDown(Keys.W) || currentKeyboard.IsKeyDown(Keys.A) || currentKeyboard.IsKeyDown(Keys.S) || currentKeyboard.IsKeyDown(Keys.D))
+            {
+                SoundLibrary.FootstepsInstance.Play();
+                
+            }
+            else if (currentKeyboard.IsKeyUp(Keys.W) && currentKeyboard.IsKeyUp(Keys.A) && currentKeyboard.IsKeyUp(Keys.S) && currentKeyboard.IsKeyUp(Keys.D))
+            {
+                SoundLibrary.FootstepsInstance.Stop();
+            }
+
+            //running sound effects
+            if (speed>=1.5f && (currentKeyboard.IsKeyDown(Keys.W) || currentKeyboard.IsKeyDown(Keys.A) || currentKeyboard.IsKeyDown(Keys.S) || currentKeyboard.IsKeyDown(Keys.D)))
+            {
+                SoundLibrary.RunningInstance.Play();
+                SoundLibrary.FootstepsInstance.Stop();
+            }
+            else if (currentKeyboard.IsKeyUp(Keys.W) && currentKeyboard.IsKeyUp(Keys.A) && currentKeyboard.IsKeyUp(Keys.S) && currentKeyboard.IsKeyUp(Keys.D))
+            {
+                SoundLibrary.RunningInstance.Stop();
             }
         }
 

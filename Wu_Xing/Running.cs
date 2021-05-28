@@ -88,6 +88,22 @@ namespace Wu_Xing
 
                     break;
             }
+
+            PlayingBackgroundMusic();
+        }
+
+        private void PlayingBackgroundMusic()
+        {
+            if (gameState == State.Running)
+            {
+                SoundLibrary.BackgroundMusicInstance.Play();
+                SoundLibrary.BackgroundMusicInstance.IsLooped = true;
+            } 
+            else
+            {
+                SoundLibrary.BackgroundMusicInstance.IsLooped = false;
+                SoundLibrary.BackgroundMusicInstance.Stop();
+            }
         }
 
         private void CheckKeyboardInput(ref Screen screen, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, GraphicsDevice GraphicsDevice)
@@ -98,6 +114,7 @@ namespace Wu_Xing
                 if (gameState == State.Running || gameState == State.Paused)
                 {
                     gameState = gameState == State.Running ? State.Paused : State.Running;
+                    SoundLibrary.BackgroundMusicInstance.Pause();
                 }
                     
                 else if (gameState == State.GameOver)

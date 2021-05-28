@@ -105,7 +105,7 @@ namespace Wu_Xing
             switch (screen)
             {
                 case Screen.Start:
-                    start.Update(ref screen, mouse, currentKeyboard, previousKeyboard);  
+                    start.Update(ref screen, mouse, currentKeyboard, previousKeyboard);
                     break;
 
                 case Screen.Menu:

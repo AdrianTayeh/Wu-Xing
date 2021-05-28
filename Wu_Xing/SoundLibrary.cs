@@ -8,6 +8,7 @@ namespace Wu_Xing
     {
         public static SoundEffect AdamDeath { get; private set; }
         public static SoundEffect Footsteps { get; private set; }
+        public static SoundEffect Running { get; private set; }
         public static SoundEffect Shooting { get; private set; }
         public static SoundEffect Upgrade { get; private set; }
         public static SoundEffect Button { get; private set; }
@@ -24,14 +25,23 @@ namespace Wu_Xing
         public static SoundEffect WoodAttack { get; private set; }
 
         public static SoundEffect Door { get; private set; }
+        public static SoundEffect DoorOpening { get; private set; }
         public static SoundEffect StartingScreen { get; private set; }
+        public static SoundEffect BackgroundMusic { get; private set; }
+
+        public static SoundEffectInstance FootstepsInstance { get; private set; }
+        public static SoundEffectInstance RunningInstance { get; private set; }
+        public static SoundEffectInstance StartingScreenInstance { get; private set; }
+        public static SoundEffectInstance EarthAttackInstance { get; private set; }
+        public static SoundEffectInstance BackgroundMusicInstance { get; private set; }
 
         public static void Load(ContentManager Content)
         {
-            SoundEffect.MasterVolume = 0.4f;
+            SoundEffect.MasterVolume = 0.3f;
             AdamDeath = Content.Load<SoundEffect>("Sounds\\Adam Death");
             Shooting = Content.Load<SoundEffect>("Sounds\\Shooting");
             Footsteps = Content.Load<SoundEffect>("Sounds\\Footsteps");
+            Running = Content.Load<SoundEffect>("Sounds\\Running");
             Upgrade = Content.Load<SoundEffect>("Sounds\\Upgrade");
             Button = Content.Load<SoundEffect>("Sounds\\Button");
             TakingDamage = Content.Load<SoundEffect>("Sounds\\Taking Damage");
@@ -47,11 +57,17 @@ namespace Wu_Xing
             WoodAttack = Content.Load<SoundEffect>("Sounds\\Wood Attack");
 
             Door = Content.Load<SoundEffect>("Sounds\\Door");
+            DoorOpening = Content.Load<SoundEffect>("Sounds\\Door Opening");
             StartingScreen = Content.Load<SoundEffect>("Sounds\\Starting Screen");
+            BackgroundMusic = Content.Load<SoundEffect>("Sounds\\Background Music");
 
-            SoundEffectInstance StartingScreenInstance = StartingScreen.CreateInstance();
+            StartingScreenInstance = StartingScreen.CreateInstance();
+            FootstepsInstance = Footsteps.CreateInstance();
+            RunningInstance = Running.CreateInstance();
+            BackgroundMusicInstance = BackgroundMusic.CreateInstance();
+            EarthAttackInstance = EarthAttack.CreateInstance();
+
             StartingScreenInstance.Play();
-
         }
     }
 }

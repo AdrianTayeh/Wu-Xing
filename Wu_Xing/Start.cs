@@ -20,6 +20,7 @@ namespace Wu_Xing
         {
             if ((currentKeyboardState.GetPressedKeys().Count() > 0 && currentKeyboardState.IsKeyUp(Keys.Escape)) || mouse.LeftIsPressed || mouse.RightIsPressed)
                 screen = Screen.Menu;
+            //SoundLibrary.StartingScreenInstance.Play();
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle window)

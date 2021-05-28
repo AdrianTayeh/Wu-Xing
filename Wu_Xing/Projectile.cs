@@ -118,7 +118,7 @@ namespace Wu_Xing
                     if (hitbox.Intersects(gameObjects[i].Hitbox))
                     {
                         dead = true;
-                        SoundLibrary.EarthAttack.Play(0.2f, 0, 0);
+                        SoundLibrary.EarthAttack.Play(0.1f, 0, 0);
                         return;
                     }
                 }
@@ -130,7 +130,7 @@ namespace Wu_Xing
                 if (roomHitbox.Colliding && hitbox.Intersects(roomHitbox))
                 {
                     dead = true;
-                    SoundLibrary.EarthAttack.Play(0.2f, -0.7f, 0);
+                    SoundLibrary.EarthAttack.Play(0.1f, -0.7f, 0);
                     return;
                 }
             }
