@@ -60,7 +60,8 @@ namespace Wu_Xing
             adam.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             for (int i = gameObjects.Count - 1; i >= 0; i--)
-                gameObjects[i].Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
+                if (!gameObjects[i].IsDead)
+                    gameObjects[i].Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
             for (int i = gameObjects.Count - 1; i >= 0; i--)
                 if (gameObjects[i].IsDead)

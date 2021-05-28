@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -12,16 +13,22 @@ namespace Wu_Xing
     class Settings
     {
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
+        private static float minimapOpacity;
+        private static float masterVolume;
+        private static float musicVolume;
 
-        public static float MinimapOpacity { get; private set; }
-        public static float SoundVolume { get; private set; }
-        public static float MusicVolume { get; private set; }
+        public static float MinimapOpacity { get { return minimapOpacity; } }
+        public static float MasterVolume { get { return masterVolume; } }
+        public static float MusicVolume { get { return musicVolume; } }
 
         public Settings(Rectangle window)
         {
-            MinimapOpacity = 0.7f;
-            SoundVolume = 1;
-            MusicVolume = 0.7f;
+            minimapOpacity = 0.7f;
+            masterVolume = 1;
+            musicVolume = 1;
+
+            SoundEffect.MasterVolume = masterVolume;
+            SoundLibrary.BackgroundMusicInstance.Volume = musicVolume;
 
             button.Add("Scaling", new Button(
                 new Point(window.Width / 2 + 140, window.Height / 2 - 270),
@@ -44,13 +51,13 @@ namespace Wu_Xing
             button.Add("Music", new Button(
                 new Point(window.Width / 2 + 140, window.Height / 2 - 90),
                 new Point(260, 70),
-                "70%", FontLibrary.Normal,
+                "100%", FontLibrary.Normal,
                 TextureLibrary.WhitePixel, null,
                 ColorLibrary.WhiteButtonBackgroundColor,
                 ColorLibrary.WhiteButtonLabelColor
                 ));
 
-            button.Add("Sound", new Button(
+            button.Add("Master volume", new Button(
                 new Point(window.Width / 2 + 140, window.Height / 2),
                 new Point(260, 70),
                 "100%", FontLibrary.Normal,
@@ -129,59 +136,68 @@ namespace Wu_Xing
 
             else if (button["Music"].IsReleased)
             {
-                int percentage = int.Parse(button["Music"].Label.Replace("%", ""));
-                percentage = percentage == 100 ? 0 : percentage + 10;
-                button["Music"].Label = percentage + "%";
-                button["Music"].UpdateLabelOrigin();
-                MusicVolume = percentage / 100f;
+                IncrementPercentage(button["Music"], ref musicVolume);
+                SoundLibrary.BackgroundMusicInstance.Volume = musicVolume;
             }
 
-            else if (button["Sound"].IsReleased)
+            else if (button["Master volume"].IsReleased)
             {
-                int percentage = int.Parse(button["Sound"].Label.Replace("%", ""));
-                percentage = percentage == 100 ? 0 : percentage + 10;
-                button["Sound"].Label = percentage + "%";
-                button["Sound"].UpdateLabelOrigin();
-                SoundVolume = percentage / 100f;
+                IncrementPercentage(button["Master volume"], ref musicVolume);
+                SoundEffect.MasterVolume = masterVolume;
             }
 
             else if (button["Map"].IsReleased)
             {
-                int percentage = int.Parse(button["Map"].Label.Replace("%", ""));
-                percentage = percentage == 100 ? 0 : percentage + 10;
-                button["Map"].Label = percentage + "%";
-                button["Map"].UpdateLabelOrigin();
-                MinimapOpacity = percentage / 100f;
+                IncrementPercentage(button["Map"], ref musicVolume);
             }
 
             else if (button["Default"].IsReleased)
             {
-                //Apply default settings:
-                //Set resolution to 1080p
-                //Set window to fullscreen
-                //Set music volume to 70%
-                //Set sound volume to 100%
-                //Set map opacity to 70%
+                //Resets buttons
+                button["Scaling"].Label = "AUTOMATIC";
+                button["Scaling"].UpdateLabelOrigin();
+                button["Window"].Label = "FULLSCREEN";
+                button["Window"].UpdateLabelOrigin();
+                button["Music"].Label = "100%";
+                button["Music"].UpdateLabelOrigin();
+                button["Master volume"].Label = "100%";
+                button["Master volume"].UpdateLabelOrigin();
+                button["Map"].Label = "70%";
+                button["Map"].UpdateLabelOrigin();
 
+                //Resets Scaling
+                resolution.Width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                resolution.Height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.PreferredBackBufferWidth = resolution.Width;
+                graphics.PreferredBackBufferHeight = resolution.Height;
+                windowScale = (float)resolution.Height / resolution.Width >= (float)window.Height / window.Width ? (float)resolution.Width / window.Width : (float)resolution.Height / window.Height;
+
+                //Resets Window
                 graphics.IsFullScreen = true;
                 graphics.ApplyChanges();
 
-                button["Resolution"].Label = "1080p";
-                button["Resolution"].UpdateLabelOrigin();
-                button["Window"].Label = "FULLSCREEN";
-                button["Window"].UpdateLabelOrigin();
-                button["Music"].Label = "70%";
-                button["Music"].UpdateLabelOrigin();
-                button["Sound"].Label = "100%";
-                button["Sound"].UpdateLabelOrigin();
-                button["Map"].Label = "70%";
-                button["Map"].UpdateLabelOrigin();
+                //Resets Music
+                musicVolume = 1;
+                SoundLibrary.BackgroundMusicInstance.Volume = musicVolume;
+
+                //Resets SoundVolume
+                masterVolume = 1;
+                SoundEffect.MasterVolume = masterVolume;
             }
 
             else if (button["Back"].IsReleased)
             {
                 screen = previousScreen;
             }  
+        }
+
+        private void IncrementPercentage(Button button, ref float percentageVariable)
+        {
+            int percentage = int.Parse(button.Label.Replace("%", ""));
+            percentage = percentage == 100 ? 0 : percentage + 10;
+            button.Label = percentage + "%";
+            button.UpdateLabelOrigin();
+            percentageVariable = percentage / 100f;
         }
 
         public void Draw(SpriteBatch spriteBatch, Rectangle window)
@@ -192,7 +208,7 @@ namespace Wu_Xing
             spriteBatch.DrawString(FontLibrary.Normal, "SCALING", new Vector2(window.Width / 2 - 270, button["Scaling"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(FontLibrary.Normal, "WINDOW", new Vector2(window.Width / 2 - 270, button["Window"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(FontLibrary.Normal, "MUSIC", new Vector2(window.Width / 2 - 270, button["Music"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
-            spriteBatch.DrawString(FontLibrary.Normal, "SOUND", new Vector2(window.Width / 2 - 270, button["Sound"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
+            spriteBatch.DrawString(FontLibrary.Normal, "MASTER VOLUME", new Vector2(window.Width / 2 - 270, button["Master volume"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(FontLibrary.Normal, "MAP OPACITY", new Vector2(window.Width / 2 - 270, button["Map"].Rectangle.Center.Y), Color.White, 0, new Vector2(0, FontLibrary.Normal.MeasureString("E").Y / 2), 1, SpriteEffects.None, 0);
 
             foreach (KeyValuePair<string, Button> item in button)

@@ -74,6 +74,12 @@ namespace Wu_Xing
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
                 screen = Screen.Start;
 
+            UpdateButtons(ref screen, ref previousScreen, mouse);
+            UpdateSaveFileButtons(ref screen);
+        }
+
+        private void UpdateButtons(ref Screen screen, ref Screen previousScreen, Mouse mouse)
+        {
             foreach (KeyValuePair<string, Button> item in button)
                 item.Value.Update(mouse);
 
@@ -81,17 +87,17 @@ namespace Wu_Xing
             {
                 previousScreen = screen;
                 screen = Screen.Settings;
-            }   
+            }
 
             else if (button["Back"].IsReleased)
             {
                 screen = Screen.Start;
-            }   
+            }
 
             else if (button["Plus"].IsReleased)
             {
                 //Add new save file
-            }  
+            }
 
             else if (button["Delete"].IsReleased)
             {
@@ -101,7 +107,10 @@ namespace Wu_Xing
                 for (int i = 1; i < button.Count - 3; i++)
                     button[i.ToString()].BackgroundColor = deleteMode ? ColorLibrary.RedButtonBackgroundColor : ColorLibrary.WhiteButtonBackgroundColor;
             }
-            
+        }
+
+        private void UpdateSaveFileButtons(ref Screen screen)
+        {
             for (int i = 1; i < button.Count - 3; i++)
             {
                 if (button[i.ToString()].IsReleased)

@@ -278,7 +278,8 @@ namespace Wu_Xing
             gameObjects.Add(new Projectile(position, element, random, Projectile.Type.MagicBall, attributes, rotation + AccuracyOffset(random), true));
             gameObjects[gameObjects.Count - 1].Move(gameObjects[gameObjects.Count - 1].Position + Rotate.PointAroundZero(Vector2.UnitY, rotation) * gameObjects[gameObjects.Count - 1].Hitbox.Width * 0.5f, gameObjects, roomHitboxes);
 
-            float volume = projectileAttributes.Damage / 5f >= 1 ? 1 : projectileAttributes.Damage / 5f;
+            float volume = 0.1f + projectileAttributes.Damage / 50f;
+            volume = volume >= 1 ? 1 : volume;
 
             if (shotsPerSecond >= 40)
             {

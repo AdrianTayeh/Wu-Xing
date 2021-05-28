@@ -130,7 +130,7 @@ namespace Wu_Xing
                     break;
 
                 case Screen.Running:
-                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, (float)gameTime.ElapsedGameTime.TotalSeconds, random, GraphicsDevice);
+                    running.Update(ref screen, ref previousScreen, mouse, currentKeyboard, previousKeyboard, (float)gameTime.ElapsedGameTime.TotalSeconds, random);
                     break;
             }
 

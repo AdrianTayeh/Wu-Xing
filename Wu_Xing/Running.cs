@@ -65,9 +65,9 @@ namespace Wu_Xing
             mapManager.GenerateNewMap(GraphicsDevice, random, size, gemToFind, elementToChannel);
         }
 
-        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random, GraphicsDevice GraphicsDevice)
+        public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random)
         {
-            CheckKeyboardInput(ref screen, currentKeyboard, previousKeyboard, random, GraphicsDevice);
+            CheckKeyboardInput(ref screen, currentKeyboard, previousKeyboard, random);
 
             switch (gameState)
             {
@@ -106,7 +106,7 @@ namespace Wu_Xing
             }
         }
 
-        private void CheckKeyboardInput(ref Screen screen, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, GraphicsDevice GraphicsDevice)
+        private void CheckKeyboardInput(ref Screen screen, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
         {
             //Escape - Toggle pause
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))

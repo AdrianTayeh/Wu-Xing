@@ -37,7 +37,6 @@ namespace Wu_Xing
 
         public static void Load(ContentManager Content)
         {
-            SoundEffect.MasterVolume = 0.3f;
             AdamDeath = Content.Load<SoundEffect>("Sounds\\Adam Death");
             Shooting = Content.Load<SoundEffect>("Sounds\\Shooting");
             Footsteps = Content.Load<SoundEffect>("Sounds\\Footsteps");
