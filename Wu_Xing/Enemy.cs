@@ -24,14 +24,14 @@ namespace Wu_Xing
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
-            DealMeleeDamage(adam);
+            DealMeleeDamage(adam, random);
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void DealMeleeDamage(Adam adam)
+        private void DealMeleeDamage(Adam adam, Random random)
         {
             if (hitbox.Intersects(adam.Hitbox))
-                adam.TakeDamage(meleeDamage);
+                adam.TakeDamage(meleeDamage, random);
         }
     }
 }

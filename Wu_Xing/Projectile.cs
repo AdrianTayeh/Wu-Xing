@@ -102,15 +102,15 @@ namespace Wu_Xing
                 //Check all gameObjects and die upon intersection
                 for (int i = gameObjects.Count - 1; i >= 0; i--)
                 {
-                    //Ignore if non-colliding
+                    if (gameObjects[i] == null || gameObjects[i].IsDead)
+                        continue;
+
                     if (!gameObjects[i].Hitbox.Colliding)
                         continue;
 
-                    //Ignore if not Tile
                     if (!(gameObjects[i] is Tile))
                         continue;
 
-                    //Ignore if HitboxType.Flat
                     if (gameObjects[i].Hitbox.Type == Hitbox.HitboxType.Flat)
                         continue;
 
@@ -118,7 +118,7 @@ namespace Wu_Xing
                     if (hitbox.Intersects(gameObjects[i].Hitbox))
                     {
                         dead = true;
-                        SoundLibrary.EarthAttack.Play(0.1f, 0, 0);
+                        SoundLibrary.EarthAttack.Play(0.06f, 0, 0);
                         return;
                     }
                 }
@@ -130,7 +130,7 @@ namespace Wu_Xing
                 if (roomHitbox.Colliding && hitbox.Intersects(roomHitbox))
                 {
                     dead = true;
-                    SoundLibrary.EarthAttack.Play(0.1f, -0.7f, 0);
+                    SoundLibrary.EarthAttack.Play(0.06f, -0.7f, 0);
                     return;
                 }
             }
@@ -165,7 +165,7 @@ namespace Wu_Xing
                         int criticalChance = 3;
                         int criticalDamageMultiplier = random.Next(100) < criticalChance ? 2 : 1;
 
-                        ((Character)gameObject).TakeDamage(attributes.Damage * criticalDamageMultiplier);
+                        ((Character)gameObject).TakeDamage(attributes.Damage * criticalDamageMultiplier, random);
                         ((Character)gameObject).TakeKnockback(direction, attributes.Knockback, gameObjects, roomHitboxes);
                         dead = true;
                         break;
@@ -177,7 +177,7 @@ namespace Wu_Xing
             {
                 if (hitbox.Intersects(adam.Hitbox))
                 {
-                    adam.TakeDamage(attributes.Damage);
+                    adam.TakeDamage(attributes.Damage, random);
                     dead = true;
                 }
             }

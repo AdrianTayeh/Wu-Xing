@@ -70,19 +70,18 @@ namespace Wu_Xing
                 //Check all gameObjects and move out of collision
                 for (int i = numerical ? 0 : (gameObjects.Count - 1); i != (numerical ? gameObjects.Count : -1); i += numerical ? 1 : -1)
                 {
-                    //Ignore if same gameObject
+                    if (gameObjects[i] == null || gameObjects[i].IsDead)
+                        continue;
+
                     if (this == gameObjects[i])
                         continue;
 
-                    //Ignore if non-colliding
                     if (!gameObjects[i].Hitbox.Colliding)
                         continue;
 
-                    //Ignore if Projectile
                     if (gameObjects[i] is Projectile)
                         continue;
 
-                    //Ignore if Tile and this is HitboxType.Flying
                     if (gameObjects[i] is Tile && hitbox.Type == Hitbox.HitboxType.Flying)
                         continue;
 
@@ -131,12 +130,12 @@ namespace Wu_Xing
             health = health > maxHealth ? maxHealth : health;
         }
 
-        public virtual void TakeDamage(float damage)
+        public virtual void TakeDamage(float damage, Random random)
         {
             health -= damage;
 
             if (health <= 0)
-                Kill();
+                Kill(random);
 
             else
                 Flash();
@@ -220,13 +219,16 @@ namespace Wu_Xing
         }
 
 
-        private void Kill()
+        private void Kill(Random random)
         {
             health = 0;
             dead = true;
 
             if (this is Adam)
                 SoundLibrary.AdamDeath.Play();
+
+            else
+                SoundLibrary.EnemyDeath.Play(0.5f, ((float)random.NextDouble() - 0.5f) / 2f, 0);
         }
 
         public override void Draw(SpriteBatch spriteBatch, Vector2 roomPosition, bool drawHitbox)

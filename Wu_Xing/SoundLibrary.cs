@@ -17,6 +17,7 @@ namespace Wu_Xing
         public static SoundEffect BossDeath { get; private set; }
         public static SoundEffect BossSpawn { get; private set; }
         public static SoundEffect EnemyDeath { get; private set; }
+        public static SoundEffect Soul { get; private set; }
 
         public static SoundEffect EarthAttack { get; private set; }
         public static SoundEffect FireAttack { get; private set; }
@@ -48,6 +49,7 @@ namespace Wu_Xing
             BossDeath = Content.Load<SoundEffect>("Sounds\\Boss Death");
             BossSpawn = Content.Load<SoundEffect>("Sounds\\Boss Spawn");
             EnemyDeath = Content.Load<SoundEffect>("Sounds\\Enemy Death");
+            Soul = Content.Load<SoundEffect>("Sounds\\Soul");
 
             EarthAttack = Content.Load<SoundEffect>("Sounds\\Earth Attack");
             FireAttack = Content.Load<SoundEffect>("Sounds\\Fire Attack");

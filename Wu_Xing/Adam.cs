@@ -185,7 +185,7 @@ namespace Wu_Xing
                 if (door.EntranceArea.Contains(position))
                 {
                     position = door.TransitionExitPosition;
-                    mapManager.StartRoomTransition(door, gameObjects);
+                    mapManager.StartRoomTransition(door);
                     break;
                 }
             }
@@ -299,35 +299,38 @@ namespace Wu_Xing
 
         private void PlayMovementSounds(KeyboardState currentKeyboard)
         {
-            //walking sound effects
-            if (currentKeyboard.IsKeyDown(Keys.W) || currentKeyboard.IsKeyDown(Keys.A) || currentKeyboard.IsKeyDown(Keys.S) || currentKeyboard.IsKeyDown(Keys.D))
+            //Moving
+            if (movingDirection != Vector2.Zero)
             {
-                SoundLibrary.FootstepsInstance.Play();
-                
-            }
-            else if (currentKeyboard.IsKeyUp(Keys.W) && currentKeyboard.IsKeyUp(Keys.A) && currentKeyboard.IsKeyUp(Keys.S) && currentKeyboard.IsKeyUp(Keys.D))
-            {
-                SoundLibrary.FootstepsInstance.Stop();
+                //Running
+                if (speed >= 1.5f)
+                {
+                    SoundLibrary.FootstepsInstance.Stop();
+                    SoundLibrary.RunningInstance.Play();
+                }
+
+                //Walking
+                else
+                {
+                    SoundLibrary.RunningInstance.Stop();
+                    SoundLibrary.FootstepsInstance.Play();
+                }
             }
 
-            //running sound effects
-            if (speed>=1.5f && (currentKeyboard.IsKeyDown(Keys.W) || currentKeyboard.IsKeyDown(Keys.A) || currentKeyboard.IsKeyDown(Keys.S) || currentKeyboard.IsKeyDown(Keys.D)))
+            //Still
+            else
             {
-                SoundLibrary.RunningInstance.Play();
                 SoundLibrary.FootstepsInstance.Stop();
-            }
-            else if (currentKeyboard.IsKeyUp(Keys.W) && currentKeyboard.IsKeyUp(Keys.A) && currentKeyboard.IsKeyUp(Keys.S) && currentKeyboard.IsKeyUp(Keys.D))
-            {
                 SoundLibrary.RunningInstance.Stop();
             }
         }
 
-        public override void TakeDamage(float damage)
+        public override void TakeDamage(float damage, Random random)
         {
             if (invulnerableTimer <= 0)
             {
                 invulnerableTimer = 1.2f;
-                base.TakeDamage(damage);
+                base.TakeDamage(damage, random);
                 SoundLibrary.TakingDamage.Play();
             }   
         }

@@ -201,7 +201,7 @@ namespace Wu_Xing
             minimapOpacity = 1 - (1 - Settings.MinimapOpacity) * extendedUITransition;
         }
 
-        public async void StartRoomTransition(Door door, List<GameObject> gameObjects)
+        public async void StartRoomTransition(Door door)
         {
             transitionRoom = door.LeadsToRoom;
             rooms[transitionRoom.X, transitionRoom.Y].IsEntered(rooms);
@@ -275,7 +275,7 @@ namespace Wu_Xing
             currentRoom.IsLeft();
             currentRoomLocation = door.LeadsToRoom;
             currentRoom = rooms[currentRoomLocation.X, currentRoomLocation.Y];
-            adam.Move(door.ExitPosition, gameObjects, currentRoom.Hitboxes);
+            adam.Move(door.ExitPosition, currentRoom.GameObjects, currentRoom.Hitboxes);
             transitionRoom = new Point(-1, -1);
             minimumMinimapSource.Location = minimumMinimapSourceEndPosition.ToPoint();
 
@@ -285,7 +285,7 @@ namespace Wu_Xing
 
         private Rectangle CalculateMinimapSource(Point roomLocation)
         {
-            Vector2 minimapCenter = roomLocation.ToVector2() + currentRoom.Size.ToVector2() / 2;
+            Vector2 minimapCenter = roomLocation.ToVector2() + rooms[roomLocation.X, roomLocation.Y].Size.ToVector2() / 2;
             Rectangle newMinimapSource = minimumMinimapSource;
 
             int nrOfVisibleTiles = (minimumMinimapSource.Width + 8) / 68;

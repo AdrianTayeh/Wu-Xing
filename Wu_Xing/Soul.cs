@@ -120,6 +120,7 @@ namespace Wu_Xing
                 Debug.WriteLine("Sideways and attack");
                 destination = Rotate.PointAroundCenter(idealPosition, adam.Position, random.Next(2) == 0 ? 0.5f : -0.5f);
                 attack = true;
+                SoundLibrary.Soul.Play(0.7f, -0.7f + ((float)random.NextDouble() - 0.5f) / 4f, 0);
             }
 
             //If one move away from ideal position, move to ideal position and attack
@@ -128,6 +129,7 @@ namespace Wu_Xing
                 Debug.WriteLine("Move and attack");
                 destination = idealPosition;
                 attack = true;
+                SoundLibrary.Soul.Play(0.7f, -0.7f + ((float)random.NextDouble() - 0.5f) / 4f, 0);
             }
 
             movingDirection = (Vector2)destination - position;

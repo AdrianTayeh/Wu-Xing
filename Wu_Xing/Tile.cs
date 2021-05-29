@@ -27,15 +27,15 @@ namespace Wu_Xing
             //Check all gameObjects and move out of collision
             for (int i = gameObjects.Count - 1; i >= 0; i--)
             {
-                //Ignore if same gameObject
+                if (gameObjects[i] == null || gameObjects[i].IsDead)
+                    continue;
+
                 if (this == gameObjects[i])
                     continue;
 
-                //Ignore if non-colliding
                 if (!gameObjects[i].Hitbox.Colliding)
                     continue;
 
-                //Ignore if not Tile
                 if (!(gameObjects[i] is Tile))
                     continue;
 

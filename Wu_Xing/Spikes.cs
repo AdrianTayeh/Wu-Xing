@@ -25,19 +25,19 @@ namespace Wu_Xing
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
             if (interval != 0)
-                IntervalSequence(elapsedSeconds, adam, gameObjects);
+                IntervalSequence(elapsedSeconds, adam, gameObjects, random);
 
             else
-                PlayerActivatedSequence(elapsedSeconds, adam, gameObjects);
+                PlayerActivatedSequence(elapsedSeconds, adam, gameObjects, random);
 
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
         }
 
-        private void IntervalSequence(float elapsedSeconds, Adam adam, List<GameObject> gameObjects)
+        private void IntervalSequence(float elapsedSeconds, Adam adam, List<GameObject> gameObjects, Random random)
         {
             if (state == State.Activated)
             {
-                DamageCharacters(adam, gameObjects);
+                DamageCharacters(adam, gameObjects, random);
 
                 animationTimer += elapsedSeconds;
                 if (animationTimer >= interval)
@@ -60,11 +60,11 @@ namespace Wu_Xing
             }
         }
 
-        private void PlayerActivatedSequence(float elapsedSeconds, Adam adam, List<GameObject> gameObjects)
+        private void PlayerActivatedSequence(float elapsedSeconds, Adam adam, List<GameObject> gameObjects, Random random)
         {
             if (state == State.Primed)
             {
-                if (DamageCharacters(adam, gameObjects))
+                if (DamageCharacters(adam, gameObjects, random))
                 {
                     state = State.Activated;
                     source.X = 100;
@@ -93,7 +93,7 @@ namespace Wu_Xing
             }
         }
 
-        private bool DamageCharacters(Adam adam, List<GameObject> gameObjects)
+        private bool DamageCharacters(Adam adam, List<GameObject> gameObjects, Random random)
         {
             bool damageDealt = false;
 
@@ -101,14 +101,14 @@ namespace Wu_Xing
             {
                 if (gameObject is Character && hitbox.Intersects(gameObject.Hitbox))
                 {
-                    ((Character)gameObject).TakeDamage(1);
+                    ((Character)gameObject).TakeDamage(1, random);
                     damageDealt = true;
                 }
             }
 
             if (hitbox.Intersects(adam.Hitbox))
             {
-                adam.TakeDamage(1);
+                adam.TakeDamage(1, random);
                 damageDealt = true;
             }
 

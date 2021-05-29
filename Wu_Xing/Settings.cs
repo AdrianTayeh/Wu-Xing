@@ -142,13 +142,13 @@ namespace Wu_Xing
 
             else if (button["Master volume"].IsReleased)
             {
-                IncrementPercentage(button["Master volume"], ref musicVolume);
+                IncrementPercentage(button["Master volume"], ref masterVolume);
                 SoundEffect.MasterVolume = masterVolume;
             }
 
             else if (button["Map"].IsReleased)
             {
-                IncrementPercentage(button["Map"], ref musicVolume);
+                IncrementPercentage(button["Map"], ref minimapOpacity);
             }
 
             else if (button["Default"].IsReleased)

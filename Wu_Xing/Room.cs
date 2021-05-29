@@ -41,6 +41,7 @@ namespace Wu_Xing
         public State RoomState { get { return roomState; } set { roomState = value; } }
         public List<Door> Doors { get { return doors; } }
         public List<Hitbox> Hitboxes { get { return hitboxes; } }
+        public List<GameObject> GameObjects { get { return gameObjects; } }
 
         public void Update(float elapsedSeconds, KeyboardState currentKeyboard, Adam adam, MapManager mapManager, Random random)
         {

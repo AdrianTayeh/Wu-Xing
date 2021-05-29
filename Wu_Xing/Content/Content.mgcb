@@ -760,6 +760,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Adam Death.wav
 
+#begin Sounds/Adam Death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Adam Death.wav
+
 #begin Sounds/Background Music.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -772,11 +778,29 @@
 /processorParam:Quality=Best
 /build:Sounds/Boss Death.wav
 
+#begin Sounds/Boss Death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Boss Death.wav
+
 #begin Sounds/Boss Spawn.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Boss Spawn.wav
+
+#begin Sounds/Boss Spawn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Boss Spawn.wav
+
+#begin Sounds/Button.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Button.wav
 
 #begin Sounds/Button.wav
 /importer:WavImporter
@@ -802,6 +826,18 @@
 /processorParam:Quality=Best
 /build:Sounds/Earth Attack.wav
 
+#begin Sounds/Earth Attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Earth Attack.wav
+
+#begin Sounds/Enemy Death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Enemy Death.wav
+
 #begin Sounds/Enemy Death.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -814,11 +850,29 @@
 /processorParam:Quality=Best
 /build:Sounds/Fire Attack.wav
 
+#begin Sounds/Fire Attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Fire Attack.wav
+
 #begin Sounds/Footsteps.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Footsteps.wav
+
+#begin Sounds/Footsteps.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Footsteps.wav
+
+#begin Sounds/Metal Attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Metal Attack.wav
 
 #begin Sounds/Metal Attack.wav
 /importer:WavImporter
@@ -838,6 +892,24 @@
 /processorParam:Quality=Best
 /build:Sounds/Shooting.wav
 
+#begin Sounds/Shooting.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Shooting.wav
+
+#begin Sounds/Soul.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Soul.wav
+
+#begin Sounds/Soul.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Soul.wav
+
 #begin Sounds/Starting Screen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -856,11 +928,29 @@
 /processorParam:Quality=Best
 /build:Sounds/Upgrade.wav
 
+#begin Sounds/Upgrade.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Upgrade.wav
+
 #begin Sounds/Water Attack.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Water Attack.wav
+
+#begin Sounds/Water Attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Water Attack.wav
+
+#begin Sounds/Wood Attack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Wood Attack.wav
 
 #begin Sounds/Wood Attack.wav
 /importer:WavImporter

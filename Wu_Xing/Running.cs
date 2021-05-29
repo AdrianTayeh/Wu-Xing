@@ -94,7 +94,7 @@ namespace Wu_Xing
 
         private void PlayingBackgroundMusic()
         {
-            if (gameState == State.Running)
+            if (gameState == State.Running || gameState == State.Transition)
             {
                 SoundLibrary.BackgroundMusicInstance.Play();
                 SoundLibrary.BackgroundMusicInstance.IsLooped = true;
