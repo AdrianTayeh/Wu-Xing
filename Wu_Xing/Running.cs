@@ -21,7 +21,10 @@ namespace Wu_Xing
 
         private Dictionary<string, Button> button = new Dictionary<string, Button>();
         private MapManager mapManager;
+
         private bool drawKeyBindings;
+        private bool extendedUI;
+        private float extendedUITransition;
 
         public Running(Rectangle window)
         {
@@ -68,6 +71,7 @@ namespace Wu_Xing
         public void Update(ref Screen screen, ref Screen previousScreen, Mouse mouse, KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random)
         {
             CheckKeyboardInput(ref screen, currentKeyboard, previousKeyboard, random);
+            UpdateExtendedUITransition();
 
             switch (gameState)
             {
@@ -90,6 +94,15 @@ namespace Wu_Xing
             }
 
             PlayingBackgroundMusic();
+        }
+
+        private void UpdateExtendedUITransition()
+        {
+            if (extendedUI)
+                extendedUITransition += extendedUITransition < 1 ? 0.1f : 0;
+
+            else
+                extendedUITransition -= extendedUITransition > 0 ? 0.1f : 0;
         }
 
         private void PlayingBackgroundMusic()
@@ -136,11 +149,15 @@ namespace Wu_Xing
             {
                 drawKeyBindings = !drawKeyBindings;
             }
+
+            //K - Toggle extended UI
+            else if (currentKeyboard.IsKeyDown(Keys.Tab) && previousKeyboard.IsKeyUp(Keys.Tab))
+                extendedUI = !extendedUI;
         }
 
         private void UpdateRunning(KeyboardState currentKeyboard, KeyboardState previousKeyboard, float elapsedSeconds, Random random)
         {
-            mapManager.Update(elapsedSeconds, currentKeyboard, previousKeyboard, random);
+            mapManager.Update(elapsedSeconds, currentKeyboard, previousKeyboard, random, extendedUITransition);
             UpdateTimer(elapsedSeconds);
 
             if (mapManager.Adam.IsDead)
@@ -201,9 +218,10 @@ namespace Wu_Xing
         public void DrawHUD(SpriteBatch spriteBatch, Rectangle window)
         {
             spriteBatch.Draw(TextureLibrary.Filter, Vector2.Zero, null, Color.White);
-            mapManager.DrawMinimap(spriteBatch, window);
+            mapManager.DrawMinimap(spriteBatch, window, extendedUITransition);
             mapManager.Adam.DrawHearts(spriteBatch);
-            mapManager.DrawRealmDescription(spriteBatch, window);
+            mapManager.DrawRealmDescription(spriteBatch, window, extendedUITransition);
+            mapManager.DrawEffectiveness(spriteBatch, window, extendedUITransition);
 
             if (drawKeyBindings)
             {
@@ -234,7 +252,6 @@ namespace Wu_Xing
                 spriteBatch.DrawString(FontLibrary.Huge, "YOU DIED", new Vector2(window.Width / 2, 450), Color.White, 0, FontLibrary.Huge.MeasureString("YOU DIED") / 2, 1, SpriteEffects.None, 0);
                 spriteBatch.DrawString(FontLibrary.Normal, "PRESS R TO RESTART", new Vector2(window.Width / 2, 530), Color.White, 0, FontLibrary.Normal.MeasureString("PRESS R TO RESTART") / 2, 1, SpriteEffects.None, 0);
                 spriteBatch.DrawString(FontLibrary.Normal, "OR ESC TO RETURN TO MENU", new Vector2(window.Width / 2, 530 + FontLibrary.Normal.LineSpacing), Color.White, 0, FontLibrary.Normal.MeasureString("OR ESC TO RETURN TO MENU") / 2, 1, SpriteEffects.None, 0);
-
             }
         }
     }

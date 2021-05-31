@@ -23,8 +23,6 @@ namespace Wu_Xing
         private Dictionary<Realm, Element> realmElement;
 
         private bool drawHitboxes;
-        private bool extendedUI;
-        private float extendedUITransition;
 
         private Point currentRoomLocation;
         private Point transitionRoom;
@@ -99,11 +97,11 @@ namespace Wu_Xing
             }
         }
 
-        public void Update(float elapsedSeconds, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
+        public void Update(float elapsedSeconds, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, float extendedUITransition)
         {
             CheckKeyboardInput(currentKeyboard, previousKeyboard, random);
             currentRoom.Update(elapsedSeconds, currentKeyboard, adam, this, random);
-            UpdateExtendedUI(currentKeyboard, previousKeyboard);
+            UpdateExtendedUI(extendedUITransition);
         }
 
         private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
@@ -111,10 +109,6 @@ namespace Wu_Xing
             //H - Toggle hitboxes
             if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
                 drawHitboxes = !drawHitboxes;
-
-            //K - Toggle extended UI
-            if (currentKeyboard.IsKeyDown(Keys.Tab) && previousKeyboard.IsKeyUp(Keys.Tab))
-                extendedUI = !extendedUI;
         }
 
         public void GenerateNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
@@ -190,14 +184,8 @@ namespace Wu_Xing
             }
         }
 
-        private void UpdateExtendedUI(KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        private void UpdateExtendedUI(float extendedUITransition)
         {
-            if (extendedUI)
-                extendedUITransition += extendedUITransition < 1 ? 0.1f : 0;
-            
-            else
-                extendedUITransition -= extendedUITransition > 0 ? 0.1f : 0;
-
             minimapOpacity = 1 - (1 - Settings.MinimapOpacity) * extendedUITransition;
         }
 
@@ -332,7 +320,7 @@ namespace Wu_Xing
             spriteBatch.End();
         }
 
-        public void DrawMinimap(SpriteBatch spriteBatch, Rectangle window)
+        public void DrawMinimap(SpriteBatch spriteBatch, Rectangle window, float extendedUITransition)
         {
             float scale = 0.5f + extendedUITransition / 2;
             int size = (int)(468 * scale);
@@ -346,10 +334,15 @@ namespace Wu_Xing
             spriteBatch.Draw(fullMinimap, new Rectangle(window.Width - 50 - size, 50, size, size), minimapSource, ColorLibrary.Opacity(Color.White, minimapOpacity));
         }
 
-        public void DrawRealmDescription(SpriteBatch spriteBatch, Rectangle window)
+        public void DrawRealmDescription(SpriteBatch spriteBatch, Rectangle window, float opacity)
         {
-            spriteBatch.DrawString(FontLibrary.Huge, realm.ToString().ToUpper(), new Vector2(window.Width - 580, 90), Color.FromNonPremultiplied(255, 255, 255, (int)(255 * extendedUITransition)), 0, FontLibrary.Huge.MeasureString(realm.ToString().ToUpper()) * new Vector2(1, 0.5f), 1, SpriteEffects.None, 0);
-            spriteBatch.DrawString(FontLibrary.Normal, realmDescription[realm].ToUpper(), new Vector2(window.Width - 580, 140), ColorLibrary.Opacity(ColorLibrary.Element[element], extendedUITransition), 0, FontLibrary.Normal.MeasureString(realmDescription[realm].ToUpper()) * new Vector2(1, 0.5f), 1, SpriteEffects.None, 0);
+            spriteBatch.DrawString(FontLibrary.Huge, realm.ToString().ToUpper(), new Vector2(window.Width - 580, 90), ColorLibrary.Opacity(Color.White, opacity), 0, FontLibrary.Huge.MeasureString(realm.ToString().ToUpper()) * new Vector2(1, 0.5f), 1, SpriteEffects.None, 0);
+            spriteBatch.DrawString(FontLibrary.Normal, realmDescription[realm].ToUpper(), new Vector2(window.Width - 580, 140), ColorLibrary.Opacity(ColorLibrary.Element[element], opacity), 0, FontLibrary.Normal.MeasureString(realmDescription[realm].ToUpper()) * new Vector2(1, 0.5f), 1, SpriteEffects.None, 0);
+        }
+
+        public void DrawEffectiveness(SpriteBatch spriteBatch, Rectangle window, float opacity)
+        {
+            Effectiveness.DrawFullString(spriteBatch, new Vector2(40, window.Height - 30 - FontLibrary.Normal.LineSpacing), adam.Element, element, opacity);
         }
 
         public void DrawWorld(SpriteBatch spriteBatch)

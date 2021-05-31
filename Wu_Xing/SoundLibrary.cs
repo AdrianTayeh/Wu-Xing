@@ -13,6 +13,7 @@ namespace Wu_Xing
         public static SoundEffect Upgrade { get; private set; }
         public static SoundEffect Button { get; private set; }
         public static SoundEffect TakingDamage { get; private set; }
+        public static SoundEffect CriticalHit { get; private set; }
 
         public static SoundEffect BossDeath { get; private set; }
         public static SoundEffect BossSpawn { get; private set; }
@@ -45,6 +46,7 @@ namespace Wu_Xing
             Upgrade = Content.Load<SoundEffect>("Sounds\\Upgrade");
             Button = Content.Load<SoundEffect>("Sounds\\Button");
             TakingDamage = Content.Load<SoundEffect>("Sounds\\Taking Damage");
+            CriticalHit = Content.Load<SoundEffect>("Sounds\\Critical Hit");
 
             BossDeath = Content.Load<SoundEffect>("Sounds\\Boss Death");
             BossSpawn = Content.Load<SoundEffect>("Sounds\\Boss Spawn");

@@ -83,6 +83,7 @@
     <Compile Include="Projectile.cs" />
     <Compile Include="Hitbox.cs" />
     <Compile Include="SoundLibrary.cs" />
+    <Compile Include="Effectiveness.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

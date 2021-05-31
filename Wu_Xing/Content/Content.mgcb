@@ -808,6 +808,12 @@
 /processorParam:Quality=Best
 /build:Sounds/Button.wav
 
+#begin Sounds/Critical Hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Critical Hit.wav
+
 #begin Sounds/Door Opening.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

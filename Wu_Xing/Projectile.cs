@@ -162,11 +162,16 @@ namespace Wu_Xing
                 {
                     if (gameObject is Character && hitbox.Intersects(gameObject.Hitbox))
                     {
-                        int criticalChance = 3;
-                        int criticalDamageMultiplier = random.Next(100) < criticalChance ? 2 : 1;
+                        int criticalDamageMultiplier = random.Next(100) < attributes.CriticalChance ? 2 : 1;
+                        float effectivenessMultiplier = Effectiveness.GetMultiplier(element, gameObject.Element);
+                        float damage = attributes.Damage * criticalDamageMultiplier * effectivenessMultiplier;
 
-                        ((Character)gameObject).TakeDamage(attributes.Damage * criticalDamageMultiplier, random);
+                        ((Character)gameObject).TakeDamage(damage, random);
                         ((Character)gameObject).TakeKnockback(direction, attributes.Knockback, gameObjects, roomHitboxes);
+
+                        if (criticalDamageMultiplier == 2)
+                            SoundLibrary.CriticalHit.Play();
+
                         dead = true;
                         break;
                     }

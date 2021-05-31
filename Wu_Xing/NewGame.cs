@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -38,6 +39,10 @@ namespace Wu_Xing
 
         private enum Stage { PickElement, PickGem, Versus }
         private Stage stage;
+
+        private Button helpButton;
+        private string helpText;
+        private bool drawHelpText;
 
         public NewGame(Rectangle window, GraphicsDevice GraphicsDevice)
         {
@@ -98,6 +103,24 @@ namespace Wu_Xing
                 ColorLibrary.SolidWhiteButtonBackgroundColor,
                 null
                 ));
+
+            helpButton = new Button(
+                new Point(60, 60),
+                new Point(60, 60),
+                "?", FontLibrary.Normal,
+                null, null,
+                null,
+                ColorLibrary.BlackButtonLabelColor
+                );
+
+            string textFile = Environment.CurrentDirectory;
+
+            //For Windows
+            textFile = textFile.Replace(@"bin\DesktopGL\AnyCPU\Debug", @"Text\Effectiveness.txt");
+            //For MacOS
+            textFile = textFile.Replace(@"bin/DesktopGL/AnyCPU/Debug", @"Text/Effectiveness.txt");
+
+            helpText = File.ReadAllText(textFile);
         }
 
         public void Refresh()
@@ -105,6 +128,8 @@ namespace Wu_Xing
             elementToChannel = null;
             gemToFind = null;
             stage = Stage.PickElement;
+            drawHelpText = false;
+            helpButton.Active = true;
 
             //Gems obtained in this save file
             woodGemObtained = true;
@@ -166,20 +191,12 @@ namespace Wu_Xing
         private void UpdatePickElement(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, ref Screen screen)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
-                screen = Screen.Pregame;
-
-            foreach (KeyValuePair<Element, Button> button in gemButtons)
-                button.Value.Update(mouse);
-
-            //Preview element
-            foreach (KeyValuePair<Element, Button> button in gemButtons)
             {
-                if (button.Value.IsHoveredOn && button.Value.Active)
-                {
-                    elementToChannel = button.Key;
-                    break;
-                }
+                screen = Screen.Pregame;
+                return;
             }
+
+            Updatebuttons(mouse, ref elementToChannel);
 
             //Check if element selected
             foreach (KeyValuePair<Element, Button> button in gemButtons)
@@ -205,20 +222,10 @@ namespace Wu_Xing
             {
                 stage = Stage.PickElement;
                 gemToFind = null;
+                return;
             }
-                
-            foreach (KeyValuePair<Element, Button> button in gemButtons)
-                button.Value.Update(mouse);
 
-            //Preview element
-            foreach (KeyValuePair<Element, Button> button in gemButtons)
-            {
-                if (button.Value.IsHoveredOn && button.Value.Active)
-                {
-                    gemToFind = button.Key;
-                    break;
-                }
-            }
+            Updatebuttons(mouse, ref gemToFind);
 
             //Check if element selected
             foreach (KeyValuePair<Element, Button> button in gemButtons)
@@ -228,10 +235,32 @@ namespace Wu_Xing
                     //Next stage
                     stage = Stage.Versus;
                     SoundLibrary.Upgrade.Play();
+                    helpButton.Active = false;
 
                     //Generate map on separate thread
                     mapGeneratorThread = new Thread( () => running.InitializeNewMap(GraphicsDevice, random, 15, button.Key, (Element)elementToChannel));
                     mapGeneratorThread.Start();
+                    break;
+                }
+            }
+        }
+
+        private void Updatebuttons(Mouse mouse, ref Element? preview)
+        {
+            helpButton.Update(mouse);
+
+            if (helpButton.IsReleased)
+                drawHelpText = !drawHelpText;
+
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
+                button.Value.Update(mouse);
+
+            //Preview element
+            foreach (KeyValuePair<Element, Button> button in gemButtons)
+            {
+                if (button.Value.IsHoveredOn && button.Value.Active)
+                {
+                    preview = button.Key;
                     break;
                 }
             }
@@ -259,6 +288,8 @@ namespace Wu_Xing
                     if (energyLineVisible[i])
                         spriteBatch.Draw(TextureLibrary.EnergyLine, energyCirclePosition + energyLinePosition[i], energyLineSource[i], Color.White, energyLineRotation[i], energyLineSource[i].Size.ToVector2() / 2, 1, SpriteEffects.FlipHorizontally, 0);
 
+                helpButton.Draw(spriteBatch);
+
                 foreach (KeyValuePair<Element, Button> button in gemButtons)
                     button.Value.Draw(spriteBatch);
 
@@ -275,6 +306,15 @@ namespace Wu_Xing
                 {
                     spriteBatch.Draw(TextureLibrary.Symbols[(Element)gemToFind], new Vector2(window.Width * 0.8f, window.Height / 2), null, Color.White, 0, TextureLibrary.Symbols[(Element)gemToFind].Bounds.Size.ToVector2() / 2, 0.4f, SpriteEffects.None, 0);
                     spriteBatch.DrawString(FontLibrary.Normal, gemToFind.ToString().ToUpper(), new Vector2(window.Width * 0.8f, window.Height / 2 + 150), Color.White, 0, FontLibrary.Normal.MeasureString(gemToFind.ToString().ToUpper()) / 2, 1, SpriteEffects.None, 0);
+
+                    Vector2 position = new Vector2(window.Width / 2, window.Height - 200) - FontLibrary.Normal.MeasureString(elementToChannel.ToString().ToUpper() + " IS " + Effectiveness.GetString(elementToChannel, gemToFind).ToUpper() + " AGAINST " + gemToFind.ToString().ToUpper()) / 2;
+                    Effectiveness.DrawFullString(spriteBatch, position, elementToChannel, gemToFind, 1);
+                }
+
+                if (drawHelpText)
+                {
+                    spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(0, 100, 1030, 730), Color.FromNonPremultiplied(30, 30, 30, 220));
+                    spriteBatch.DrawString(FontLibrary.Normal, helpText, new Vector2(50, 150), Color.White, 0, Vector2.Zero, 0.8f, SpriteEffects.None, 0);
                 }
             }
 

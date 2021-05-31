@@ -13,6 +13,7 @@ namespace Wu_Xing
         public static Dictionary<Button.State, Color> WhiteButtonBackgroundColor { get; private set; }
         public static Dictionary<Button.State, Color> LockedWhiteButtonBackgroundColor { get; private set; }
         public static Dictionary<Button.State, Color> WhiteButtonLabelColor { get; private set; }
+        public static Dictionary<Button.State, Color> BlackButtonLabelColor { get; private set; }
         public static Dictionary<Button.State, Color> GreenButtonBackgroundColor { get; private set; }
         public static Dictionary<Button.State, Color> RedButtonBackgroundColor { get; private set; }
         public static Dictionary<Button.State, Color> SolidWhiteButtonBackgroundColor { get; private set; }
@@ -40,6 +41,11 @@ namespace Wu_Xing
                 { Button.State.None, Color.Black },
                 { Button.State.Hover, Color.Black },
                 { Button.State.Held, Color.Black } };
+
+            BlackButtonLabelColor = new Dictionary<Button.State, Color> {
+                { Button.State.None, Color.White },
+                { Button.State.Hover, Color.White },
+                { Button.State.Held, Color.White } };
 
             GreenButtonBackgroundColor = new Dictionary<Button.State, Color> {
                 { Button.State.None, Color.Lime },
