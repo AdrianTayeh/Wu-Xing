@@ -34,6 +34,7 @@ namespace Level_Editor
 
         private Camera camera;
         private Vector2 cameraPosition;
+        private SaveRoom saveRoom;
 
         public Game1()
         {
@@ -73,12 +74,14 @@ namespace Level_Editor
             mouse = new Mouse(window, resolution, windowScale);
             camera = new Camera(window);
             tile = new Tile();
+            saveRoom = new SaveRoom(ref roomSize);
             cameraPosition = TextureLibrary.Rooms["1x1"].Bounds.Size.ToVector2() / 2;
         }
 
         protected override void Update(GameTime gameTime)
         {
             mouse.Update();
+            saveRoom.Save(currentKeyboard);
             currentKeyboard = Keyboard.GetState();
 
             if (currentKeyboard.IsKeyDown(Keys.Escape))
@@ -96,7 +99,7 @@ namespace Level_Editor
                     cameraPosition.X += 5;
 
                 camera.UpdateFocus(cameraPosition);
-                tile.Update(ref screen, mouse);
+                tile.Update(ref screen, mouse, camera);
             }
 
             else
@@ -149,9 +152,9 @@ namespace Level_Editor
                 GraphicsDevice.Clear(Color.Transparent);
                 spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Matrix);
 
+
                 spriteBatch.Draw(TextureLibrary.Rooms[size.X + "x" + size.Y], Vector2.Zero, null, Color.FromNonPremultiplied(60, 60, 60, 255), 0, Vector2.Zero, 1, SpriteEffects.None, 0.1f);
                 tile.DrawWorld(spriteBatch);
-
                 spriteBatch.End();
             }
 

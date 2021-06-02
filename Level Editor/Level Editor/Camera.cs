@@ -27,5 +27,10 @@ namespace Level_Editor
             matrix = Matrix.CreateTranslation(-position.X + viewport.Width / 2, -position.Y + viewport.Height / 2, 0);
         }
 
+        public Vector2 MousePositionInWorld(Mouse mouse)
+        {
+            return Vector2.Transform(new Vector2(mouse.Position.X, mouse.Position.Y), Matrix.Invert(Matrix));
+        }
+
     }
 }
