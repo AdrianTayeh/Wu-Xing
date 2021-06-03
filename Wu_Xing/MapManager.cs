@@ -23,6 +23,7 @@ namespace Wu_Xing
         private Dictionary<Realm, Element> realmElement;
 
         private bool drawHitboxes;
+        private bool drawFullMap;
 
         private Point currentRoomLocation;
         private Point transitionRoom;
@@ -109,6 +110,10 @@ namespace Wu_Xing
             //H - Toggle hitboxes
             if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
                 drawHitboxes = !drawHitboxes;
+
+            //M - Toggle full map
+            else if (currentKeyboard.IsKeyDown(Keys.M) && previousKeyboard.IsKeyUp(Keys.M))
+                drawFullMap = !drawFullMap;
         }
 
         public void GenerateNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
@@ -306,7 +311,7 @@ namespace Wu_Xing
             {
                 for (int x = 0; x < rooms.GetLength(0); x++)
                 {
-                    if (rooms[x, y] != null && rooms[x, y].RoomState != Room.State.Unknown)
+                    if (rooms[x, y] != null && (rooms[x, y].RoomState != Room.State.Unknown || drawFullMap))
                     {
                         Rectangle rectangle = new Rectangle(x * 68, y * 68, 68 * rooms[x, y].Size.X - 8, 68 * rooms[x, y].Size.Y - 8);
                         spriteBatch.Draw(TextureLibrary.WhitePixel, rectangle, new Point(x, y) == currentRoomLocation ? Color.White : minimapColor[rooms[x, y].RoomState]);
@@ -329,7 +334,9 @@ namespace Wu_Xing
             minimapSource.Y = (int)(minimumMinimapSource.Y - minimumMinimapSource.Y * extendedUITransition);
             minimapSource.Width = (int)(minimumMinimapSource.Width + (fullMinimap.Width - minimumMinimapSource.Width) * extendedUITransition);
             minimapSource.Height = (int)(minimumMinimapSource.Height + (fullMinimap.Height - minimumMinimapSource.Height) * extendedUITransition);
-            
+
+            minimapSource = minimapSource.Width > fullMinimap.Width ? fullMinimap.Bounds : minimapSource;
+                
             spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(window.Width - 70 - size, 30, size + 40, size + 40), Color.FromNonPremultiplied(0, 0, 0, 100));
             spriteBatch.Draw(fullMinimap, new Rectangle(window.Width - 50 - size, 50, size, size), minimapSource, ColorLibrary.Opacity(Color.White, minimapOpacity));
         }

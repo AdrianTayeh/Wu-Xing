@@ -43,11 +43,13 @@ namespace Wu_Xing
         private Button helpButton;
         private string helpText;
         private bool drawHelpText;
+        private int mapSize;
 
         public NewGame(Rectangle window, GraphicsDevice GraphicsDevice)
         {
             energyCirclePosition = new Vector2(window.Width / 2, window.Height / 2);
             energyCircle = new RenderTarget2D(GraphicsDevice, TextureLibrary.EnergyCircle.Width, TextureLibrary.EnergyCircle.Height);
+            mapSize = 13;
 
             //Set sources for the energy lines
             for (int i = 0; i < energyLineSource.Length; i++)
@@ -197,6 +199,7 @@ namespace Wu_Xing
             }
 
             Updatebuttons(mouse, ref elementToChannel);
+            UpdateKeyboardInput(currentKeyboard, previousKeyboard);
 
             //Check if element selected
             foreach (KeyValuePair<Element, Button> button in gemButtons)
@@ -216,6 +219,15 @@ namespace Wu_Xing
             }
         }
 
+        private void UpdateKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard)
+        {
+            if (currentKeyboard.IsKeyDown(Keys.Up) && previousKeyboard.IsKeyUp(Keys.Up))
+                mapSize += mapSize < 30 ? 1 : 0;
+
+            else if (currentKeyboard.IsKeyDown(Keys.Down) && previousKeyboard.IsKeyUp(Keys.Down))
+                mapSize -= mapSize > 5 ? 1 : 0;
+        }
+
         private void UpdatePickGem(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Mouse mouse, Random random, Running running, GraphicsDevice GraphicsDevice)
         {
             if (currentKeyboard.IsKeyUp(Keys.Escape) && previousKeyboard.IsKeyDown(Keys.Escape))
@@ -226,6 +238,7 @@ namespace Wu_Xing
             }
 
             Updatebuttons(mouse, ref gemToFind);
+            UpdateKeyboardInput(currentKeyboard, previousKeyboard);
 
             //Check if element selected
             foreach (KeyValuePair<Element, Button> button in gemButtons)
@@ -238,7 +251,7 @@ namespace Wu_Xing
                     helpButton.Active = false;
 
                     //Generate map on separate thread
-                    mapGeneratorThread = new Thread( () => running.InitializeNewMap(GraphicsDevice, random, 15, button.Key, (Element)elementToChannel));
+                    mapGeneratorThread = new Thread( () => running.InitializeNewMap(GraphicsDevice, random, mapSize, button.Key, (Element)elementToChannel));
                     mapGeneratorThread.Start();
                     break;
                 }
@@ -315,6 +328,7 @@ namespace Wu_Xing
                 {
                     spriteBatch.Draw(TextureLibrary.WhitePixel, new Rectangle(0, 100, 1030, 730), Color.FromNonPremultiplied(30, 30, 30, 220));
                     spriteBatch.DrawString(FontLibrary.Normal, helpText, new Vector2(50, 150), Color.White, 0, Vector2.Zero, 0.8f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(FontLibrary.Normal, "Map size: " + mapSize, new Vector2(window.Width - 180, window.Height - 50), Color.White);
                 }
             }
 

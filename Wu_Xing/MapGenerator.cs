@@ -80,6 +80,9 @@ namespace Wu_Xing
             while (true)
             {
                 tries += 1;
+                if (tries % 1000 == 0)
+                    Debug.WriteLine(tries + " tries. " + (DateTime.Now - startTime).TotalMilliseconds + " milliseconds elapsed.");
+
                 mapTile = new MapTile[size, size];
                 GenerateFirstFiveRooms();
                 GenerateAllRooms();

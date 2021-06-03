@@ -40,7 +40,6 @@ namespace Wu_Xing
 
         public override void Update(float elapsedSeconds, List<GameObject> gameObjects, Adam adam, KeyboardState currentKeyboard, MapManager mapManager, Random random)
         {
-            //Decrease cooldown
             if (shotCooldown > 0)
                 shotCooldown -= elapsedSeconds;
 
@@ -51,7 +50,6 @@ namespace Wu_Xing
                 DetermineMovingDirection(adam, random);
             }
 
-            //If has destination, move
             else if (destination != null)
             {
                 MoveToDestination(elapsedSeconds, gameObjects, adam, random, mapManager.CurrentRoom.Hitboxes);
