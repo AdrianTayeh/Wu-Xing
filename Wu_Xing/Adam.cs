@@ -61,8 +61,8 @@ namespace Wu_Xing
             Shoot(elapsedSeconds, gameObjects, random, mapManager.CurrentRoom.Hitboxes);
             base.Update(elapsedSeconds, gameObjects, adam, currentKeyboard, mapManager, random);
 
-            CheckDoors(mapManager, gameObjects);
-            PlayMovementSounds(currentKeyboard);
+            CheckDoors(mapManager);
+            PlayMovementSounds();
         }
 
         private void CheckCheatInput(KeyboardState currentKeyboard)
@@ -178,7 +178,7 @@ namespace Wu_Xing
             }
         }
 
-        private void CheckDoors(MapManager mapManager, List<GameObject> gameObjects)
+        private void CheckDoors(MapManager mapManager)
         {
             foreach (Door door in mapManager.Rooms[mapManager.CurrentRoomLocation.X, mapManager.CurrentRoomLocation.Y].Doors)
             {
@@ -244,17 +244,13 @@ namespace Wu_Xing
 
         private void Shoot(float elapsedSeconds, List<GameObject> gameObjects, Random random, List<Hitbox> roomHitboxes)
         {
-            //Decrease cooldown
             if (shotCooldown > 0)
                 shotCooldown -= elapsedSeconds;
 
             //If ready to shoot, is aiming, and is facing the right way
             if (shotCooldown <= 0 && aimingDirection != Vector2.Zero && rotation == rotationTarget)
             {
-                //Reset cooldown
                 shotCooldown += 1 / shotsPerSecond;
-
-                //Create projectile
                 CreateProjectile(gameObjects, random, roomHitboxes);
             }
         }
@@ -297,7 +293,7 @@ namespace Wu_Xing
             }
         }
 
-        private void PlayMovementSounds(KeyboardState currentKeyboard)
+        private void PlayMovementSounds()
         {
             //Moving
             if (movingDirection != Vector2.Zero)

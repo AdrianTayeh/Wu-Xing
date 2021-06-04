@@ -100,12 +100,12 @@ namespace Wu_Xing
 
         public void Update(float elapsedSeconds, KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random, float extendedUITransition)
         {
-            CheckKeyboardInput(currentKeyboard, previousKeyboard, random);
+            CheckKeyboardInput(currentKeyboard, previousKeyboard);
             currentRoom.Update(elapsedSeconds, currentKeyboard, adam, this, random);
             UpdateExtendedUI(extendedUITransition);
         }
 
-        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard, Random random)
+        private void CheckKeyboardInput(KeyboardState currentKeyboard, KeyboardState previousKeyboard)
         {
             //H - Toggle hitboxes
             if (currentKeyboard.IsKeyDown(Keys.H) && previousKeyboard.IsKeyUp(Keys.H))
@@ -119,21 +119,7 @@ namespace Wu_Xing
         public void GenerateNewMap(GraphicsDevice GraphicsDevice, Random random, int size, Element gemToFind, Element elementToChannel)
         {
             element = gemToFind;
-
-            if (element == Element.Fire)
-                realm = Realm.Muspelheim;
-
-            else if (element == Element.Earth)
-                realm = Realm.Svartalfheim;
-
-            else if (element == Element.Metal)
-                realm = Realm.Asgard;
-
-            else if (element == Element.Water)
-                realm = Realm.Niflheim;
-
-            else
-                realm = Realm.Alfheim;
+            SetRealmToFirstOfCurrentElement();
 
             fullMinimap = new RenderTarget2D(GraphicsDevice, size * 68 - 8, size * 68 - 8);
             rooms = new MapGenerator(random).NewMap(size, element);
@@ -143,24 +129,36 @@ namespace Wu_Xing
 
         public void RegenerateMap(Random random)
         {
-            if (element == Element.Fire)
-                realm = Realm.Muspelheim;
-
-            else if (element == Element.Earth)
-                realm = Realm.Svartalfheim;
-
-            else if (element == Element.Metal)
-                realm = Realm.Asgard;
-
-            else if (element == Element.Water)
-                realm = Realm.Niflheim;
-
-            else
-                realm = Realm.Alfheim;
-
+            SetRealmToFirstOfCurrentElement();
             rooms = new MapGenerator(random).NewMap(rooms.GetLength(0), element);
             MakeCenterCurrentRoom();
             adam = new Adam(CenterOfCenterRoom, (Element)adam.Element, random);
+        }
+
+        private void SetRealmToFirstOfCurrentElement()
+        {
+            switch (element)
+            {
+                case Element.Fire:
+                    realm = Realm.Muspelheim;
+                    break;
+
+                case Element.Earth:
+                    realm = Realm.Svartalfheim;
+                    break;
+
+                case Element.Metal:
+                    realm = Realm.Asgard;
+                    break;
+
+                case Element.Water:
+                    realm = Realm.Niflheim;
+                    break;
+
+                default:
+                    realm = Realm.Alfheim;
+                    break;
+            }
         }
 
         public void NullMap()

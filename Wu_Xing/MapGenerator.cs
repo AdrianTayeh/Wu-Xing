@@ -67,9 +67,6 @@ namespace Wu_Xing
             gridOffset = GridOffset = 190;
         }
 
-        /// <summary>
-        /// Size must be at least 5, and should not be larger than 25.
-        /// </summary>
         public Room[,] NewMap(int size, Element element)
         {
             //For debugging
@@ -348,10 +345,6 @@ namespace Wu_Xing
             //Each string holds tiles and enemies for a room
             Dictionary<Room.Type, Dictionary<Point, List<string>>> rows = GetDictionaryWithAllRooms();
 
-            //Chance of character to become elementary
-            //A random number lower than 5, has a 20% chance of being 0
-            int chance = 5;
-
             //Go through all tiles
             for (int y = 0; y < mapTile.GetLength(0); y++)
             {
@@ -362,13 +355,13 @@ namespace Wu_Xing
                     if (mapTile[x, y] != null && mapTile[x, y].Size.X > 0 && mapTile[x, y].Size.Y > 0)
                     {
                         List<Door> doors = GetListOfDoors(x, y);
-                        List<Hitbox> hitboxes = GetListOfHitboxes(mapTile[x, y].Size, doors);
+                        List<Hitbox> hitboxes = GetListOfHitboxes(mapTile[x, y].Size);
                         List<GameObject> gameObjects = new List<GameObject>();
 
                         //Get gameObjects from random string
                         string randomString = rows[mapTile[x, y].Type][mapTile[x, y].Size][random.Next(rows[mapTile[x, y].Type][mapTile[x, y].Size].Count)];
                         if (randomString != "")
-                            GetRoomContentsFromString(gameObjects, randomString, element, chance);
+                            GetRoomContentsFromString(gameObjects, randomString, element);
 
                         //Initialize room
                         rooms[x, y] = new Room(mapTile[x, y].Size, mapTile[x, y].Type, doors, gameObjects, hitboxes);
@@ -458,7 +451,7 @@ namespace Wu_Xing
             return new Door(position, exitPosition, entranceArea, rotation, leadsToRoom, doorType);
         }
 
-        private List<Hitbox> GetListOfHitboxes(Point size, List<Door> doors)
+        private List<Hitbox> GetListOfHitboxes(Point size)
         {
             Rectangle horizontal = new Rectangle(0, 0, 700, gridOffset);
             Rectangle vertical = new Rectangle(0, 0, gridOffset, 300);
@@ -534,7 +527,7 @@ namespace Wu_Xing
             return rows;
         }
 
-        private void GetRoomContentsFromString(List<GameObject> gameObjects, string row, Element element, int chance)
+        private void GetRoomContentsFromString(List<GameObject> gameObjects, string row, Element element)
         {
             //Row format:
             //block;block;block
@@ -559,43 +552,51 @@ namespace Wu_Xing
                     
                     for (int i = 0; i < length; i++)
                     {
-                        if (objectID == "S")
-                            gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), Element.Earth, random));
-
-                        else if (objectID == "W")
-                            gameObjects.Add(new WoodBox(new Vector2(position.X + i * 100, position.Y), Element.Wood, random));
-
-                        else if (objectID == "H")
-                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), null, random));
-
-                        else if (objectID == "WH")
-                            gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), Element.Water, random));
-
-                        else if (objectID == "M")
-                            gameObjects.Add(new MetalBox(new Vector2(position.X + i * 100, position.Y), Element.Metal, random));
-
-                        else if (objectID == "C") //Uniqe block format: x,y,objectID,length,direction,speed
-                            gameObjects.Add(new Conveyor(new Vector2(position.X + i * 100, position.Y), null, random, int.Parse(components[4]), float.Parse(components[5].Replace('.', ','))));
-
-                        else if (objectID == "SP") //Uniqe block format: x,y,objectID,length,interval
-                            gameObjects.Add(new Spikes(new Vector2(position.X + i * 100, position.Y), null, random, float.Parse(components[4].Replace('.', ','))));
-
-                        else if (objectID == "F")
-                            gameObjects.Add(new Fire(new Vector2(position.X + i * 100, position.Y), Element.Fire, random));
+                        switch (objectID)
+                        {
+                            case "S":
+                                gameObjects.Add(new Stone(new Vector2(position.X + i * 100, position.Y), Element.Earth, random));
+                                break;
+                            case "W":
+                                gameObjects.Add(new WoodBox(new Vector2(position.X + i * 100, position.Y), Element.Wood, random));
+                                break;
+                            case "H":
+                                gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), null, random));
+                                break;
+                            case "WH":
+                                gameObjects.Add(new Hole(new Vector2(position.X + i * 100, position.Y), Element.Water, random));
+                                break;
+                            case "M":
+                                gameObjects.Add(new MetalBox(new Vector2(position.X + i * 100, position.Y), Element.Metal, random));
+                                break;
+                            case "C":
+                                gameObjects.Add(new Conveyor(new Vector2(position.X + i * 100, position.Y), null, random, int.Parse(components[4]), float.Parse(components[5].Replace('.', ','))));
+                                break;
+                            case "SP":
+                                gameObjects.Add(new Spikes(new Vector2(position.X + i * 100, position.Y), null, random, float.Parse(components[4].Replace('.', ','))));
+                                break;
+                            case "F":
+                                gameObjects.Add(new Fire(new Vector2(position.X + i * 100, position.Y), Element.Fire, random));
+                                break;
+                        }
                     }
                 }
 
                 //If the block consists of three components, it is a character
                 else
                 {
-                    if (objectID == "O")
-                        gameObjects.Add(new Orb(position, element, random));
-
-                    else if (objectID == "S")
-                        gameObjects.Add(new Soul(position, element, random));
-
-                    else if (objectID == "W")
-                        gameObjects.Add(new Wanderer(position, element, random));
+                    switch (objectID)
+                    {
+                        case "O":
+                            gameObjects.Add(new Orb(position, element, random));
+                            break;
+                        case "S":
+                            gameObjects.Add(new Soul(position, element, random));
+                            break;
+                        case "W":
+                            gameObjects.Add(new Wanderer(position, element, random));
+                            break;
+                    }
                 }
             }
 
