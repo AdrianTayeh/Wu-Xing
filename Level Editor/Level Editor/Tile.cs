@@ -120,9 +120,9 @@ namespace Level_Editor
             if (mouseClicks > 0)
                 spriteBatch.DrawString(FontLibrary.Big, tileString, mousePosition + new Vector2(20, -8), Color.White);
 
-            spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 1 = Save to Center Room", new Vector2(50, 50), Color.White);
+            spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 1 = Save to Center Room (No enemies)", new Vector2(50, 50), Color.White);
             spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 2 = Save to Normal Room", new Vector2(50, 100), Color.White);
-            spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 3 = Save to Boss Room", new Vector2(50, 150), Color.White);
+            spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 3 = Save to Boss Room (Only 1x1 rooms)", new Vector2(50, 150), Color.White);
         }
     }
 }
