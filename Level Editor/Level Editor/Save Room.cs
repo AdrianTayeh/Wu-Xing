@@ -46,46 +46,52 @@ namespace Level_Editor
                 if (item.Item1 != "None")
                     positions.Add(item);
 
-            i = 0;
-            foreach (Tuple<string, Vector2, string> position in positions)
+            for(int i = 0; i < positions.Count; i++)
             {
-                if (i + 1 < positions.Count && position.Item1 == positions[i + 1].Item1 && position.Item2.X == positions[i + 1].Item2.X)
-                    length++;
-
-                if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && (!position.Item1.Contains("Orb") || !position.Item1.Contains("Soul") || !position.Item1.Contains("Wanderer")))
+                for(int j = 1; i + j < positions.Count; j++)
+                {
+                    if (positions[i].Item1 == positions[i+j].Item1 && (int)((positions[i].Item2.X - 190) / 100) + j == (int)((positions[i + j].Item2.X - 190) / 100))
+                        length += 1;
+                    else
+                        break;
+                }
+                if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && (!positions[i].Item1.Contains("Orb") || !positions[i].Item1.Contains("Soul") || !positions[i].Item1.Contains("Wanderer")))
                 {
                     sw = File.AppendText("Center " + size + ".txt");
-                    sw.Write((int)((position.Item2.X - 190)/100) + "," + (int)((position.Item2.Y - 190)/100) + "," + position.Item3 + "," + length + ";");
+                    sw.Write((int)((positions[i].Item2.X - 190) / 100) + "," + (int)((positions[i].Item2.Y - 190) / 100) + "," + positions[i].Item3 + "," + length + ";");
                     sw.Close();
+                    tilePosList.Clear();
                 }
                 else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D2))
                 {
                     sw = File.AppendText("Normal " + size + ".txt");
-                    if (position.Item1.Contains("Orb") || position.Item1.Contains("Soul") || position.Item1.Contains("Wanderer"))
+                    if (positions[i].Item1.Contains("Orb") || positions[i].Item1.Contains("Soul") || positions[i].Item1.Contains("Wanderer"))
                     {
-                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + ";");
+                        sw.Write((int)((positions[i].Item2.X - 190) / 100) + "," + (int)((positions[i].Item2.Y - 190) / 100) + "," + positions[i].Item3 + ";");
                     }
                     else
                     {
-                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + "," + length + ";");
+                        sw.Write((int)((positions[i].Item2.X - 190) / 100) + "," + (int)((positions[i].Item2.Y - 190) / 100) + "," + positions[i].Item3 + "," + length + ";");
                     }
                     sw.Close();
+                    tilePosList.Clear();
                 }
 
                 else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D3) && size == "1x1")
                 {
                     sw = File.AppendText("Boss " + size + ".txt");
-                    if (position.Item1.Contains("Orb") || position.Item1.Contains("Soul") || position.Item1.Contains("Wanderer"))
+                    if (positions[i].Item1.Contains("Orb") || positions[i].Item1.Contains("Soul") || positions[i].Item1.Contains("Wanderer"))
                     {
-                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + ";");
+                        sw.Write((int)((positions[i].Item2.X - 190) / 100) + "," + (int)((positions[i].Item2.Y - 190) / 100) + "," + positions[i].Item3 + ";");
                     }
                     else
                     {
-                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + "," + length + ";");
+                        sw.Write((int)((positions[i].Item2.X - 190) / 100) + "," + (int)((positions[i].Item2.Y - 190) / 100) + "," + positions[i].Item3 + "," + length + ";");
                     }
                     sw.Close();
+                    tilePosList.Clear();
                 }
-                i++;
+                i += length - 1;
             }
 
         }
