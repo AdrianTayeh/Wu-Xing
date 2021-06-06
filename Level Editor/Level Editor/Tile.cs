@@ -19,12 +19,14 @@ namespace Level_Editor
         private Vector2 worldPos;
         private string tileIndex;
         public List<Tuple<string, Vector2, string>> tilePosList;
+        public List<int> tilePosX;
         private KeyboardState currentKeyboardState;
 
         public Tile()
         {
             tileList = new List<string>() { "Conveyor", "Fire", "Metal Box", "Spikes", "Stone", "Water Hole", "Wood Box", "Hole", "Orb", "Soul", "Wanderer" };
             tilePosList = new List<Tuple<string, Vector2, string>>();
+            tilePosX = new List<int>();
             currentKeyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
             mouseClicks = 0;
         }
@@ -97,7 +99,7 @@ namespace Level_Editor
                     tileIndex = "W";
                     break;
             }
-            checkClick = mouse.LeftIsPressed || mouse.LeftIsHeld;
+            checkClick = mouse.LeftIsPressed;
 
             if (checkClick)
                 tilePosList.Add(new Tuple<string, Vector2, string>(tileString, worldPos, tileIndex));
@@ -110,7 +112,8 @@ namespace Level_Editor
         {
             foreach (Tuple<string, Vector2, string> item in tilePosList)
             {
-                    spriteBatch.DrawString(FontLibrary.Big, item.Item1, item.Item2, Color.White);
+                spriteBatch.DrawString(FontLibrary.Big, item.Item1, item.Item2, Color.White);
+                tilePosX.Add((int)(item.Item2.X - 190) / 100);
             }
         }
 
@@ -120,6 +123,7 @@ namespace Level_Editor
             if (mouseClicks > 0)
                 spriteBatch.DrawString(FontLibrary.Big, tileString, mousePosition + new Vector2(20, -8), Color.White);
 
+            spriteBatch.DrawString(FontLibrary.Big, "Press Ctrl + S to initiate Saving", new Vector2(50, 0), Color.White);
             spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 1 = Save to Center Room (No enemies)", new Vector2(50, 50), Color.White);
             spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 2 = Save to Normal Room", new Vector2(50, 100), Color.White);
             spriteBatch.DrawString(FontLibrary.Big, "Ctrl + 3 = Save to Boss Room (Only 1x1 rooms)", new Vector2(50, 150), Color.White);

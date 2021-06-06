@@ -17,17 +17,13 @@ namespace Level_Editor
         private StreamWriter sw;
         private string size;
         private int i;
-        private List<int> tilePosX;
-        private List<int> tilePosY;
 
         public SaveRoom()
         {
-            tilePosX = new List<int>();
-            tilePosY = new List<int>();
             length = 1;            
         }
 
-        public void Save(KeyboardState currentKeyboard, ref List<Tuple<string, Vector2, string>> tilePosList, ref Game1.RoomSize roomSize)
+        public void Save(KeyboardState currentKeyboard, ref List<Tuple<string, Vector2, string>> tilePosList, ref Game1.RoomSize roomSize, ref List<int>tilePosX)
         {
             if (roomSize == Game1.RoomSize.OneXOne)
                 size = "1x1";
@@ -45,9 +41,7 @@ namespace Level_Editor
             i = 0;
             foreach(Tuple<string, Vector2, string> item in tilePosList.Where(item => item.Item1 != "None"))
             {
-                tilePosX.Add((int)(item.Item2.X - 190) / 100);
-                tilePosY.Add((int)(item.Item2.Y - 190) / 100);
-                if (item.Item1[i] == item.Item1[i + 1] && tilePosY[i] == tilePosY[i + 1] && i+1 < tilePosX.Count)
+                if (i + 1 < tilePosList.Count && item.Item1[i] == item.Item1[i + 1] && tilePosX[i] == tilePosX[i + 1])
                     length++;
 
                 if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && (!item.Item1.Contains("Orb") || !item.Item1.Contains("Soul") || !item.Item1.Contains("Wanderer")))

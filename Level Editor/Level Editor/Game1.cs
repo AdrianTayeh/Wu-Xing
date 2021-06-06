@@ -81,7 +81,8 @@ namespace Level_Editor
         protected override void Update(GameTime gameTime)
         {
             mouse.Update();
-            saveRoom.Save(currentKeyboard, ref tile.tilePosList, ref roomSize);
+            //if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.S))
+            saveRoom.Save(currentKeyboard, ref tile.tilePosList, ref roomSize, ref tile.tilePosX);
             currentKeyboard = Keyboard.GetState();
 
             if (currentKeyboard.IsKeyDown(Keys.Escape))
@@ -89,13 +90,13 @@ namespace Level_Editor
 
             if (screen == Screen.Map)
             {
-                if (currentKeyboard.IsKeyDown(Keys.W))
+                if (currentKeyboard.IsKeyDown(Keys.Up))
                     cameraPosition.Y -= 5;
-                else if (currentKeyboard.IsKeyDown(Keys.S))
+                else if (currentKeyboard.IsKeyDown(Keys.Down))
                     cameraPosition.Y += 5;
-                if (currentKeyboard.IsKeyDown(Keys.A))
+                if (currentKeyboard.IsKeyDown(Keys.Left))
                     cameraPosition.X -= 5;
-                else if (currentKeyboard.IsKeyDown(Keys.D))
+                else if (currentKeyboard.IsKeyDown(Keys.Right   ))
                     cameraPosition.X += 5;
 
                 camera.UpdateFocus(cameraPosition);
