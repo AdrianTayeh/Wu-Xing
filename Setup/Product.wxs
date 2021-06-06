@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"><?define Wu_Xing_TargetDir=$(var.Wu_Xing.TargetDir)?>
+	<Product Id="4da11391-0545-4c75-93a7-c50f9a4578ed" Name="Wu Xing" Language="1033" Version="1.0.0.0" Manufacturer="Group11" UpgradeCode="78effd02-ffc0-4197-97a6-80124d230b5d">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="TESTFILEPRODUCTDIR" />
+    <UIRef Id="WixUI_InstallDir"/>
+    
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="Wu Xing" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+        <Directory Id="TESTFILEPRODUCTDIR" Name="Wu Xing">
+          <Directory Id="INSTALLFOLDER" Name="Wu Xing" />
+        </Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+			<Component Id="Wu_Xing.exe" Guid="8c3e5b82-779f-46af-adcb-fc549646824e">
+			  <File Id="Wu_Xing.exe" Name="Wu_Xing.exe" Source="$(var.Wu_Xing_TargetDir)Wu_Xing.exe" />
+			</Component>
+			<Component Id="MonoGame.Framework.dll" Guid="542bfe1d-38e2-443c-9fab-a3909797c17e">
+			  <File Id="MonoGame.Framework.dll" Name="MonoGame.Framework.dll" Source="$(var.Wu_Xing_TargetDir)MonoGame.Framework.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
