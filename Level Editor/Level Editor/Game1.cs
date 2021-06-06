@@ -82,7 +82,7 @@ namespace Level_Editor
         {
             mouse.Update();
             //if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.S))
-            saveRoom.Save(currentKeyboard, ref tile.tilePosList, ref roomSize, ref tile.tilePosX);
+            saveRoom.Save(currentKeyboard, ref tile.tilePosList, ref roomSize);
             currentKeyboard = Keyboard.GetState();
 
             if (currentKeyboard.IsKeyDown(Keys.Escape))

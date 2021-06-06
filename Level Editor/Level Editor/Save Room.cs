@@ -23,7 +23,7 @@ namespace Level_Editor
             length = 1;            
         }
 
-        public void Save(KeyboardState currentKeyboard, ref List<Tuple<string, Vector2, string>> tilePosList, ref Game1.RoomSize roomSize, ref List<int>tilePosX)
+        public void Save(KeyboardState currentKeyboard, ref List<Tuple<string, Vector2, string>> tilePosList, ref Game1.RoomSize roomSize)
         {
             if (roomSize == Game1.RoomSize.OneXOne)
                 size = "1x1";
@@ -38,28 +38,36 @@ namespace Level_Editor
             else if (roomSize == Game1.RoomSize.ThreeXOne)
                 size = "3x1";
 
+            
+            //Create a local list of Tuples from tilePosList, excluding "None"s
+            List<Tuple<string, Vector2, string>> positions = new List<Tuple<string, Vector2, string>>();
+
+            foreach (Tuple<string, Vector2, string> item in tilePosList)
+                if (item.Item1 != "None")
+                    positions.Add(item);
+
             i = 0;
-            foreach(Tuple<string, Vector2, string> item in tilePosList.Where(item => item.Item1 != "None"))
+            foreach (Tuple<string, Vector2, string> position in positions)
             {
-                if (i + 1 < tilePosList.Count && item.Item1[i] == item.Item1[i + 1] && tilePosX[i] == tilePosX[i + 1])
+                if (i + 1 < positions.Count && position.Item1 == positions[i + 1].Item1 && position.Item2.X == positions[i + 1].Item2.X)
                     length++;
 
-                if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && (!item.Item1.Contains("Orb") || !item.Item1.Contains("Soul") || !item.Item1.Contains("Wanderer")))
+                if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && (!position.Item1.Contains("Orb") || !position.Item1.Contains("Soul") || !position.Item1.Contains("Wanderer")))
                 {
                     sw = File.AppendText("Center " + size + ".txt");
-                    sw.Write((int)((item.Item2.X - 190)/100) + "," + (int)((item.Item2.Y - 190)/100) + "," + item.Item3 + "," + length + ";");
+                    sw.Write((int)((position.Item2.X - 190)/100) + "," + (int)((position.Item2.Y - 190)/100) + "," + position.Item3 + "," + length + ";");
                     sw.Close();
                 }
                 else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D2))
                 {
                     sw = File.AppendText("Normal " + size + ".txt");
-                    if (item.Item1.Contains("Orb") || item.Item1.Contains("Soul") || item.Item1.Contains("Wanderer"))
+                    if (position.Item1.Contains("Orb") || position.Item1.Contains("Soul") || position.Item1.Contains("Wanderer"))
                     {
-                        sw.Write((int)((item.Item2.X - 190) / 100) + "," + (int)((item.Item2.Y - 190) / 100) + "," + item.Item3 + ";");
+                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + ";");
                     }
                     else
                     {
-                        sw.Write((int)((item.Item2.X - 190) / 100) + "," + (int)((item.Item2.Y - 190) / 100) + "," + item.Item3 + "," + length + ";");
+                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + "," + length + ";");
                     }
                     sw.Close();
                 }
@@ -67,13 +75,13 @@ namespace Level_Editor
                 else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D3) && size == "1x1")
                 {
                     sw = File.AppendText("Boss " + size + ".txt");
-                    if (item.Item1.Contains("Orb") || item.Item1.Contains("Soul") || item.Item1.Contains("Wanderer"))
+                    if (position.Item1.Contains("Orb") || position.Item1.Contains("Soul") || position.Item1.Contains("Wanderer"))
                     {
-                        sw.Write((int)((item.Item2.X - 190) / 100) + "," + (int)((item.Item2.Y - 190) / 100) + "," + item.Item3 + ";");
+                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + ";");
                     }
                     else
                     {
-                        sw.Write((int)((item.Item2.X - 190) / 100) + "," + (int)((item.Item2.Y - 190) / 100) + "," + item.Item3 + "," + length + ";");
+                        sw.Write((int)((position.Item2.X - 190) / 100) + "," + (int)((position.Item2.Y - 190) / 100) + "," + position.Item3 + "," + length + ";");
                     }
                     sw.Close();
                 }

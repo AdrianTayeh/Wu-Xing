@@ -19,14 +19,12 @@ namespace Level_Editor
         private Vector2 worldPos;
         private string tileIndex;
         public List<Tuple<string, Vector2, string>> tilePosList;
-        public List<int> tilePosX;
         private KeyboardState currentKeyboardState;
 
         public Tile()
         {
             tileList = new List<string>() { "Conveyor", "Fire", "Metal Box", "Spikes", "Stone", "Water Hole", "Wood Box", "Hole", "Orb", "Soul", "Wanderer" };
             tilePosList = new List<Tuple<string, Vector2, string>>();
-            tilePosX = new List<int>();
             currentKeyboardState = Microsoft.Xna.Framework.Input.Keyboard.GetState();
             mouseClicks = 0;
         }
@@ -113,7 +111,6 @@ namespace Level_Editor
             foreach (Tuple<string, Vector2, string> item in tilePosList)
             {
                 spriteBatch.DrawString(FontLibrary.Big, item.Item1, item.Item2, Color.White);
-                tilePosX.Add((int)(item.Item2.X - 190) / 100);
             }
         }
 
