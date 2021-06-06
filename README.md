@@ -49,7 +49,7 @@ Method 2:
 * Download Visual Studio (2017 or a newer version) for Windows/Mac OS
 * Download Monogame (version 3.8.0.1641 or newer)
 * Download GitHub Desktop
-* Above the list of files, click  Code, then click Open with GitHub Desktop ( https://github.com/AdrianTayeh/Wu-Xing.git )
+* Above the list of files, click  Code, then click Open with GitHub Desktop ( or copy this link to GitHub Desktop https://github.com/AdrianTayeh/Wu-Xing.git )
 * Click Choose... and, using Windows Explorer, navigate to a local path where you want to clone the repository.
 * Open Wu_Xing.sln with Visual Studio
 * Press F5 or Start to run the game
