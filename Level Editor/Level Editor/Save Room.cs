@@ -11,7 +11,6 @@ namespace Level_Editor
 {
     class SaveRoom
     {
-        private string roomSize;
         private string x;
         private string y;
         private List <int> tilePosX;
@@ -21,10 +20,13 @@ namespace Level_Editor
         private Tile tile;
         private int length;
         private StreamWriter sw;
+        private string size;
+        private bool writeCenter;
+        private bool writeNormal;
+        private bool writeBoss;
 
-        public SaveRoom(ref Game1.RoomSize roomSize)
+        public SaveRoom()
         {
-            this.roomSize = roomSize.ToString();
             tilePosX = new List<int>();
             tilePosY = new List<int>();
             tileName = new List<string>();
@@ -34,45 +36,66 @@ namespace Level_Editor
             
         }
 
-        public void Save(KeyboardState currentKeyboard)
+        public void Save(KeyboardState currentKeyboard, ref List<Tuple<string, Vector2, string>> tilePosList, ref Game1.RoomSize roomSize)
         {
-            foreach(Tuple<string, Vector2, string> item in tile.tilePosList)
+            if (roomSize == Game1.RoomSize.OneXOne)
+                size = "1x1";
+            else if (roomSize == Game1.RoomSize.OneXTwo)
+                size = "1x2";
+            else if (roomSize == Game1.RoomSize.OneXThree)
+                size = "1x3";
+            else if (roomSize == Game1.RoomSize.TwoXOne)
+                size = "2x1";
+            else if (roomSize == Game1.RoomSize.TwoXTwo)
+                size = "2x2";
+            else if (roomSize == Game1.RoomSize.ThreeXOne)
+                size = "3x1";
+            foreach(Tuple<string, Vector2, string> item in tilePosList.Where(item => item.Item1 != "None"))
             {
-                if(item.Item1 != "None")
-                {
-                    tilePosX.Add((int)(item.Item2.X - 190) / 100);
-                    tilePosY.Add((int)(item.Item2.Y - 190) / 100);
-                    tileIndex.Add(item.Item3);
-                    tileName.Add(item.Item1);
-                }
-
+                tilePosX.Add((int)(item.Item2.X - 190) / 100);
+                tilePosY.Add((int)(item.Item2.Y - 190) / 100);
+                tileIndex.Add(item.Item3);
+                tileName.Add(item.Item1);
             }
 
-            for (int i = 0; i < tileIndex.Count; i++)
+            for (int i = 0; i < tileIndex.Count - 1; i++)
             {
-                if (tilePosY[i] == tilePosY[i + 1])
-                    length += 1;
-                else
-                    length = 1;
-
-                if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && !tileName.Contains("Orb") || !tileName.Contains("Soul") || !tileName.Contains("Wanderer"))
-                    sw = File.AppendText("Center " + roomSize + ".txt");
-
-                else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D2))
-                    sw = File.AppendText("Normal " + roomSize + ".txt");
-
-                else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D3) && roomSize == "1x1")
-                    sw = File.AppendText("Boss " + roomSize + ".txt");
-
-                if(!tileName.Contains("Orb") || !tileName.Contains("Soul") || !tileName.Contains("Wanderer"))
+                if (tileName[i] == tileName[i + 1] && tilePosY[i] == tilePosY[i + 1])
+                    length++;
+                if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D1) && (!tileName.Contains("Orb") || !tileName.Contains("Soul") || !tileName.Contains("Wanderer")))
                 {
+                    sw = File.AppendText("Center " + size + ".txt");
                     sw.Write(tilePosX[i] + "," + tilePosY[i] + "," + tileIndex[i] + "," + length + ";");
+                    sw.Close();
                 }
-
-                else
+                else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D2))
                 {
-
+                    sw = File.AppendText("Normal " + size + ".txt");
+                    if(tileName.Contains("Orb") || tileName.Contains("Soul") || tileName.Contains("Wanderer"))
+                    {
+                        sw.Write(tilePosX[i] + "," + tilePosY[i] + "," + tileIndex[i] + ";");
+                    }
+                    else
+                    {
+                        sw.Write(tilePosX[i] + "," + tilePosY[i] + "," + tileIndex[i] + "," + length + ";");
+                    }
+                    sw.Close();
                 }
+
+                else if (currentKeyboard.IsKeyDown(Keys.LeftControl) && currentKeyboard.IsKeyDown(Keys.D3) && size == "1x1")
+                {
+                    sw = File.AppendText("Boss " + size + ".txt");
+                    if (tileName.Contains("Orb") || tileName.Contains("Soul") || tileName.Contains("Wanderer"))
+                    {
+                        sw.Write(tilePosX[i] + "," + tilePosY[i] + "," + tileIndex[i] + ";");
+                    }
+                    else
+                    {
+                        sw.Write(tilePosX[i] + "," + tilePosY[i] + "," + tileIndex[i] + "," + length + ";");
+                    }
+                        sw.Close();
+                }
+
             }
         }
     }

@@ -74,14 +74,14 @@ namespace Level_Editor
             mouse = new Mouse(window, resolution, windowScale);
             camera = new Camera(window);
             tile = new Tile();
-            saveRoom = new SaveRoom(ref roomSize);
+            saveRoom = new SaveRoom();
             cameraPosition = TextureLibrary.Rooms["1x1"].Bounds.Size.ToVector2() / 2;
         }
 
         protected override void Update(GameTime gameTime)
         {
             mouse.Update();
-            saveRoom.Save(currentKeyboard);
+            saveRoom.Save(currentKeyboard, ref tile.tilePosList, ref roomSize);
             currentKeyboard = Keyboard.GetState();
 
             if (currentKeyboard.IsKeyDown(Keys.Escape))
